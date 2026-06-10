@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from pydantic import BaseModel
 from models.models import Goal
 from database import SessionLocal
+from schema.goal_schema import GoalSchema, GoalCreateSchema
 
 app = FastAPI()
 
@@ -16,21 +16,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-# Pydantic schema for Goal
-class GoalSchema(BaseModel):
-    id: int
-    name: str
-    target: int
-
-    class Config:
-        orm_mode = True
-
-
-class GoalCreateSchema(BaseModel):
-    name: str
-    target: int
 
 
 @app.get("/")
