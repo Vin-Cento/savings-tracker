@@ -38,3 +38,9 @@ npm-debug.log*
 *.pem
 .DS_Store
 Thumbs.db
+/backend-code/migrations/versions
+/backend-code/migrations/versions
+/backend-code/__pycache__
+/backend-code/models/__pycache__
+/backend-code/__pycache__
+/backend-code/models/__pycache__

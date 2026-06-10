@@ -58,3 +58,16 @@ def create_goal(goal: GoalCreateSchema, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_goal)
     return new_goal
+
+
+@app.delete("/goals/{goal_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_goal(goal_id: int, db: Session = Depends(get_db)):
+    goal = db.query(Goal).filter(Goal.id == goal_id).first()
+    if not goal:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Goal with id {goal_id} not found"
+        )
+    db.delete(goal)
+    db.commit()
+    return None

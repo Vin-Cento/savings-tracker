@@ -1,6 +1,7 @@
 from __future__ import annotations
 from datetime import datetime
 from sqlalchemy import (
+    Boolean,
     Text,
     BigInteger,
     DateTime,
@@ -22,6 +23,10 @@ class Goal(Base):
     name: Mapped[str] = mapped_column(
         Text, unique=True, index=True, nullable=False)
     target: Mapped[int] = mapped_column(BigInteger)
+    total: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, server_default="0")
+    active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default='true')
 
 
 class Deposit(Base):
