@@ -34,6 +34,10 @@ export type GoalSchema = {
      * Target
      */
     target: number;
+    /**
+     * Deadline
+     */
+    deadline: string;
 };
 
 /**

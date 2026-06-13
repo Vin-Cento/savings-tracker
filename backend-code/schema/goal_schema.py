@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -6,6 +7,7 @@ class GoalSchema(BaseModel):
     id: int
     name: str
     target: int
+    deadline: datetime
 
     class Config:
         orm_mode = True

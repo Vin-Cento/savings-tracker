@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSort } from "react-icons/fa";
+import { formatMoney } from '../composables/format'
 
 import PopUpMenu from "../components/PopUpMenu.tsx"
 import { fetchGoals, deleteGoal } from "../stores/goalSlice.ts";
@@ -95,6 +96,15 @@ function GoalManagerPage() {
                 </button>
               </div>
             </th>
+
+            <th className="p-3">
+              <div className="flex items-center gap-2">
+                <span>DeadLine</span>
+                <button onClick={() => handleSort("deadline")}>
+                  <FaSort className="text-sm" />
+                </button>
+              </div>
+            </th>
           </tr>
         </thead>
 
@@ -103,7 +113,8 @@ function GoalManagerPage() {
             <tr key={goal.id} className="bg-amber-700 border-b border-amber-900">
               <td className="p-3">{goal.id}</td>
               <td className="p-3">{goal.name}</td>
-              <td className="p-3">${goal.target}</td>
+              <td className="p-3">{formatMoney(goal.target)}</td>
+              <td className="p-3">{goal.deadline}</td>
             </tr>
           ))}
         </tbody>
