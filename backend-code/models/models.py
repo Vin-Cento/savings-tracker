@@ -7,12 +7,13 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     func,
+    text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
-    create_time: Mapped[datetime] = mapped_column(
+    createdAt: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
@@ -27,6 +28,11 @@ class Goal(Base):
         BigInteger, nullable=False, server_default="0")
     active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default='true')
+    deadline: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("(CURRENT_TIMESTAMP + INTERVAL '1 year')")
+    )
 
 
 class Deposit(Base):

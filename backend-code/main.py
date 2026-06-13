@@ -4,10 +4,24 @@ from typing import List
 from models.models import Goal
 from database import SessionLocal
 from schema.goal_schema import GoalSchema, GoalCreateSchema
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 # Dependency to get DB session
+
+origins = [
+    "http://localhost:5173",  # Vite React
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_db():
@@ -24,14 +38,14 @@ async def read_root():
 
 
 @app.get("/goals/", response_model=List[GoalSchema])
-async def get_goals(db: Session = Depends(get_db)):
+async def list(db: Session = Depends(get_db)):
     goals = db.query(Goal).all()
     return goals
 
 
 @app.post("/goals/", response_model=GoalSchema,
           status_code=status.HTTP_201_CREATED)
-def create_goal(goal: GoalCreateSchema, db: Session = Depends(get_db)):
+def create(goal: GoalCreateSchema, db: Session = Depends(get_db)):
     existing_goal = db.query(Goal).filter(Goal.name == goal.name).first()
     if existing_goal:
         raise HTTPException(
@@ -45,13 +59,13 @@ def create_goal(goal: GoalCreateSchema, db: Session = Depends(get_db)):
     return new_goal
 
 
-@app.delete("/goals/{goal_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_goal(goal_id: int, db: Session = Depends(get_db)):
-    goal = db.query(Goal).filter(Goal.id == goal_id).first()
+@app.delete("/goals/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete(id: int, db: Session = Depends(get_db)):
+    goal = db.query(Goal).filter(Goal.id == id).first()
     if not goal:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Goal with id {goal_id} not found"
+            detail=f"Goal with id {id} not found"
         )
     db.delete(goal)
     db.commit()
