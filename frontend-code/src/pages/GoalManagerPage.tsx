@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSort } from "react-icons/fa";
-import { formatMoney } from '../composables/format'
+import { formatMoney, formatTimeLocale } from '../composables/format'
 
 import PopUpMenu from "../components/PopUpMenu.tsx"
 import { fetchGoals, deleteGoal } from "../stores/goalSlice.ts";
@@ -114,7 +114,7 @@ function GoalManagerPage() {
               <td className="p-3">{goal.id}</td>
               <td className="p-3">{goal.name}</td>
               <td className="p-3">{formatMoney(goal.target)}</td>
-              <td className="p-3">{goal.deadline}</td>
+              <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
             </tr>
           ))}
         </tbody>
