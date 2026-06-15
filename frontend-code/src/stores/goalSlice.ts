@@ -76,7 +76,7 @@ const goalsSlice = createSlice({
         state.goals = state.goals.filter((goal) => goal.id !== action.payload);
       })
       .addCase(addGoal.fulfilled, (state, action) => {
-        state.goals.push(action.payload);
+        state.goals.unshift(action.payload);
       });
     ;
     ;
