@@ -39,7 +39,7 @@ async def read_root():
 
 @app.get("/goals/", response_model=List[GoalSchema])
 async def list(db: Session = Depends(get_db)):
-    goals = db.query(Goal).all()
+    goals = db.query(Goal).order_by(Goal.createdAt.desc()).all()
     return goals
 
 
