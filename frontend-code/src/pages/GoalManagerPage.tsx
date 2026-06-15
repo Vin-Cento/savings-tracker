@@ -6,6 +6,7 @@ import { formatMoney, formatTimeLocale } from '../composables/format'
 import PopUpMenu from "../components/PopUpMenu.tsx"
 import { fetchGoals, deleteGoal } from "../stores/goalSlice.ts";
 import type { RootState, AppDispatch } from "../stores/store.ts";
+import type { GoalSchema } from "../client/types.gen.ts";
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,11 +25,12 @@ function GoalManagerPage() {
     dispatch(fetchGoals());
   }, [dispatch]);
 
-  const handleDeleteGoal = () => {
-    if (goals.length === 0) return;
-    let goal = goals[goals.length - 1]
-    dispatch(deleteGoal(goal.id))
+  const handleDeleteGoal = (id: number) => {
+    dispatch(deleteGoal(id))
   };
+  const handleEditGoal = (goal: GoalSchema) => {
+    console.log(goal)
+  }
 
   const sortedGoals = [...goals].sort((a, b) => {
     if (!sortConfig) return 0;
@@ -105,6 +107,8 @@ function GoalManagerPage() {
                 </button>
               </div>
             </th>
+            {/* New header for actions */}
+            <th className="p-3 text-center">Actions</th>
           </tr>
         </thead>
 
@@ -115,6 +119,23 @@ function GoalManagerPage() {
               <td className="p-3">{goal.name}</td>
               <td className="p-3">{formatMoney(goal.target)}</td>
               <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
+              {/* New column for Edit and Delete buttons */}
+              <td className="p-3 flex gap-2 justify-center">
+                <button
+                  className="p-1 px-3 rounded bg-blue-600 hover:bg-blue-700 transition-colors"
+                  onClick={() => handleEditGoal(goal)}
+                  title="Edit Goal"
+                >
+                  Edit
+                </button>
+                <button
+                  className="p-1 px-3 rounded bg-red-600 hover:bg-red-700 transition-colors"
+                  onClick={() => handleDeleteGoal(goal.id)}
+                  title="Delete Goal"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -126,13 +147,6 @@ function GoalManagerPage() {
           onClick={() => setOpen(true)}
         >
           Create Goal
-        </button>
-
-        <button
-          className="p-2 rounded-xl bg-red-400"
-          onClick={handleDeleteGoal}
-        >
-          Delete Goal
         </button>
       </div>
 
