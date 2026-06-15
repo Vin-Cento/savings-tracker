@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaSort } from "react-icons/fa";
+import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp } from "react-icons/fa";
 import { formatMoney, formatTimeLocale } from '../composables/format'
 
 import PopUpMenu from "../components/PopUpMenu.tsx"
@@ -16,7 +16,7 @@ function GoalManagerPage() {
   )
 
   const [sortConfig, setSortConfig] = useState<{
-    attr: string; direction: 'asc' | 'desc'
+    attr: string; direction: 'asc' | 'desc' | 'na'
   } | null>(null);
 
   const [open, setOpen] = useState(false);
@@ -57,10 +57,14 @@ function GoalManagerPage() {
   });
 
   const handleSort = (attr: string) => {
-    let direction: "asc" | "desc" = "asc"
+    let direction: "asc" | "desc" | "na" = "na"
 
     if (sortConfig?.attr === attr && sortConfig.direction === "asc") {
       direction = "desc"
+    } else if (sortConfig?.attr === attr && sortConfig.direction === "desc") {
+      direction = "na"
+    } else if (sortConfig?.attr === attr && sortConfig.direction === "na") {
+      direction = "asc"
     }
     setSortConfig({ attr, direction })
   };
@@ -76,7 +80,17 @@ function GoalManagerPage() {
               <div className="flex items-center gap-2">
                 <span>Id</span>
                 <button onClick={() => handleSort("id")}>
-                  <FaSort className="text-sm" />
+                  {sortConfig?.attr === "id" ? (
+                    sortConfig.direction === "asc" ? (
+                      <FaSortUp className="text-sm" />
+                    ) : sortConfig.direction === "desc" ? (
+                      <FaSortDown className="text-sm" />
+                    ) : (
+                      <FaSort className="text-sm" />
+                    )
+                  ) : (
+                    <FaSort className="text-sm" />
+                  )}
                 </button>
               </div>
             </th>
@@ -85,7 +99,17 @@ function GoalManagerPage() {
               <div className="flex items-center gap-2">
                 <span>Name</span>
                 <button onClick={() => handleSort("name")}>
-                  <FaSort className="text-sm" />
+                  {sortConfig?.attr === "id" ? (
+                    sortConfig.direction === "asc" ? (
+                      <FaSortUp className="text-sm" />
+                    ) : sortConfig.direction === "desc" ? (
+                      <FaSortDown className="text-sm" />
+                    ) : (
+                      <FaSort className="text-sm" />
+                    )
+                  ) : (
+                    <FaSort className="text-sm" />
+                  )}
                 </button>
               </div>
             </th>
@@ -94,7 +118,17 @@ function GoalManagerPage() {
               <div className="flex items-center gap-2">
                 <span>Target</span>
                 <button onClick={() => handleSort("target")}>
-                  <FaSort className="text-sm" />
+                  {sortConfig?.attr === "id" ? (
+                    sortConfig.direction === "asc" ? (
+                      <FaSortUp className="text-sm" />
+                    ) : sortConfig.direction === "desc" ? (
+                      <FaSortDown className="text-sm" />
+                    ) : (
+                      <FaSort className="text-sm" />
+                    )
+                  ) : (
+                    <FaSort className="text-sm" />
+                  )}
                 </button>
               </div>
             </th>
@@ -103,7 +137,17 @@ function GoalManagerPage() {
               <div className="flex items-center gap-2">
                 <span>DeadLine</span>
                 <button onClick={() => handleSort("deadline")}>
-                  <FaSort className="text-sm" />
+                  {sortConfig?.attr === "id" ? (
+                    sortConfig.direction === "asc" ? (
+                      <FaSortUp className="text-sm" />
+                    ) : sortConfig.direction === "desc" ? (
+                      <FaSortDown className="text-sm" />
+                    ) : (
+                      <FaSort className="text-sm" />
+                    )
+                  ) : (
+                    <FaSort className="text-sm" />
+                  )}
                 </button>
               </div>
             </th>
@@ -120,20 +164,18 @@ function GoalManagerPage() {
               <td className="p-3">{formatMoney(goal.target)}</td>
               <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
               {/* New column for Edit and Delete buttons */}
-              <td className="p-3 flex gap-2 justify-center">
+              <td className="p-3 flex gap-2 justify-center items-center">
                 <button
-                  className="p-1 px-3 rounded bg-blue-600 hover:bg-blue-700 transition-colors"
                   onClick={() => handleEditGoal(goal)}
                   title="Edit Goal"
                 >
-                  Edit
+                  <FaEdit className='text-sm' />
                 </button>
                 <button
-                  className="p-1 px-3 rounded bg-red-600 hover:bg-red-700 transition-colors"
                   onClick={() => handleDeleteGoal(goal.id)}
                   title="Delete Goal"
                 >
-                  Delete
+                  <FaTrash className='text-sm' />
                 </button>
               </td>
             </tr>
