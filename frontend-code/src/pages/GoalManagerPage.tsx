@@ -94,73 +94,75 @@ function GoalManagerPage() {
   if (error) return <div className="text-red-400 m-2">{error}</div>;
   return (
     <>
-      <div className="min-h-screen">
-        <table className="w-4/5 rounded-xl text-white m-2">
-          <thead>
-            <tr className="bg-zinc-800 text-left">
+      <main className="flex-1 min-h-0 overflow-y-auto">
+        <div className="overflow-x-auto">
+          <table className="w-4/5 rounded-xl text-white m-2">
+            <thead>
+              <tr className="bg-zinc-800 text-left">
 
-              <th className="p-3">
-                <div className="flex items-center gap-2">
-                  <span>Name</span>
-                  <button onClick={() => handleSort("name")}>
-                    <SortIcon attr="name" />
-                  </button>
-                </div>
-              </th>
+                <th className="p-3">
+                  <div className="flex items-center gap-2">
+                    <span>Name</span>
+                    <button onClick={() => handleSort("name")}>
+                      <SortIcon attr="name" />
+                    </button>
+                  </div>
+                </th>
 
-              <th className="p-3">
-                <div className="flex items-center gap-2">
-                  <span>Target</span>
-                  <button onClick={() => handleSort("target")}>
-                    <SortIcon attr="target" />
-                  </button>
-                </div>
-              </th>
+                <th className="p-3">
+                  <div className="flex items-center gap-2">
+                    <span>Target</span>
+                    <button onClick={() => handleSort("target")}>
+                      <SortIcon attr="target" />
+                    </button>
+                  </div>
+                </th>
 
-              <th className="p-3">
-                <div className="flex items-center gap-2">
-                  <span>DeadLine</span>
-                  <button onClick={() => handleSort("deadline")}>
-                    <SortIcon attr="deadline" />
-                  </button>
-                </div>
-              </th>
-              {/* New header for actions */}
-              <th className="p-3 text-center">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {sortedGoals.map((goal) => (
-              <tr key={goal.id} className="bg-amber-700 border-b border-amber-900">
-                <td className="p-3">{goal.name}</td>
-                <td className="p-3">{formatMoney(goal.target)}</td>
-                <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
-
-                {/* Actions */}
-                <td className="p-3 flex gap-2 justify-center items-center">
-                  <button
-                    onClick={() => handleEditGoal(goal)}
-                    title="Edit Goal"
-                  >
-                    <FaEdit className='text-sm' />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteGoal(goal.id)}
-                    title="Delete Goal"
-                  >
-                    <FaTrash className='text-sm' />
-                  </button>
-                </td>
+                <th className="p-3">
+                  <div className="flex items-center gap-2">
+                    <span>DeadLine</span>
+                    <button onClick={() => handleSort("deadline")}>
+                      <SortIcon attr="deadline" />
+                    </button>
+                  </div>
+                </th>
+                {/* New header for actions */}
+                <th className="p-3 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody>
+              {sortedGoals.map((goal) => (
+                <tr key={goal.id} className="bg-amber-700 border-b border-amber-900">
+                  <td className="p-3">{goal.name}</td>
+                  <td className="p-3">{formatMoney(goal.target)}</td>
+                  <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
+
+                  {/* Actions */}
+                  <td className="p-3 flex gap-2 justify-center items-center">
+                    <button
+                      onClick={() => handleEditGoal(goal)}
+                      title="Edit Goal"
+                    >
+                      <FaEdit className='text-sm' />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteGoal(goal.id)}
+                      title="Delete Goal"
+                    >
+                      <FaTrash className='text-sm' />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
 
       <PopUpMenu open={open} setOpen={setOpen} />
       {/* Footer */}
-      <footer className="relative h-16 -mt-16 clear-both bg-zinc-800 text-white">
+      <footer className="h-16 shrink-0 bg-zinc-800 text-white">
         <div className="flex m-2 text-white">
           <button
             className="mr-2 p-2 rounded-xl bg-green-300 text-black"
