@@ -94,8 +94,8 @@ function GoalManagerPage() {
   if (error) return <div className="text-red-400 m-2">{error}</div>;
   return (
     <>
-      <div className="flex-1">
-        <table className="w-4/5 border-collapse overflow-hidden rounded-xl text-white m-2">
+      <div className="min-h-screen">
+        <table className="w-4/5 rounded-xl text-white m-2">
           <thead>
             <tr className="bg-zinc-800 text-left">
 
