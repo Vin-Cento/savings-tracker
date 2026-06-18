@@ -1,5 +1,10 @@
 from datetime import datetime
+from typing import List
 from pydantic import BaseModel
+
+
+class Pagination(BaseModel):
+    total: int
 
 
 class SchemaModel(BaseModel):
@@ -11,12 +16,15 @@ class GoalSchema(SchemaModel):
     id: int
     name: str
     target: int
-    total: int
     active: bool
     deadline: datetime
 
     class Config:
         orm_mode = True
+
+
+class GoalPaginationSchema(Pagination):
+    data: List[GoalSchema]
 
 
 class GoalCreateSchema(BaseModel):

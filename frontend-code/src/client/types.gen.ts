@@ -19,9 +19,27 @@ export type GoalCreateSchema = {
 };
 
 /**
+ * GoalPaginationSchema
+ */
+export type GoalPaginationSchema = {
+    /**
+     * Total
+     */
+    total: number;
+    /**
+     * Data
+     */
+    data: Array<GoalSchema>;
+};
+
+/**
  * GoalSchema
  */
 export type GoalSchema = {
+    /**
+     * Createdat
+     */
+    createdAt: string;
     /**
      * Id
      */
@@ -34,6 +52,10 @@ export type GoalSchema = {
      * Target
      */
     target: number;
+    /**
+     * Active
+     */
+    active: boolean;
     /**
      * Deadline
      */
@@ -101,11 +123,9 @@ export type ListGoalsGetData = {
 
 export type ListGoalsGetResponses = {
     /**
-     * Response List Goals  Get
-     *
      * Successful Response
      */
-    200: Array<GoalSchema>;
+    200: GoalPaginationSchema;
 };
 
 export type ListGoalsGetResponse = ListGoalsGetResponses[keyof ListGoalsGetResponses];

@@ -1,27 +1,29 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { listGoalsGet, deleteGoalsIdDelete, createGoalsPost } from "../client/sdk.gen";
-import type { GoalCreateSchema, GoalSchema } from '../client/types.gen';
+import type { GoalCreateSchema, GoalSchema, GoalPaginationSchema } from '../client/types.gen';
+
+const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, active: true, deadline: "2026-06-18 13:00:59.978522-04", createdAt: "2026-06-18 13:00:59.978522-04" };
 
 interface GoalsState {
-  goals: GoalSchema[];
+  goals: GoalPaginationSchema;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
 const initialState: GoalsState = {
-  goals: [],
+  goals: { data: [emptyGoal], total: 0 },
   status: 'idle',
   error: null,
 };
 
-export const fetchGoals = createAsyncThunk<GoalSchema[]>(
+export const fetchGoals = createAsyncThunk<GoalPaginationSchema>(
   'goals/fetchGoals',
   async () => {
     const { data, error } = await listGoalsGet();
     if (error) {
       throw error
     }
-    return data ?? [];
+    return data ?? { data: [emptyGoal], total: 0 };
   }
 );
 
@@ -73,10 +75,10 @@ const goalsSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(deleteGoal.fulfilled, (state, action) => {
-        state.goals = state.goals.filter((goal) => goal.id !== action.payload);
+        state.goals.data = state.goals.data.filter((goal) => goal.id !== action.payload);
       })
       .addCase(addGoal.fulfilled, (state, action) => {
-        state.goals.unshift(action.payload);
+        state.goals.data.unshift(action.payload);
       });
     ;
     ;

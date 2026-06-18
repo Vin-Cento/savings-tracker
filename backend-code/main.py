@@ -1,9 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
 from models.models import Goal
 from database import SessionLocal
-from schema.goal_schema import GoalSchema, GoalCreateSchema
+from schema.goal_schema import GoalPaginationSchema, GoalSchema, GoalCreateSchema
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -37,10 +36,11 @@ async def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/goals/", response_model=List[GoalSchema])
+@app.get("/goals/", response_model=GoalPaginationSchema)
 async def list(db: Session = Depends(get_db)):
+    total = db.query(Goal).count()
     goals = db.query(Goal).order_by(Goal.createdAt.desc()).all()
-    return goals
+    return {"total": total, "data": goals}
 
 
 @app.post("/goals/", response_model=GoalSchema,

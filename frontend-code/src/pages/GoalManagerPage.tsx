@@ -7,6 +7,7 @@ import PopUpMenu from "../components/PopUpMenu.tsx"
 import { fetchGoals, deleteGoal } from "../stores/goalSlice.ts";
 import type { RootState, AppDispatch } from "../stores/store.ts";
 import type { GoalSchema } from "../client/types.gen.ts";
+import { sortingComparison } from "../composables/util.ts";
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,14 +16,14 @@ function GoalManagerPage() {
   const { goals } = useSelector(
     (state: RootState) => state.goals
   )
-  const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, deadline: "" };
+  const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, active: true, deadline: "", createdAt: "" };
   const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
 
   const PAGE_SIZE = 20;
-  const emptyRows = Math.max(0, PAGE_SIZE - goals.length);
+  const emptyRows = Math.max(0, PAGE_SIZE - goals.total);
 
   const [sortConfig, setSortConfig] = useState<{
-    attr: string; direction: 'asc' | 'desc' | 'na'
+    attr: string; direction: 'asc' | 'desc' | null;
   } | null>(null);
 
   const [open, setOpen] = useState(false);
@@ -36,11 +37,12 @@ function GoalManagerPage() {
   };
 
   const handleEditGoal = (goal: GoalSchema) => {
-    console.log(goal)
+    setOpen(true);
+    setGoalSelected(goal);
   }
 
-  const sortedGoals = [...goals].sort((a, b) => {
-    if (!sortConfig || sortConfig.direction === "na") return 0; // No sorting
+  const sortedGoals = [...goals.data].sort((a, b) => {
+    if (!sortConfig || sortConfig.direction === null) return 0; // No sorting
 
     const attr = sortConfig.attr as keyof typeof a;
 
@@ -51,35 +53,17 @@ function GoalManagerPage() {
     if (aValue == null) return 1;
     if (bValue == null) return -1;
 
-    let comparison = 0;
-
-    // Helper to check if value is a valid date string or Date object
-    function isValidDate(value: any): boolean {
-      const date = new Date(value);
-      return !isNaN(date.getTime());
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      comparison = aValue - bValue;
-    } else if (isValidDate(aValue) && isValidDate(bValue)) {
-      const dateA = new Date(aValue);
-      const dateB = new Date(bValue);
-      comparison = dateA.getTime() - dateB.getTime();
-    } else if (typeof aValue === "string" && typeof bValue === "string") {
-      comparison = aValue.toLowerCase().localeCompare(bValue.toLowerCase());
-    } else {
-      comparison = String(aValue).localeCompare(String(bValue));
-    }
+    let comparison = sortingComparison(aValue, bValue)
 
     return sortConfig.direction === "asc" ? -comparison : comparison;
   });
 
   const handleSort = (attr: string) => {
-    let direction: "asc" | "desc" | "na" = "asc";
+    let direction: "asc" | "desc" | null = "asc";
 
     if (sortConfig?.attr === attr) {
       if (sortConfig.direction === "asc") direction = "desc";
-      else if (sortConfig.direction === "desc") direction = "na";
+      else if (sortConfig.direction === "desc") direction = null;
       else direction = "asc";
     }
 
@@ -87,7 +71,7 @@ function GoalManagerPage() {
   };
 
   const SortIcon = ({ attr }: { attr: string }) => {
-    if (sortConfig?.attr !== attr || sortConfig.direction === "na") {
+    if (sortConfig?.attr !== attr || sortConfig.direction === null) {
       return <FaSort className="text-sm" />;
     }
     if (sortConfig.direction === "asc") {
