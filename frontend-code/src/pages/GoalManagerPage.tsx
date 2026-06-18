@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp } from "react-icons/fa";
+import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { formatMoney, formatTimeLocale } from '../composables/format'
 
 import PopUpMenu from "../components/PopUpMenu.tsx"
@@ -99,7 +99,7 @@ function GoalManagerPage() {
   return (
     <>
       <main className="flex-1 min-h-0 overflow-y-auto">
-        <table className="table w-4/5 rounded-xl text-white m-2">
+        <table className="table w-4/5 rounded-xl text-white m-auto">
           <thead>
             <tr className="bg-zinc-800 text-left">
 
@@ -161,7 +161,18 @@ function GoalManagerPage() {
           </tbody>
           <tfoot >
             <tr>
-              <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>footer</td>
+              <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>
+                <span className="flex items-center justify-center">
+                  <button className="m-1"><FaArrowLeft className="text-sm" /></button>
+                  <button className="m-1 underline text-sm">1</button>
+                  <button className="m-1 underline text-sm">2</button>
+                  <button className="m-1 underline text-sm">3</button>
+                  <button className="m-1 underline text-sm">4</button>
+                  <button className="m-1 underline text-sm">5</button>
+                  <button className="m-1 underline text-sm">6</button>
+                  <button className="m-1"><FaArrowRight className="text-sm" /></button>
+                </span>
+              </td>
             </tr>
           </tfoot>
         </table>
