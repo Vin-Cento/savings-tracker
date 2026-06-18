@@ -11,9 +11,13 @@ import type { GoalSchema } from "../client/types.gen.ts";
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
 
+
   const { goals, status, error } = useSelector(
     (state: RootState) => state.goals
   )
+  const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, deadline: "" };
+  const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
+
 
   const [sortConfig, setSortConfig] = useState<{
     attr: string; direction: 'asc' | 'desc' | 'na'
@@ -94,12 +98,12 @@ function GoalManagerPage() {
   if (error) return <div className="text-red-400 m-2">{error}</div>;
   return (
     <>
-      <main className="flex-1 min-h-0 overflow-y-auto table-container">
+      <main className="flex-1 min-h-0 overflow-y-auto">
         <table className="table w-4/5 rounded-xl text-white m-2">
           <thead>
             <tr className="bg-zinc-800 text-left">
 
-              <th className="p-3">
+              <th className="p-3 bg-zinc-800 sticky top-0 z-10">
                 <div className="flex items-center gap-2">
                   <span>Name</span>
                   <button onClick={() => handleSort("name")}>
@@ -108,7 +112,7 @@ function GoalManagerPage() {
                 </div>
               </th>
 
-              <th className="p-3">
+              <th className="p-3 bg-zinc-800 sticky top-0 z-10">
                 <div className="flex items-center gap-2">
                   <span>Target</span>
                   <button onClick={() => handleSort("target")}>
@@ -117,7 +121,7 @@ function GoalManagerPage() {
                 </div>
               </th>
 
-              <th className="p-3">
+              <th className="p-3 bg-zinc-800 sticky top-0 z-10">
                 <div className="flex items-center gap-2">
                   <span>DeadLine</span>
                   <button onClick={() => handleSort("deadline")}>
@@ -126,7 +130,7 @@ function GoalManagerPage() {
                 </div>
               </th>
               {/* New header for actions */}
-              <th className="p-3 text-center">Actions</th>
+              <th className="p-3 bg-zinc-800 sticky top-0 z-10">Actions</th>
             </tr>
           </thead>
 
@@ -138,7 +142,7 @@ function GoalManagerPage() {
                 <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
 
                 {/* Actions */}
-                <td className="p-3 flex gap-2 justify-center items-center">
+                <td className="p-3 flex gap-2 items-center">
                   <button
                     onClick={() => handleEditGoal(goal)}
                     title="Edit Goal"
@@ -155,16 +159,21 @@ function GoalManagerPage() {
               </tr>
             ))}
           </tbody>
+          <tfoot >
+            <tr>
+              <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>footer</td>
+            </tr>
+          </tfoot>
         </table>
       </main>
 
-      <PopUpMenu open={open} setOpen={setOpen} />
+      <PopUpMenu open={open} setOpen={setOpen} goal={goalSelected} />
       {/* Footer */}
       <footer className="h-16 shrink-0 bg-zinc-800 text-white">
         <div className="flex m-2 text-white">
           <button
             className="mr-2 p-2 rounded-xl bg-green-300 text-black"
-            onClick={() => setOpen(true)}
+            onClick={() => { setOpen(true); setGoalSelected(emptyGoal) }}
           >
             Create Goal
           </button>

@@ -1,10 +1,11 @@
 import { useDispatch } from "react-redux";
 import { addGoal } from "../stores/goalSlice";
 import type { AppDispatch } from "../stores/store";
-import type { GoalCreateSchema } from "../client";
+import type { GoalCreateSchema, GoalSchema } from "../client";
 
 type PopUpMenuProps = {
   open: boolean;
+  goal: GoalSchema;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
