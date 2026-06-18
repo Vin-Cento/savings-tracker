@@ -70,9 +70,7 @@ function PopUpMenu({ open, setOpen }: PopUpMenuProps) {
             />
             <button
               type="submit"
-              className="bg-green-400 p-2 
-                rounded-lg text-black 
-                hover:cursor-pointer">
+              className="bg-green-400 p-2 rounded-lg text-black">
               submit
             </button>
           </form>
