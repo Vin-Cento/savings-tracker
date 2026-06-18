@@ -99,9 +99,9 @@ function GoalManagerPage() {
   return (
     <>
       <main className="flex-1 min-h-0 overflow-y-auto">
-        <table className="table w-4/5 rounded-xl text-white m-auto">
-          <thead>
-            <tr className="bg-zinc-800 text-left">
+        <table className="table w-4/5 min-h-full rounded-xl text-white m-auto">
+          <thead >
+            <tr className="bg-zinc-800 text-left h-12">
 
               <th className="p-3 bg-zinc-800 sticky top-0 z-10">
                 <div className="flex items-center gap-2">
@@ -142,16 +142,18 @@ function GoalManagerPage() {
                 <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
 
                 {/* Actions */}
-                <td className="p-3 flex gap-2 items-center">
+                <td className="items-center gap-2">
                   <button
                     onClick={() => handleEditGoal(goal)}
                     title="Edit Goal"
+                    className="p-1"
                   >
                     <FaEdit className='text-sm' />
                   </button>
                   <button
                     onClick={() => handleDeleteGoal(goal.id)}
                     title="Delete Goal"
+                    className="p-1"
                   >
                     <FaTrash className='text-sm' />
                   </button>
@@ -160,7 +162,7 @@ function GoalManagerPage() {
             ))}
           </tbody>
           <tfoot >
-            <tr>
+            <tr className="h-12">
               <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>
                 <span className="flex items-center justify-center">
                   <button className="m-1"><FaArrowLeft className="text-sm" /></button>
