@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import { formatMoney, formatTimeLocale } from '../composables/format'
 
 import PopUpMenu from "../components/PopUpMenu.tsx"
@@ -12,12 +12,14 @@ function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
 
 
-  const { goals, status, error } = useSelector(
+  const { goals } = useSelector(
     (state: RootState) => state.goals
   )
   const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, deadline: "" };
   const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
 
+  const PAGE_SIZE = 20;
+  const emptyRows = Math.max(0, PAGE_SIZE - goals.length);
 
   const [sortConfig, setSortConfig] = useState<{
     attr: string; direction: 'asc' | 'desc' | 'na'
@@ -94,16 +96,41 @@ function GoalManagerPage() {
     return <FaSortDown className="text-sm" />;
   };
 
-  if (status === "loading") return <div className="text-white m-2">Loading...</div>;
-  if (error) return <div className="text-red-400 m-2">{error}</div>;
   return (
     <>
-      <main className="flex-1 min-h-0 overflow-y-auto">
-        <table className="table w-4/5 min-h-full rounded-xl text-white m-auto">
+      <main className="flex-1 overflow-y-auto">
+        <div className="sticky top-0 z-30 h-14 bg-zinc-950 flex items-center">
+          <div className="flex text-black w-4/5 m-auto">
+            <div className="flex w-4/5">
+              <input
+                type="text"
+                className="text-black rounded-l-xl bg-amber-50 w-full focus:outline-none pl-4"
+              />
+
+              <button className="bg-amber-50 hover:text-black rounded-r-lg p-2">
+                <FaSearch />
+              </button>
+            </div>
+
+            <div className="flex-1" />
+
+            <button
+              className="p-1 rounded-xl bg-green-300 text-gray-700 font-bold"
+              onClick={() => {
+                setOpen(true);
+                setGoalSelected(emptyGoal);
+              }}
+            >
+              Create Goal
+            </button>
+          </div>
+        </div>
+
+        <table className="w-4/5 rounded-xl text-white m-auto">
           <thead >
             <tr className="bg-zinc-800 text-left h-12">
 
-              <th className="p-3 bg-zinc-800 sticky top-0 z-10">
+              <th className="p-3 bg-zinc-800 sticky top-14 z-10">
                 <div className="flex items-center gap-2">
                   <span>Name</span>
                   <button onClick={() => handleSort("name")}>
@@ -112,7 +139,7 @@ function GoalManagerPage() {
                 </div>
               </th>
 
-              <th className="p-3 bg-zinc-800 sticky top-0 z-10">
+              <th className="p-3 bg-zinc-800 sticky top-14 z-10">
                 <div className="flex items-center gap-2">
                   <span>Target</span>
                   <button onClick={() => handleSort("target")}>
@@ -121,7 +148,7 @@ function GoalManagerPage() {
                 </div>
               </th>
 
-              <th className="p-3 bg-zinc-800 sticky top-0 z-10">
+              <th className="p-3 bg-zinc-800 sticky top-14 z-10">
                 <div className="flex items-center gap-2">
                   <span>DeadLine</span>
                   <button onClick={() => handleSort("deadline")}>
@@ -130,7 +157,7 @@ function GoalManagerPage() {
                 </div>
               </th>
               {/* New header for actions */}
-              <th className="p-3 bg-zinc-800 sticky top-0 z-10">Actions</th>
+              <th className="p-3 bg-zinc-800 sticky top-14 z-10">Actions</th>
             </tr>
           </thead>
 
@@ -160,6 +187,15 @@ function GoalManagerPage() {
                 </td>
               </tr>
             ))}
+
+            {Array.from({ length: emptyRows }).map((_, index) => (
+              <tr key={`empty-${index}`} className="bg-amber-700 border-b border-amber-900 h-14">
+                <td className="p-3 bg-orange-300">&nbsp;</td>
+                <td className="p-3 bg-orange-300">&nbsp;</td>
+                <td className="p-3 bg-orange-300">&nbsp;</td>
+                <td className="p-3 bg-orange-300">&nbsp;</td>
+              </tr>
+            ))}
           </tbody>
           <tfoot >
             <tr className="h-12">
@@ -181,17 +217,6 @@ function GoalManagerPage() {
       </main>
 
       <PopUpMenu open={open} setOpen={setOpen} goal={goalSelected} />
-      {/* Footer */}
-      <footer className="h-16 shrink-0 bg-zinc-800 text-white">
-        <div className="flex m-2 text-white">
-          <button
-            className="mr-2 p-2 rounded-xl bg-green-300 text-black"
-            onClick={() => { setOpen(true); setGoalSelected(emptyGoal) }}
-          >
-            Create Goal
-          </button>
-        </div>
-      </footer>
     </>
   );
 }
