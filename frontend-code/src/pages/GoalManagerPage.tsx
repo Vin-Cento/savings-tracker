@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import { formatMoney, formatTimeLocale } from '../composables/format'
+import { fetchGoals, deleteGoal } from "../stores/goalSlice";
+import { sortingComparison } from "../composables/util";
+import { emptyGoal } from "../constants/defaults";
 
-import PopUpMenu from "../components/PopUpMenu.tsx"
-import { fetchGoals, deleteGoal } from "../stores/goalSlice.ts";
-import type { RootState, AppDispatch } from "../stores/store.ts";
-import type { GoalSchema } from "../client/types.gen.ts";
-import { sortingComparison } from "../composables/util.ts";
+import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import PopUpMenu from "../components/PopUpMenu"
+
+import type { RootState, AppDispatch } from "../stores/store";
+import type { GoalSchema } from "../client/types.gen";
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,7 +18,6 @@ function GoalManagerPage() {
   const { goals } = useSelector(
     (state: RootState) => state.goals
   )
-  const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, active: true, deadline: "", createdAt: "" };
   const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
 
   const PAGE_SIZE = 20;
@@ -41,6 +42,18 @@ function GoalManagerPage() {
     setGoalSelected(goal);
   }
 
+  const handleSort = (attr: string) => {
+    let direction: "asc" | "desc" | null = "asc";
+
+    if (sortConfig?.attr === attr) {
+      if (sortConfig.direction === "asc") direction = "desc";
+      else if (sortConfig.direction === "desc") direction = null;
+      else direction = "asc";
+    }
+
+    setSortConfig({ attr, direction });
+  };
+
   const sortedGoals = [...goals.data].sort((a, b) => {
     if (!sortConfig || sortConfig.direction === null) return 0; // No sorting
 
@@ -58,17 +71,6 @@ function GoalManagerPage() {
     return sortConfig.direction === "asc" ? -comparison : comparison;
   });
 
-  const handleSort = (attr: string) => {
-    let direction: "asc" | "desc" | null = "asc";
-
-    if (sortConfig?.attr === attr) {
-      if (sortConfig.direction === "asc") direction = "desc";
-      else if (sortConfig.direction === "desc") direction = null;
-      else direction = "asc";
-    }
-
-    setSortConfig({ attr, direction });
-  };
 
   const SortIcon = ({ attr }: { attr: string }) => {
     if (sortConfig?.attr !== attr || sortConfig.direction === null) {

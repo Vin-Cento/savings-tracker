@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { listGoalsGet, deleteGoalsIdDelete, createGoalsPost } from "../client/sdk.gen";
-import type { GoalCreateSchema, GoalSchema, GoalPaginationSchema } from '../client/types.gen';
-
-const emptyGoal: GoalSchema = { id: -1, name: '', target: 0, active: true, deadline: "2026-06-18 13:00:59.978522-04", createdAt: "2026-06-18 13:00:59.978522-04" };
+import type { GoalCreateSchema, GoalPaginationSchema } from '../client/types.gen';
+import { emptyGoal } from "../constants/defaults.ts";
 
 interface GoalsState {
   goals: GoalPaginationSchema;
