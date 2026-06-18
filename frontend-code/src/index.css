@@ -7,3 +7,7 @@ ul {
 body {
   background-color: #1C1C1C;
 }
+
+button:hover {
+  cursor: pointer;
+}
