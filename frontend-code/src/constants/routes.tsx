@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import DefaultLayout from "../layouts/DefaultLayout";
 import HomePage from "../pages/HomePage";
 import GoalManagerPage from "../pages/GoalManagerPage";
+import GoalPage from "../pages/Goals";
 
 const routes = createBrowserRouter([
   {
@@ -9,7 +10,8 @@ const routes = createBrowserRouter([
     element: <DefaultLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'goals', element: <GoalManagerPage /> }
+      { path: 'goals/:id', element: <GoalPage /> },
+      { path: 'goals/management', element: <GoalManagerPage /> }
     ]
   }
 ])

@@ -37,6 +37,14 @@ async def read_root():
     return {"Hello": "World"}
 
 
+@app.get("/goals/{id}", response_model=GoalSchema)
+async def get(id: int, db: Session = Depends(get_db)):
+    goal = db.query(Goal).filter(Goal.id == id).first()
+    if not goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    return goal
+
+
 @app.get("/goals/", response_model=GoalPaginationSchema)
 async def list(
         page: int = Query(1, ge=1),
@@ -56,7 +64,10 @@ async def list(
 @app.post("/goals/", response_model=GoalSchema,
           status_code=status.HTTP_201_CREATED)
 def create(goal: GoalCreateSchema, db: Session = Depends(get_db)):
+    new_goal = None
+    print(goal)
     if goal.id == -1:
+        print('in goal.id == -1')
         existing_goal = db.query(Goal).filter(Goal.name == goal.name).first()
         if existing_goal:
             raise HTTPException(

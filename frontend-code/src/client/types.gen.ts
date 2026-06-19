@@ -21,9 +21,13 @@ export type GoalCreateSchema = {
      */
     target: number;
     /**
+     * Active
+     */
+    active: boolean;
+    /**
      * Deadline
      */
-    deadline: string;
+    deadline?: string | null;
 };
 
 /**
@@ -75,7 +79,7 @@ export type GoalSchema = {
     /**
      * Deadline
      */
-    deadline: string;
+    deadline?: string | null;
 };
 
 /**
@@ -129,6 +133,66 @@ export type ReadRootGetResponses = {
      */
     200: unknown;
 };
+
+export type DeleteGoalsIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/goals/{id}';
+};
+
+export type DeleteGoalsIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteGoalsIdDeleteError = DeleteGoalsIdDeleteErrors[keyof DeleteGoalsIdDeleteErrors];
+
+export type DeleteGoalsIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteGoalsIdDeleteResponse = DeleteGoalsIdDeleteResponses[keyof DeleteGoalsIdDeleteResponses];
+
+export type GetGoalsIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/goals/{id}';
+};
+
+export type GetGoalsIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetGoalsIdGetError = GetGoalsIdGetErrors[keyof GetGoalsIdGetErrors];
+
+export type GetGoalsIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GoalSchema;
+};
+
+export type GetGoalsIdGetResponse = GetGoalsIdGetResponses[keyof GetGoalsIdGetResponses];
 
 export type ListGoalsGetData = {
     body?: never;
@@ -188,33 +252,3 @@ export type CreateGoalsPostResponses = {
 };
 
 export type CreateGoalsPostResponse = CreateGoalsPostResponses[keyof CreateGoalsPostResponses];
-
-export type DeleteGoalsIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: number;
-    };
-    query?: never;
-    url: '/goals/{id}';
-};
-
-export type DeleteGoalsIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteGoalsIdDeleteError = DeleteGoalsIdDeleteErrors[keyof DeleteGoalsIdDeleteErrors];
-
-export type DeleteGoalsIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DeleteGoalsIdDeleteResponse = DeleteGoalsIdDeleteResponses[keyof DeleteGoalsIdDeleteResponses];

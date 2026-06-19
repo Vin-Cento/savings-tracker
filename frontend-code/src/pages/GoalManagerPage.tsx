@@ -10,6 +10,7 @@ import PopUpMenu from "../components/PopUpMenu"
 
 import type { RootState, AppDispatch } from "../stores/store";
 import type { GoalSchema } from "../client/types.gen";
+import { Link } from "react-router-dom";
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -177,9 +178,18 @@ function GoalManagerPage() {
           <tbody>
             {sortedGoals.map((goal) => (
               <tr key={goal.id} className="bg-amber-700 border-b border-amber-900">
-                <td className="p-3">{goal.name}</td>
+                <td className="p-3">
+                  <Link
+                    to={`/goals/${goal.id}`}
+                    className="underline hover:text-amber-200"
+                  >
+                    {goal.name}
+                  </Link>
+                </td>
                 <td className="p-3">{formatMoney(goal.target)}</td>
-                <td className="p-3">{formatTimeLocale(goal.deadline)}</td>
+                <td className="p-3">
+                  {goal.deadline ? formatTimeLocale(goal.deadline) : ""}
+                </td>
 
                 {/* Actions */}
                 <td className="items-center gap-2">

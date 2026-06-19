@@ -32,7 +32,8 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
       id: goal.id,
       name: formData.get("name") as string, // you might want to validate this too
       target: Number(formData.get("target")), // consider validating too (e.g. isNaN)
-      deadline: new Date(deadlineValue).toISOString(),
+      deadline: deadlineValue == "" ? null : new Date(deadlineValue).toISOString(),
+      active: true,
     };
 
     try {
@@ -87,10 +88,9 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
               type="date"
               id="deadline"
               name="deadline"
-              defaultValue={new Date(goal.deadline).toISOString().split("T")[0]}
+              defaultValue={goal.deadline ? new Date(goal.deadline).toISOString().split("T")[0] : ""}
               className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
               placeholder="Enter target number"
-              required
             />
 
             <button

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -19,7 +19,7 @@ class GoalSchema(SchemaModel):
     name: str
     target: int
     active: bool
-    deadline: datetime
+    deadline: Optional[datetime] = None
 
     class Config:
         orm_mode = True
@@ -33,4 +33,5 @@ class GoalCreateSchema(BaseModel):
     id: int
     name: str
     target: int
-    deadline: datetime
+    active: bool
+    deadline: Optional[datetime] = None

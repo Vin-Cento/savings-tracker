@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+from typing import Optional
 from sqlalchemy import (
     Boolean,
     Text,
@@ -7,7 +8,6 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     func,
-    text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -28,10 +28,9 @@ class Goal(Base):
         BigInteger, nullable=False, server_default="0")
     active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default='true')
-    deadline: Mapped[datetime] = mapped_column(
+    deadline: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
-        nullable=False,
-        server_default=text("(CURRENT_TIMESTAMP + INTERVAL '1 year')")
+        nullable=True
     )
 
 

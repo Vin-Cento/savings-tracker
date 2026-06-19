@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateGoalsPostData, CreateGoalsPostErrors, CreateGoalsPostResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses } from './types.gen';
+import type { CreateGoalsPostData, CreateGoalsPostErrors, CreateGoalsPostResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, GetGoalsIdGetData, GetGoalsIdGetErrors, GetGoalsIdGetResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -24,6 +24,16 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const readRootGet = <ThrowOnError extends boolean = false>(options?: Options<ReadRootGetData, ThrowOnError>) => (options?.client ?? client).get<ReadRootGetResponses, unknown, ThrowOnError>({ url: '/', ...options });
 
 /**
+ * Delete
+ */
+export const deleteGoalsIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteGoalsIdDeleteData, ThrowOnError>) => (options.client ?? client).delete<DeleteGoalsIdDeleteResponses, DeleteGoalsIdDeleteErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
+
+/**
+ * Get
+ */
+export const getGoalsIdGet = <ThrowOnError extends boolean = false>(options: Options<GetGoalsIdGetData, ThrowOnError>) => (options.client ?? client).get<GetGoalsIdGetResponses, GetGoalsIdGetErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
+
+/**
  * List
  */
 export const listGoalsGet = <ThrowOnError extends boolean = false>(options?: Options<ListGoalsGetData, ThrowOnError>) => (options?.client ?? client).get<ListGoalsGetResponses, ListGoalsGetErrors, ThrowOnError>({ url: '/goals/', ...options });
@@ -39,8 +49,3 @@ export const createGoalsPost = <ThrowOnError extends boolean = false>(options: O
         ...options.headers
     }
 });
-
-/**
- * Delete
- */
-export const deleteGoalsIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteGoalsIdDeleteData, ThrowOnError>) => (options.client ?? client).delete<DeleteGoalsIdDeleteResponses, DeleteGoalsIdDeleteErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
