@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatMoney, formatTimeLocale } from '../composables/format'
 import { fetchGoals, deleteGoal } from "../stores/goalSlice";
@@ -83,6 +83,31 @@ function GoalManagerPage() {
     }
     return <FaSortDown className="text-sm" />;
   };
+
+  const getVisiblePages = () => {
+    const pages = new Set<number>();
+
+    // first 3 pages
+    for (let i = 1; i <= Math.min(3, totalPages); i++) {
+      pages.add(i);
+    }
+
+    // 3 pages around current page: previous, current, next
+    for (let i = page - 1; i <= page + 1; i++) {
+      if (i >= 1 && i <= totalPages) {
+        pages.add(i);
+      }
+    }
+
+    // last 3 pages
+    for (let i = Math.max(1, totalPages - 2); i <= totalPages; i++) {
+      pages.add(i);
+    }
+
+    return Array.from(pages).sort((a, b) => a - b);
+  };
+
+  const visiblePages = getVisiblePages();
 
   return (
     <>
@@ -190,20 +215,24 @@ function GoalManagerPage() {
               <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>
                 <span className="flex items-center justify-center">
                   <button className="m-1"><FaArrowLeft className="text-sm" /></button>
-                  {Array.from({ length: totalPages }).map((_, index) => {
-                    const pageNumber = index + 1;
+                  {visiblePages.map((pageNumber, index) => {
+                    const prevPage = visiblePages[index - 1];
+                    const shouldShowDots = prevPage && pageNumber - prevPage > 1;
 
                     return (
-                      <button
-                        key={pageNumber}
-                        onClick={() => setPage(pageNumber)}
-                        className={`m-1 text-sm ${page === pageNumber
-                          ? "font-bold no-underline text-green-300"
-                          : "underline"
-                          }`}
-                      >
-                        {pageNumber}
-                      </button>
+                      <React.Fragment key={pageNumber}>
+                        {shouldShowDots && <span className="mx-1">...</span>}
+
+                        <button
+                          onClick={() => setPage(pageNumber)}
+                          className={`m-1 text-sm ${page === pageNumber
+                            ? "font-bold no-underline text-green-300"
+                            : "underline"
+                            }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      </React.Fragment>
                     );
                   })}
                   <button className="m-1"><FaArrowRight className="text-sm" /></button>
