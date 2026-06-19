@@ -2,7 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from models.models import Goal
 from database import SessionLocal
-from schema.goal_schema import GoalPaginationSchema, GoalSchema, GoalCreateSchema
+from schema.goal_schema import (GoalPaginationSchema, GoalSchema,
+                                GoalCreateSchema)
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()

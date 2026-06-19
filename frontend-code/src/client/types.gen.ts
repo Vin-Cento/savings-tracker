@@ -35,6 +35,14 @@ export type GoalPaginationSchema = {
      */
     total: number;
     /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
      * Data
      */
     data: Array<GoalSchema>;
@@ -125,9 +133,27 @@ export type ReadRootGetResponses = {
 export type ListGoalsGetData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
     url: '/goals/';
 };
+
+export type ListGoalsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListGoalsGetError = ListGoalsGetErrors[keyof ListGoalsGetErrors];
 
 export type ListGoalsGetResponses = {
     /**

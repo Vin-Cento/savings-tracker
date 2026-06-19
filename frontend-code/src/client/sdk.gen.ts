@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateGoalsPostData, CreateGoalsPostErrors, CreateGoalsPostResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, ListGoalsGetData, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses } from './types.gen';
+import type { CreateGoalsPostData, CreateGoalsPostErrors, CreateGoalsPostResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -26,7 +26,7 @@ export const readRootGet = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * List
  */
-export const listGoalsGet = <ThrowOnError extends boolean = false>(options?: Options<ListGoalsGetData, ThrowOnError>) => (options?.client ?? client).get<ListGoalsGetResponses, unknown, ThrowOnError>({ url: '/goals/', ...options });
+export const listGoalsGet = <ThrowOnError extends boolean = false>(options?: Options<ListGoalsGetData, ThrowOnError>) => (options?.client ?? client).get<ListGoalsGetResponses, ListGoalsGetErrors, ThrowOnError>({ url: '/goals/', ...options });
 
 /**
  * Create

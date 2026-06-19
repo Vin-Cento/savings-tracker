@@ -10,21 +10,30 @@ interface GoalsState {
 }
 
 const initialState: GoalsState = {
-  goals: { data: [emptyGoal], total: 0 },
+  goals: { data: [emptyGoal], total: 0, page: 1, limit: 5 },
   status: 'idle',
   error: null,
 };
 
-export const fetchGoals = createAsyncThunk<GoalPaginationSchema>(
-  'goals/fetchGoals',
-  async () => {
-    const { data, error } = await listGoalsGet();
-    if (error) {
-      throw error
+export const fetchGoals = createAsyncThunk<
+  GoalPaginationSchema,
+  { page: number; limit: number }
+>
+  (
+    "goals/fetchGoals",
+    async ({ page, limit }) => {
+      const { data, error } = await listGoalsGet({
+        query: { page, limit },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data!;
+
     }
-    return data ?? { data: [emptyGoal], total: 0 };
-  }
-);
+  );
 
 export const deleteGoal = createAsyncThunk<number, number>(
   "goals/deleteGoal",

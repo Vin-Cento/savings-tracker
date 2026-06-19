@@ -19,9 +19,11 @@ function GoalManagerPage() {
     (state: RootState) => state.goals
   )
   const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
+  const [page, setPage] = useState(1);
 
-  const PAGE_SIZE = 20;
-  const emptyRows = Math.max(0, PAGE_SIZE - goals.total);
+  let PAGE_SIZE = 15;
+  const totalPages = Math.ceil(goals.total / PAGE_SIZE);
+  const emptyRows = Math.max(0, PAGE_SIZE - goals.data.length);
 
   const [sortConfig, setSortConfig] = useState<{
     attr: string; direction: 'asc' | 'desc' | null;
@@ -30,8 +32,8 @@ function GoalManagerPage() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchGoals());
-  }, [dispatch]);
+    dispatch(fetchGoals({ page: page, limit: PAGE_SIZE }));
+  }, [dispatch, page]);
 
   const handleDeleteGoal = (id: number) => {
     dispatch(deleteGoal(id))
@@ -188,12 +190,22 @@ function GoalManagerPage() {
               <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>
                 <span className="flex items-center justify-center">
                   <button className="m-1"><FaArrowLeft className="text-sm" /></button>
-                  <button className="m-1 underline text-sm">1</button>
-                  <button className="m-1 underline text-sm">2</button>
-                  <button className="m-1 underline text-sm">3</button>
-                  <button className="m-1 underline text-sm">4</button>
-                  <button className="m-1 underline text-sm">5</button>
-                  <button className="m-1 underline text-sm">6</button>
+                  {Array.from({ length: totalPages }).map((_, index) => {
+                    const pageNumber = index + 1;
+
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => setPage(pageNumber)}
+                        className={`m-1 text-sm ${page === pageNumber
+                          ? "font-bold no-underline text-green-300"
+                          : "underline"
+                          }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
                   <button className="m-1"><FaArrowRight className="text-sm" /></button>
                 </span>
               </td>
