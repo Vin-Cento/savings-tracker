@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from models.models import Goal
 from database import SessionLocal
@@ -37,10 +37,19 @@ async def read_root():
 
 
 @app.get("/goals/", response_model=GoalPaginationSchema)
-async def list(db: Session = Depends(get_db)):
+async def list(
+        page: int = Query(1, ge=1),
+        limit: int = Query(10, ge=1, le=100),
+        db: Session = Depends(get_db)):
     total = db.query(Goal).count()
-    goals = db.query(Goal).order_by(Goal.createdAt.desc()).all()
-    return {"total": total, "data": goals}
+    goals = (
+        db.query(Goal)
+        .order_by(Goal.createdAt.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
+    return {"total": total, "page": page, "limit": limit, "data": goals}
 
 
 @app.post("/goals/", response_model=GoalSchema,
