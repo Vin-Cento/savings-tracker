@@ -9,7 +9,7 @@ type PopUpMenuProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function PopUpMenu({ open, setOpen }: PopUpMenuProps) {
+function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
   if (!open) return null;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -33,7 +33,6 @@ function PopUpMenu({ open, setOpen }: PopUpMenuProps) {
     }
   };
 
-
   return (
     <div
       className="fixed inset-0 z-50 bg-black/50 text-white"
@@ -52,6 +51,7 @@ function PopUpMenu({ open, setOpen }: PopUpMenuProps) {
               type="text"
               id="name"
               name="name"
+              defaultValue={goal.name}
               className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
               placeholder="Enter your name"
               required
@@ -64,10 +64,25 @@ function PopUpMenu({ open, setOpen }: PopUpMenuProps) {
               type="number"
               id="target"
               name="target"
+              defaultValue={goal.target}
               className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
               placeholder="Enter target number"
               required
             />
+
+            <label htmlFor="deadline" className="block text-white mb-2">
+              Deadline:
+            </label>
+            <input
+              type="date"
+              id="deadline"
+              name="deadline"
+              defaultValue={new Date(goal.deadline).toISOString().split("T")[0]}
+              className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
+              placeholder="Enter target number"
+              required
+            />
+
             <button
               type="submit"
               className="bg-green-400 p-2 rounded-lg text-black">
