@@ -46,16 +46,37 @@ async def list(db: Session = Depends(get_db)):
 @app.post("/goals/", response_model=GoalSchema,
           status_code=status.HTTP_201_CREATED)
 def create(goal: GoalCreateSchema, db: Session = Depends(get_db)):
-    existing_goal = db.query(Goal).filter(Goal.name == goal.name).first()
-    if existing_goal:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Goal with name '{goal.name}' already exists."
-        )
-    new_goal = Goal(name=goal.name, target=goal.target)
-    db.add(new_goal)
-    db.commit()
-    db.refresh(new_goal)
+    if goal.id == -1:
+        existing_goal = db.query(Goal).filter(Goal.name == goal.name).first()
+        if existing_goal:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Goal with name '{goal.name}' already exists."
+            )
+        new_goal = Goal(name=goal.name, target=goal.target)
+        db.add(new_goal)
+        db.commit()
+        db.refresh(new_goal)
+    else:
+        # Update existing goal
+        existing_goal = db.query(Goal).filter(
+            Goal.id == goal.id
+        ).first()
+
+        if not existing_goal:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Goal {goal.id} not found"
+            )
+
+        existing_goal.name = goal.name
+        existing_goal.target = goal.target
+        existing_goal.deadline = goal.deadline
+
+        db.commit()
+        db.refresh(existing_goal)
+        new_goal = existing_goal
+
     return new_goal
 
 

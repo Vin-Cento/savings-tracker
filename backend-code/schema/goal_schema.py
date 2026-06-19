@@ -28,5 +28,7 @@ class GoalPaginationSchema(Pagination):
 
 
 class GoalCreateSchema(BaseModel):
+    id: int
     name: str
     target: int
+    deadline: datetime

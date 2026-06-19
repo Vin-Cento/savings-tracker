@@ -77,7 +77,15 @@ const goalsSlice = createSlice({
         state.goals.data = state.goals.data.filter((goal) => goal.id !== action.payload);
       })
       .addCase(addGoal.fulfilled, (state, action) => {
-        state.goals.data.unshift(action.payload);
+        if (action.payload.id == -1) {
+          state.goals.data.unshift(action.payload);
+        }
+        else {
+          const index = state.goals.data.findIndex(goal => goal.id === action.payload.id);
+          if (index !== -1) {
+            state.goals.data[index] = action.payload;
+          }
+        }
       });
     ;
     ;

@@ -9,6 +9,10 @@ export type ClientOptions = {
  */
 export type GoalCreateSchema = {
     /**
+     * Id
+     */
+    id: number;
+    /**
      * Name
      */
     name: string;
@@ -16,6 +20,10 @@ export type GoalCreateSchema = {
      * Target
      */
     target: number;
+    /**
+     * Deadline
+     */
+    deadline: string;
 };
 
 /**

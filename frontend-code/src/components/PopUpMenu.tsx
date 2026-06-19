@@ -14,15 +14,25 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async (
-    e: React.SubmitEvent<HTMLFormElement>
+    e: React.SubmitEvent<HTMLFormElement>  // Note: React.FormEvent, not SubmitEvent
   ) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
 
+    // Get the raw deadline value safely
+    const deadlineValue = formData.get("deadline");
+
+    if (typeof deadlineValue !== "string") {
+      console.error("Invalid deadline value");
+      return; // or show user error
+    }
+
     const payload: GoalCreateSchema = {
-      name: formData.get("name") as string,
-      target: Number(formData.get("target")),
+      id: goal.id,
+      name: formData.get("name") as string, // you might want to validate this too
+      target: Number(formData.get("target")), // consider validating too (e.g. isNaN)
+      deadline: new Date(deadlineValue).toISOString(),
     };
 
     try {
