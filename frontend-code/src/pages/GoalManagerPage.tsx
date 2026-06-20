@@ -87,24 +87,11 @@ function GoalManagerPage() {
 
   const getVisiblePages = () => {
     const pages = new Set<number>();
-
-    // first 3 pages
-    for (let i = 1; i <= Math.min(3, totalPages); i++) {
-      pages.add(i);
-    }
-
-    // 3 pages around current page: previous, current, next
-    for (let i = page - 1; i <= page + 1; i++) {
+    for (let i = page - 1; i <= page + 9; i++) {
       if (i >= 1 && i <= totalPages) {
         pages.add(i);
       }
     }
-
-    // last 3 pages
-    for (let i = Math.max(1, totalPages - 2); i <= totalPages; i++) {
-      pages.add(i);
-    }
-
     return Array.from(pages).sort((a, b) => a - b);
   };
 
@@ -224,15 +211,12 @@ function GoalManagerPage() {
             <tr className="h-12">
               <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>
                 <span className="flex items-center justify-center">
-                  <button className="m-1"><FaArrowLeft className="text-sm" /></button>
-                  {visiblePages.map((pageNumber, index) => {
-                    const prevPage = visiblePages[index - 1];
-                    const shouldShowDots = prevPage && pageNumber - prevPage > 1;
+                  {page !== 1 && <button className="m-1" onClick={() => { setPage(page - 1) }}><FaArrowLeft className="text-sm" /></button>}
+                  {visiblePages.map((pageNumber) => {
+                    const shouldShowDots = (pageNumber === visiblePages[visiblePages.length - 1]) && ((pageNumber * PAGE_SIZE) < goals.total);
 
                     return (
                       <React.Fragment key={pageNumber}>
-                        {shouldShowDots && <span className="mx-1">...</span>}
-
                         <button
                           onClick={() => setPage(pageNumber)}
                           className={`m-1 text-sm ${page === pageNumber
@@ -242,10 +226,11 @@ function GoalManagerPage() {
                         >
                           {pageNumber}
                         </button>
+                        {shouldShowDots && <span className="mx-1">...</span>}
                       </React.Fragment>
                     );
                   })}
-                  <button className="m-1"><FaArrowRight className="text-sm" /></button>
+                  {page * PAGE_SIZE < goals.total && <button className="m-1" onClick={() => { setPage(page + 1) }}><FaArrowRight className="text-sm" /></button>}
                 </span>
               </td>
             </tr>
