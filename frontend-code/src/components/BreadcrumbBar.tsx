@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom"
 import type { AppDispatch, RootState } from "../stores/store";
 import { useEffect } from "react";
-import { addHistory } from "../stores/breadcrumbSlice";
+import { addHistory, clearHistory } from "../stores/breadcrumbSlice";
 
 function getBreadcrumbLabel(pathname: string) {
   if (pathname === "/") return "Home";
@@ -24,6 +24,9 @@ function BreadcrumbBar() {
   );
 
   useEffect(() => {
+    if (location.pathname === '/') {
+      dispatch(clearHistory());
+    }
     dispatch(
       addHistory({
         label: getBreadcrumbLabel(location.pathname),
