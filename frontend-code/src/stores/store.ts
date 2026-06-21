@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import counterReducer from "./counterSlice";
 import goalReducer from "./goalSlice";
+import breadcrumbReducer from "./breadcrumbSlice";
 
 export const store = configureStore({
   reducer: {
     goals: goalReducer,
+    breadcrumb: breadcrumbReducer,
   },
 });
 
