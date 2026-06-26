@@ -5,8 +5,9 @@ import { fetchGoals, deleteGoal } from "../stores/goalSlice";
 import { sortingComparison } from "../composables/util";
 import { emptyGoal } from "../constants/defaults";
 
-import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaPiggyBank } from "react-icons/fa";
 import PopUpMenu from "../components/PopUpMenu"
+import DepositPopUpMenu from "../components/DepositPopUpMenu"
 
 import type { RootState, AppDispatch } from "../stores/store";
 import type { GoalSchema } from "../client/types.gen";
@@ -31,6 +32,7 @@ function GoalManagerPage() {
   } | null>(null);
 
   const [open, setOpen] = useState(false);
+  const [openDeposit, setOpenDeposit] = useState(false);
 
   useEffect(() => {
     dispatch(fetchGoals({ page: page, limit: PAGE_SIZE }));
@@ -42,6 +44,11 @@ function GoalManagerPage() {
 
   const handleEditGoal = (goal: GoalSchema) => {
     setOpen(true);
+    setGoalSelected(goal);
+  }
+
+  const handleDeposit = (goal: GoalSchema) => {
+    setOpenDeposit(true);
     setGoalSelected(goal);
   }
 
@@ -181,6 +188,13 @@ function GoalManagerPage() {
                 {/* Actions */}
                 <td className="items-center gap-2">
                   <button
+                    onClick={() => handleDeposit(goal)}
+                    title="Deposit"
+                    className="p-1"
+                  >
+                    <FaPiggyBank className='text-sm' />
+                  </button>
+                  <button
                     onClick={() => handleEditGoal(goal)}
                     title="Edit Goal"
                     className="p-1"
@@ -239,6 +253,7 @@ function GoalManagerPage() {
       </main>
 
       <PopUpMenu open={open} setOpen={setOpen} goal={goalSelected} />
+      <DepositPopUpMenu open={openDeposit} setOpen={setOpenDeposit} goal={goalSelected} />
     </>
   );
 }

@@ -42,3 +42,6 @@ Thumbs.db
 /backend-code/__pycache__
 /backend-code/models/__pycache__
 /backend-code/schema/__pycache__
+/backend-code/repositories/__pycache__
+/backend-code/routes/__pycache__
+/backend-code/services/__pycache__

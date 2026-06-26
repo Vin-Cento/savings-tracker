@@ -1,0 +1,87 @@
+import { useDispatch } from "react-redux";
+import { addGoal } from "../stores/goalSlice";
+import type { AppDispatch } from "../stores/store";
+import type { GoalCreateSchema, GoalSchema } from "../client";
+
+type DepositPopUpMenuProps = {
+  open: boolean;
+  goal: GoalSchema;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function DepositPopUpMenu({ open, goal, setOpen }: DepositPopUpMenuProps) {
+  if (!open) return null;
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSubmit = async (
+    e: React.SubmitEvent<HTMLFormElement>  // Note: React.FormEvent, not SubmitEvent
+  ) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    // Get the raw deadline value safely
+    const deadlineValue = formData.get("deadline");
+
+    if (typeof deadlineValue !== "string") {
+      console.error("Invalid deadline value");
+      return; // or show user error
+    }
+
+    const payload: GoalCreateSchema = {
+      id: goal.id,
+      name: formData.get("name") as string, // you might want to validate this too
+      target: Number(formData.get("target")), // consider validating too (e.g. isNaN)
+      deadline: deadlineValue == "" ? null : new Date(deadlineValue).toISOString(),
+      active: true,
+    };
+
+    try {
+      await dispatch(addGoal(payload));
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/50"
+      onClick={() => setOpen(false)}
+    >
+      <div className="flex h-full items-center justify-center">
+        <div
+          className="rounded-lg bg-amber-600 p-10"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="target" className="block mb-2">
+              Deposit:
+            </label>
+            <input
+              type="number"
+              id="target"
+              name="target"
+              defaultValue-0
+              className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
+              placeholder="Enter target number"
+              required
+            />
+            <label className="block mb-2">Notes:</label>
+            <textarea className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block" id="userInput" name="userInput"
+              rows={4} cols={50}
+              placeholder="Enter your note here..."></textarea>
+            <button
+              type="submit"
+              className="bg-green-400 p-2 rounded-lg text-black">
+              submit
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+export default DepositPopUpMenu;
