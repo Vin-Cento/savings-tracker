@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.goal_routes import router as goal_router
+from routes.deposit_routes import router as deposit_router
 
 app = FastAPI()
 
@@ -26,3 +27,4 @@ async def read_root():
 
 
 app.include_router(goal_router)
+app.include_router(deposit_router)

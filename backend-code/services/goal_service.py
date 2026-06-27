@@ -1,12 +1,14 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from schema.goal_schema import GoalCreateSchema
+from schema.goal_schema import (GoalCreateSchema,
+                                GoalPaginationSchema,
+                                GoalSchema)
 from repositories import goal_repository
 
 
 def get_goal(db: Session, goal_id: int):
-    goal = goal_repository.get_goal_by_id(db, goal_id)
+    goal = goal_repository.get(db, goal_id)
 
     if not goal:
         raise HTTPException(
@@ -17,21 +19,23 @@ def get_goal(db: Session, goal_id: int):
     return goal
 
 
-def list_goals(db: Session, page: int, limit: int):
-    total = goal_repository.count_goals(db)
-    goals = goal_repository.list_goals(db, page, limit)
+def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
+    total = goal_repository.count(db)
+    goals = goal_repository.list(db, page, limit)
 
-    return {
-        "total": total,
-        "page": page,
-        "limit": limit,
-        "data": goals,
-    }
+    goals_schema = [GoalSchema.model_validate(item) for item in goals]
+
+    return GoalPaginationSchema(
+        total=total,
+        page=page,
+        limit=limit,
+        data=goals_schema,
+    )
 
 
-def create_or_update_goal(db: Session, goal: GoalCreateSchema):
+def upsert_goal(db: Session, goal: GoalCreateSchema):
     if goal.id == -1:
-        existing_goal = goal_repository.get_goal_by_name(db, goal.name)
+        existing_goal = goal_repository.get(db, goal.id)
 
         if existing_goal:
             raise HTTPException(
@@ -39,9 +43,9 @@ def create_or_update_goal(db: Session, goal: GoalCreateSchema):
                 detail=f"Goal with name '{goal.name}' already exists.",
             )
 
-        return goal_repository.create_goal(db, goal)
+        return goal_repository.create(db, goal)
 
-    existing_goal = goal_repository.get_goal_by_id(db, goal.id)
+    existing_goal = goal_repository.get(db, goal.id)
 
     if not existing_goal:
         raise HTTPException(
@@ -49,11 +53,11 @@ def create_or_update_goal(db: Session, goal: GoalCreateSchema):
             detail=f"Goal {goal.id} not found",
         )
 
-    return goal_repository.update_goal(db, existing_goal, goal)
+    return goal_repository.update(db, existing_goal, goal)
 
 
 def delete_goal(db: Session, goal_id: int):
-    goal = goal_repository.get_goal_by_id(db, goal_id)
+    goal = goal_repository.get(db, goal_id)
 
     if not goal:
         raise HTTPException(
@@ -61,4 +65,4 @@ def delete_goal(db: Session, goal_id: int):
             detail=f"Goal with id {goal_id} not found",
         )
 
-    goal_repository.delete_goal(db, goal)
+    goal_repository.delete(db, goal)

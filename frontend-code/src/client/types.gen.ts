@@ -5,6 +5,72 @@ export type ClientOptions = {
 };
 
 /**
+ * DepositCreateSchema
+ */
+export type DepositCreateSchema = {
+    /**
+     * Amount
+     */
+    amount: number;
+    /**
+     * Note
+     */
+    note?: string | null;
+    /**
+     * Goal Id
+     */
+    goal_id: number;
+};
+
+/**
+ * DepositPaginationSchema
+ */
+export type DepositPaginationSchema = {
+    /**
+     * Total
+     */
+    total: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Data
+     */
+    data?: Array<DepositSchema>;
+};
+
+/**
+ * DepositSchema
+ */
+export type DepositSchema = {
+    /**
+     * Createdat
+     */
+    createdAt: string;
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Amount
+     */
+    amount: number;
+    /**
+     * Note
+     */
+    note: string;
+    /**
+     * Goal Id
+     */
+    goal_id: number;
+};
+
+/**
  * GoalCreateSchema
  */
 export type GoalCreateSchema = {
@@ -207,7 +273,7 @@ export type ListGoalsGetData = {
          */
         limit?: number;
     };
-    url: '/goals/';
+    url: '/goals';
 };
 
 export type ListGoalsGetErrors = {
@@ -228,27 +294,183 @@ export type ListGoalsGetResponses = {
 
 export type ListGoalsGetResponse = ListGoalsGetResponses[keyof ListGoalsGetResponses];
 
-export type CreateGoalsPostData = {
+export type UpsertGoalsPostData = {
     body: GoalCreateSchema;
     path?: never;
     query?: never;
-    url: '/goals/';
+    url: '/goals';
 };
 
-export type CreateGoalsPostErrors = {
+export type UpsertGoalsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateGoalsPostError = CreateGoalsPostErrors[keyof CreateGoalsPostErrors];
+export type UpsertGoalsPostError = UpsertGoalsPostErrors[keyof UpsertGoalsPostErrors];
 
-export type CreateGoalsPostResponses = {
+export type UpsertGoalsPostResponses = {
     /**
      * Successful Response
      */
     201: GoalSchema;
 };
 
-export type CreateGoalsPostResponse = CreateGoalsPostResponses[keyof CreateGoalsPostResponses];
+export type UpsertGoalsPostResponse = UpsertGoalsPostResponses[keyof UpsertGoalsPostResponses];
+
+export type DeleteDepositIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/deposit/{id}';
+};
+
+export type DeleteDepositIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteDepositIdDeleteError = DeleteDepositIdDeleteErrors[keyof DeleteDepositIdDeleteErrors];
+
+export type DeleteDepositIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteDepositIdDeleteResponse = DeleteDepositIdDeleteResponses[keyof DeleteDepositIdDeleteResponses];
+
+export type GetDepositIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/deposit/{id}';
+};
+
+export type GetDepositIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetDepositIdGetError = GetDepositIdGetErrors[keyof GetDepositIdGetErrors];
+
+export type GetDepositIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DepositSchema;
+};
+
+export type GetDepositIdGetResponse = GetDepositIdGetResponses[keyof GetDepositIdGetResponses];
+
+export type ListDepositgoalIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: {
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/depositgoal/{id}';
+};
+
+export type ListDepositgoalIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListDepositgoalIdGetError = ListDepositgoalIdGetErrors[keyof ListDepositgoalIdGetErrors];
+
+export type ListDepositgoalIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DepositPaginationSchema;
+};
+
+export type ListDepositgoalIdGetResponse = ListDepositgoalIdGetResponses[keyof ListDepositgoalIdGetResponses];
+
+export type AddDepositPostData = {
+    body: DepositCreateSchema;
+    path?: never;
+    query?: never;
+    url: '/deposit';
+};
+
+export type AddDepositPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddDepositPostError = AddDepositPostErrors[keyof AddDepositPostErrors];
+
+export type AddDepositPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DepositSchema;
+};
+
+export type AddDepositPostResponse = AddDepositPostResponses[keyof AddDepositPostResponses];
+
+export type SumDepositGoalIdTotalGetData = {
+    body?: never;
+    path: {
+        /**
+         * Goal Id
+         */
+        goal_id: number;
+    };
+    query?: never;
+    url: '/deposit/{goal_id}/total';
+};
+
+export type SumDepositGoalIdTotalGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SumDepositGoalIdTotalGetError = SumDepositGoalIdTotalGetErrors[keyof SumDepositGoalIdTotalGetErrors];
+
+export type SumDepositGoalIdTotalGetResponses = {
+    /**
+     * Response Sum Deposit  Goal Id  Total Get
+     *
+     * Successful Response
+     */
+    200: number;
+};
+
+export type SumDepositGoalIdTotalGetResponse = SumDepositGoalIdTotalGetResponses[keyof SumDepositGoalIdTotalGetResponses];

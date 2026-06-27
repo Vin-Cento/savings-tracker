@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import goalReducer from "./goalSlice";
 import breadcrumbReducer from "./breadcrumbSlice";
+import depositReducer from "./depositSlice";
 
 export const store = configureStore({
   reducer: {
     goals: goalReducer,
     breadcrumb: breadcrumbReducer,
+    deposits: depositReducer
   },
 });
 

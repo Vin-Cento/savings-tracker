@@ -1,16 +1,10 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
-
-
-class Pagination(BaseModel):
-    total: int
-    limit: int
-    page: int
-
-
-class SchemaModel(BaseModel):
-    createdAt: datetime
+from schema.base_schema import (
+    SchemaModel,
+    Pagination
+)
 
 
 # Pydantic schema for Goal
@@ -22,7 +16,7 @@ class GoalSchema(SchemaModel):
     deadline: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class GoalPaginationSchema(Pagination):

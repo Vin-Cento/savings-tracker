@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
-import { addGoal } from "../stores/goalSlice";
 import type { AppDispatch } from "../stores/store";
-import type { GoalCreateSchema, GoalSchema } from "../client";
+import type { DepositCreateSchema, GoalSchema } from "../client";
+import { addDeposit } from "../stores/depositSlice";
 
 type DepositPopUpMenuProps = {
   open: boolean;
@@ -21,23 +21,21 @@ function DepositPopUpMenu({ open, goal, setOpen }: DepositPopUpMenuProps) {
     const formData = new FormData(e.currentTarget);
 
     // Get the raw deadline value safely
-    const deadlineValue = formData.get("deadline");
+    const amountValue = formData.get("amount");
+    const noteValue = formData.get("note");
 
-    if (typeof deadlineValue !== "string") {
-      console.error("Invalid deadline value");
-      return; // or show user error
-    }
+    const amount: number = typeof amountValue === "string" ? Number(amountValue) : NaN;
+    const note: string | null = typeof noteValue === "string" ? noteValue : null;
 
-    const payload: GoalCreateSchema = {
-      id: goal.id,
-      name: formData.get("name") as string, // you might want to validate this too
-      target: Number(formData.get("target")), // consider validating too (e.g. isNaN)
-      deadline: deadlineValue == "" ? null : new Date(deadlineValue).toISOString(),
-      active: true,
+
+    const payload: DepositCreateSchema = {
+      goal_id: goal.id,
+      amount: Number(amount),
+      note: note
     };
 
     try {
-      await dispatch(addGoal(payload));
+      await dispatch(addDeposit(payload));
       setOpen(false);
     } catch (error) {
       console.error(error);
@@ -55,20 +53,21 @@ function DepositPopUpMenu({ open, goal, setOpen }: DepositPopUpMenuProps) {
           onClick={(e) => e.stopPropagation()}
         >
           <form onSubmit={handleSubmit}>
-            <label htmlFor="target" className="block mb-2">
+            <label htmlFor="amount" className="block mb-2">
               Deposit:
             </label>
             <input
               type="number"
-              id="target"
-              name="target"
+              id="amount"
+              name="amount"
               defaultValue-0
               className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
               placeholder="Enter target number"
               required
             />
             <label className="block mb-2">Notes:</label>
-            <textarea className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block" id="userInput" name="userInput"
+            <textarea className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block"
+              id="note" name="note"
               rows={4} cols={50}
               placeholder="Enter your note here..."></textarea>
             <button

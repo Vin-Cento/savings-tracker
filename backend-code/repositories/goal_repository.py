@@ -6,19 +6,15 @@ from models.models import Goal
 from schema.goal_schema import GoalCreateSchema
 
 
-def get_goal_by_id(db: Session, goal_id: int) -> Optional[Goal]:
+def get(db: Session, goal_id: int) -> Optional[Goal]:
     return db.query(Goal).filter(Goal.id == goal_id).first()
 
 
-def get_goal_by_name(db: Session, name: str) -> Optional[Goal]:
-    return db.query(Goal).filter(Goal.name == name).first()
-
-
-def count_goals(db: Session) -> int:
+def count(db: Session) -> int:
     return db.query(Goal).count()
 
 
-def list_goals(db: Session, page: int, limit: int) -> List[Goal]:
+def list(db: Session, page: int, limit: int) -> List[Goal]:
     return (
         db.query(Goal)
         .order_by(Goal.createdAt.desc())
@@ -28,7 +24,7 @@ def list_goals(db: Session, page: int, limit: int) -> List[Goal]:
     )
 
 
-def create_goal(db: Session, goal: GoalCreateSchema):
+def create(db: Session, goal: GoalCreateSchema):
     new_goal = Goal(
         name=goal.name,
         target=goal.target,
@@ -42,7 +38,7 @@ def create_goal(db: Session, goal: GoalCreateSchema):
     return new_goal
 
 
-def update_goal(db: Session, existing_goal: Goal, goal: GoalCreateSchema):
+def update(db: Session, existing_goal: Goal, goal: GoalCreateSchema):
     existing_goal.name = goal.name
     existing_goal.target = goal.target
     existing_goal.deadline = goal.deadline
@@ -53,6 +49,6 @@ def update_goal(db: Session, existing_goal: Goal, goal: GoalCreateSchema):
     return existing_goal
 
 
-def delete_goal(db: Session, goal: Goal):
+def delete(db: Session, goal: Goal):
     db.delete(goal)
     db.commit()

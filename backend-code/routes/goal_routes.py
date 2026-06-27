@@ -16,32 +16,32 @@ router = APIRouter(
 
 
 @router.get("/{id}", response_model=GoalSchema)
-def get_goal(id: int, db: Session = Depends(get_db)):
+def get(id: int, db: Session = Depends(get_db)):
     return goal_service.get_goal(db, id)
 
 
-@router.get("/", response_model=GoalPaginationSchema)
-def list_goals(
+@router.get("", response_model=GoalPaginationSchema)
+def list(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
-    return goal_service.list_goals(db, page, limit)
+    return goal_service.list_goal(db, page, limit)
 
 
 @router.post(
-    "/",
+    "",
     response_model=GoalSchema,
     status_code=status.HTTP_201_CREATED,
 )
-def create_or_update_goal(
+def upsert(
     goal: GoalCreateSchema,
     db: Session = Depends(get_db),
 ):
-    return goal_service.create_or_update_goal(db, goal)
+    return goal_service.upsert_goal(db, goal)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_goal(id: int, db: Session = Depends(get_db)):
+def delete(id: int, db: Session = Depends(get_db)):
     goal_service.delete_goal(db, id)
     return None
