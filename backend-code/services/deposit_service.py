@@ -1,9 +1,8 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from models.models import Deposit
 from repositories import deposit_repository
-from schema.deposit_schema import (DepositCreateSchema,
+from schema.deposit_schema import (DepositCreateSchema, DepositGetTotalSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
 
@@ -20,13 +19,9 @@ def get_deposit(db: Session, id: int):
     return deposit
 
 
-def get_deposit_total(db: Session, goal_id: int) -> int:
-    deposits = list_deposit(db, goal_id, 1, 10000)
-    sum = 0
-
-    for deposit in deposits.data:
-        sum += deposit.amount
-
+def get_deposit_total(db: Session,
+                      depositSumBody: DepositGetTotalSchema) -> int:
+    sum = deposit_repository.sum(db, depositSumBody.goals)
     return sum
 
 
@@ -35,6 +30,7 @@ def list_deposit(db: Session,
                  page: int,
                  limit: int) -> DepositPaginationSchema:
     total = deposit_repository.count(db, goal_id)
+    sum = 0
     deposits = deposit_repository.list(
         db, goal_id, page, limit)
 
@@ -45,8 +41,12 @@ def list_deposit(db: Session,
             detail="Deposit not found",
         )
 
+    for deposit in deposits:
+        sum += deposit.amount
+
     return DepositPaginationSchema(
         total=total,
+        sum=sum,
         page=page,
         limit=limit,
         data=deposit_schemas

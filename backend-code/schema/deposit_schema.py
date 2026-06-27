@@ -19,9 +19,14 @@ class DepositSchema(SchemaModel):
 
 class DepositPaginationSchema(Pagination):
     data: List[DepositSchema] = []
+    sum: int = 0
 
 
 class DepositCreateSchema(BaseModel):
     amount: int
     note: str | None = None
     goal_id: int
+
+
+class DepositGetTotalSchema(BaseModel):
+    goals: List[int]

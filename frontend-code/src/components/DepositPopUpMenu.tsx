@@ -60,7 +60,7 @@ function DepositPopUpMenu({ open, goal, setOpen }: DepositPopUpMenuProps) {
               type="number"
               id="amount"
               name="amount"
-              defaultValue-0
+              defaultValue={0}
               className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
               placeholder="Enter target number"
               required
