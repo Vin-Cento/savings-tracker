@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
-
+from sys import maxsize
 from database import get_db
 from schema.deposit_schema import (DepositCreateSchema, DepositGetTotalSchema,
                                    DepositPaginationSchema,
@@ -20,8 +20,8 @@ def get(id: int, db: Session = Depends(get_db)):
 
 @router.get("/goal/{id}", response_model=DepositPaginationSchema)
 def list(id: int,
-         page: int = Query(1, ge=0),
-         limit: int = Query(10, ge=0, le=100000),
+         page: int = Query(1, ge=1),
+         limit: int = Query(10, ge=1, le=maxsize),
          db: Session = Depends(get_db)):
     return deposit_service.list_deposit(db, id, page, limit)
 
