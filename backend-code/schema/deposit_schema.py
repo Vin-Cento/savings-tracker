@@ -10,7 +10,7 @@ from schema.base_schema import (
 class DepositSchema(SchemaModel):
     id: int
     amount: int
-    note: str
+    note: str | None = None
     goal_id: int
 
     class Config:
