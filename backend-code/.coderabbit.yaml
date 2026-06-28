@@ -1,0 +1,7 @@
+reviews:
+  path_filters:
+    - "!frontend/src/client/**"
+    - "!backend/alembic/versions/**"
+    - "!node_modules/**"
+    - "!dist/**"
+    - "!build/**"
