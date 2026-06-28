@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AddDepositPostData, AddDepositPostErrors, AddDepositPostResponses, DeleteDepositIdDeleteData, DeleteDepositIdDeleteErrors, DeleteDepositIdDeleteResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, GetDepositIdGetData, GetDepositIdGetErrors, GetDepositIdGetResponses, GetGoalsIdGetData, GetGoalsIdGetErrors, GetGoalsIdGetResponses, ListDepositGoalIdGetData, ListDepositGoalIdGetErrors, ListDepositGoalIdGetResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses, TotalDepositTotalGetData, TotalDepositTotalGetErrors, TotalDepositTotalGetResponses, UpsertGoalsPostData, UpsertGoalsPostErrors, UpsertGoalsPostResponses } from './types.gen';
+import type { AddDepositAddPostData, AddDepositAddPostErrors, AddDepositAddPostResponses, CountGoalsCountGetData, CountGoalsCountGetErrors, CountGoalsCountGetResponses, DeleteDepositIdDeleteData, DeleteDepositIdDeleteErrors, DeleteDepositIdDeleteResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, GetDepositIdGetData, GetDepositIdGetErrors, GetDepositIdGetResponses, GetGoalsIdGetData, GetGoalsIdGetErrors, GetGoalsIdGetResponses, ListDepositPostData, ListDepositPostErrors, ListDepositPostResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses, TotalDepositTotalPostData, TotalDepositTotalPostErrors, TotalDepositTotalPostResponses, UpsertGoalsPostData, UpsertGoalsPostErrors, UpsertGoalsPostResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -22,6 +22,11 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
  * Read Root
  */
 export const readRootGet = <ThrowOnError extends boolean = false>(options?: Options<ReadRootGetData, ThrowOnError>) => (options?.client ?? client).get<ReadRootGetResponses, unknown, ThrowOnError>({ url: '/', ...options });
+
+/**
+ * Count
+ */
+export const countGoalsCountGet = <ThrowOnError extends boolean = false>(options?: Options<CountGoalsCountGetData, ThrowOnError>) => (options?.client ?? client).get<CountGoalsCountGetResponses, CountGoalsCountGetErrors, ThrowOnError>({ url: '/goals/count', ...options });
 
 /**
  * Delete
@@ -61,15 +66,10 @@ export const deleteDepositIdDelete = <ThrowOnError extends boolean = false>(opti
 export const getDepositIdGet = <ThrowOnError extends boolean = false>(options: Options<GetDepositIdGetData, ThrowOnError>) => (options.client ?? client).get<GetDepositIdGetResponses, GetDepositIdGetErrors, ThrowOnError>({ url: '/deposit/{id}', ...options });
 
 /**
- * List
- */
-export const listDepositGoalIdGet = <ThrowOnError extends boolean = false>(options: Options<ListDepositGoalIdGetData, ThrowOnError>) => (options.client ?? client).get<ListDepositGoalIdGetResponses, ListDepositGoalIdGetErrors, ThrowOnError>({ url: '/deposit/goal/{id}', ...options });
-
-/**
  * Add
  */
-export const addDepositPost = <ThrowOnError extends boolean = false>(options: Options<AddDepositPostData, ThrowOnError>) => (options.client ?? client).post<AddDepositPostResponses, AddDepositPostErrors, ThrowOnError>({
-    url: '/deposit',
+export const addDepositAddPost = <ThrowOnError extends boolean = false>(options: Options<AddDepositAddPostData, ThrowOnError>) => (options.client ?? client).post<AddDepositAddPostResponses, AddDepositAddPostErrors, ThrowOnError>({
+    url: '/deposit/add',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -78,9 +78,21 @@ export const addDepositPost = <ThrowOnError extends boolean = false>(options: Op
 });
 
 /**
+ * List
+ */
+export const listDepositPost = <ThrowOnError extends boolean = false>(options?: Options<ListDepositPostData, ThrowOnError>) => (options?.client ?? client).post<ListDepositPostResponses, ListDepositPostErrors, ThrowOnError>({
+    url: '/deposit',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+    }
+});
+
+/**
  * Total
  */
-export const totalDepositTotalGet = <ThrowOnError extends boolean = false>(options: Options<TotalDepositTotalGetData, ThrowOnError>) => (options.client ?? client).get<TotalDepositTotalGetResponses, TotalDepositTotalGetErrors, ThrowOnError>({
+export const totalDepositTotalPost = <ThrowOnError extends boolean = false>(options: Options<TotalDepositTotalPostData, ThrowOnError>) => (options.client ?? client).post<TotalDepositTotalPostResponses, TotalDepositTotalPostErrors, ThrowOnError>({
     url: '/deposit/total',
     ...options,
     headers: {

@@ -1,7 +1,9 @@
+from typing import List
+
 from fastapi import status, HTTPException
 from sqlalchemy.orm import Session
 from repositories import deposit_repository
-from schema.deposit_schema import (DepositCreateSchema, DepositGetTotalSchema,
+from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
 
@@ -12,18 +14,18 @@ def get_deposit(db: Session, id: int):
 
 
 def get_deposit_total(db: Session,
-                      depositSumBody: DepositGetTotalSchema) -> int:
-    sum = deposit_repository.sum(db, {"goal_id": depositSumBody.goals})
+                      goals: List[int]) -> int:
+    sum = deposit_repository.total(db, {"goal_id": goals})
     return sum
 
 
 def list_deposit(db: Session,
-                 goal_id: int,
+                 goal_id: List[int],
                  page: int,
                  limit: int) -> DepositPaginationSchema:
-    total = deposit_repository.count(db, {"goal_id": goal_id})
     sum = 0
-    deposits = deposit_repository.list(
+    total = deposit_repository.count(db, {"goal_id": goal_id})
+    deposits = deposit_repository.fetch(
         db, {"goal_id": goal_id}, page, limit)
 
     deposit_schemas = [DepositSchema.model_validate(item) for item in deposits]

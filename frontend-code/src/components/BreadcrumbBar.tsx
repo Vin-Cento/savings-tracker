@@ -39,7 +39,7 @@ function BreadcrumbBar() {
   return (
     <>
       {location.pathname !== "/" &&
-        <nav>
+        <nav aria-label="Breadcrumb">
           <ol className="flex bg-zinc-800 items-center shrink-0 text-sm italic">
             {breadcrumb.map((item, index) => {
               const isLast = index === breadcrumb.length - 1;
@@ -47,7 +47,7 @@ function BreadcrumbBar() {
               return (
                 <li key={item.path} className="flex items-center">
                   {isLast ? (
-                    <span className="pl-1">
+                    <span aria-current="page" className="pl-1">
                       {item.label}
                     </span>
                   ) : (

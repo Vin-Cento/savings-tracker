@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { DepositCreateSchema, DepositGetTotalSchema, DepositPaginationSchema } from '../client/types.gen';
-import { addDepositPost, deleteDepositIdDelete } from "../client";
-import { listDepositGoalIdGet, totalDepositTotalGet } from "../client/sdk.gen";
+import type { DepositCreateSchema, DepositPaginationSchema } from '../client/types.gen';
+import { addDepositAddPost, deleteDepositIdDelete } from "../client";
+import { listDepositPost } from "../client/sdk.gen";
 
 interface DepositsState {
   deposits: DepositPaginationSchema;
@@ -17,13 +17,13 @@ const initialState: DepositsState = {
 
 export const fetchDeposit = createAsyncThunk<
   DepositPaginationSchema,
-  { id: number; page: number; limit: number }
+  { id: number[]; page: number; limit: number }
 >(
   "deposits/fetchDeposits",
   async ({ id, page, limit }) => {
-    const { data, error } = await listDepositGoalIdGet({
+    const { data, error } = await listDepositPost({
       query: { page, limit },
-      path: { id },
+      body: id
     });
 
     if (error) {
@@ -50,7 +50,7 @@ export const deleteDeposit = createAsyncThunk<number, number>(
 export const addDeposit = createAsyncThunk(
   'deposits/addDeposit',
   async (payload: DepositCreateSchema) => {
-    let { data, error } = await addDepositPost({ body: payload })
+    let { data, error } = await addDepositAddPost({ body: payload })
     if (error) {
       throw error
     }
@@ -63,20 +63,20 @@ export const addDeposit = createAsyncThunk(
 )
 
 
-export const getTotalDeposit = createAsyncThunk(
-  'deposits/getTotalDeposit',
-  async (payload: DepositGetTotalSchema) => {
-    let { data, error } = await totalDepositTotalGet({ body: payload })
-    if (error) {
-      throw error
-    }
-    if (!data) {
-      throw new Error("No goal returned from API");
-    }
-
-    return data
-  }
-)
+// export const getTotalDeposit = createAsyncThunk(
+//   'deposits/getTotalDeposit',
+//   async (payload: DepositGetTotalSchema) => {
+//     let { data, error } = await totalDepositTotalPost({ body: payload })
+//     if (error) {
+//       throw error
+//     }
+//     if (!data) {
+//       throw new Error("No goal returned from API");
+//     }
+//
+//     return data
+//   }
+// )
 
 const depositsSlice = createSlice({
   name: "deposits",

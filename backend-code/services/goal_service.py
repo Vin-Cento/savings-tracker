@@ -20,7 +20,7 @@ def get_goal(db: Session, goal_id: int):
 
 
 def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
-    total = goal_repository.count(db)
+    total = goal_repository.count(active=True, db=db)
     goals = goal_repository.list(db, page, limit)
 
     goals_schema = [GoalSchema.model_validate(item) for item in goals]
@@ -31,6 +31,11 @@ def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
         limit=limit,
         data=goals_schema,
     )
+
+
+def count_goal(active: bool, db: Session) -> int:
+    result = goal_repository.count(active, db)
+    return result
 
 
 def upsert_goal(db: Session, goal: GoalCreateSchema):

@@ -10,8 +10,8 @@ def get(db: Session, goal_id: int) -> Optional[Goal]:
     return db.query(Goal).filter(Goal.id == goal_id).first()
 
 
-def count(db: Session) -> int:
-    return db.query(Goal).count()
+def count(active: bool, db: Session) -> int:
+    return db.query(Goal).filter(Goal.active == active).count()
 
 
 def list(db: Session, page: int, limit: int) -> List[Goal]:

@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional, Sequence
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, select
 from models.models import Deposit
-from schema.deposit_schema import DepositCreateSchema, DepositSchema
+from schema.deposit_schema import DepositCreateSchema
 
 
 def get(db: Session, where: Dict[str, Any]) -> Optional[Deposit]:
@@ -37,7 +37,7 @@ def count(db: Session, where: Dict[str, Any]) -> int:
     return result
 
 
-def sum(db: Session, where: Dict[str, Any]) -> int:
+def total(db: Session, where: Dict[str, Any]) -> int:
     conditions = []
     for key, value in where.items():
         attr = getattr(Deposit, key)
@@ -53,14 +53,16 @@ def sum(db: Session, where: Dict[str, Any]) -> int:
     return result
 
 
-def list(db: Session,
-         where: Dict[str, Any],
-         page: int,
-         limit: int) -> Sequence[Deposit]:
+def fetch(db: Session,
+          where: Dict[str, Any],
+          page: int,
+          limit: int) -> Sequence[Deposit]:
     conditions = []
     for key, value in where.items():
         attr = getattr(Deposit, key)
         if isinstance(value, (list, tuple, set)):  # type: ignore
+            if len(value) == 0:
+                continue
             conditions.append(attr.in_(value))
         else:
             conditions.append(attr == value)

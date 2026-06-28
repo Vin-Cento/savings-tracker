@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Query, status
+from typing import List
+from fastapi import APIRouter, Body, Depends, Query, status
 from sqlalchemy.orm import Session
 from sys import maxsize
 from database import get_db
-from schema.deposit_schema import (DepositCreateSchema, DepositGetTotalSchema,
+from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
 from services import deposit_service
@@ -18,23 +19,22 @@ def get(id: int, db: Session = Depends(get_db)):
     return deposit_service.get_deposit(db, id)
 
 
-@router.get("/goal/{id}", response_model=DepositPaginationSchema)
-def list(id: int,
-         page: int = Query(1, ge=1),
+@router.post("/add", response_model=DepositSchema)
+def add(deposit: DepositCreateSchema, db: Session = Depends(get_db)):
+    return deposit_service.add_deposit(db, deposit)
+
+
+@router.post("", response_model=DepositPaginationSchema)
+def list(id: List[int] = Body(default=[]),
+         page: int = Query(1, ge=1, le=maxsize),
          limit: int = Query(10, ge=1, le=maxsize),
          db: Session = Depends(get_db)):
     return deposit_service.list_deposit(db, id, page, limit)
 
 
-@router.post("", response_model=DepositSchema)
-def add(deposit: DepositCreateSchema, db: Session = Depends(get_db)):
-    return deposit_service.add_deposit(db, deposit)
-
-
-@router.get("/total", response_model=int)
-def total(depositSumBody: DepositGetTotalSchema,
-          db: Session = Depends(get_db)):
-    return deposit_service.get_deposit_total(db, depositSumBody)
+@router.post("/total", response_model=int)
+def total(goals: List[int], db: Session = Depends(get_db)):
+    return deposit_service.get_deposit_total(db, goals)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
