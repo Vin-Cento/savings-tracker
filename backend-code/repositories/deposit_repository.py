@@ -1,47 +1,78 @@
-from typing import List, Optional
+from typing import Any, Dict, Optional, Sequence
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, and_, select
 from models.models import Deposit
 from schema.deposit_schema import DepositCreateSchema, DepositSchema
 
 
-def get(db: Session, goal_id: int) -> Optional[Deposit]:
-    return db.query(Deposit).filter(Deposit.goal_id == goal_id).first()
-
-
-def count(db: Session, goal_id: int) -> int:
-    if goal_id == -1:
-        return db.query(Deposit).count()
-    return db.query(Deposit).filter(Deposit.goal_id == goal_id).count()
-
-
-def sum(db: Session, goal_id: List[int]) -> int:
-    if goal_id == []:
-        total = db.query(func.sum(Deposit.amount)).scalar()
+def get(db: Session, where: Dict[str, Any]) -> Optional[Deposit]:
+    conditions = []
+    for key, value in where.items():
+        attr = getattr(Deposit, key)
+        if isinstance(value, (list, tuple, set)):  # type: ignore
+            conditions.append(attr.in_(value))
+        else:
+            conditions.append(attr == value)
+    if conditions:
+        stmt = select(Deposit).where(and_(*conditions))
     else:
-        total = db.query(func.sum(Deposit.amount)).filter(
-            Deposit.goal_id.in_(goal_id)).scalar()
-    return total or 0
+        stmt = select(Deposit)
+    result = db.execute(stmt).scalars().first()
+    return result
+
+
+def count(db: Session, where: Dict[str, Any]) -> int:
+    conditions = []
+    for key, value in where.items():
+        attr = getattr(Deposit, key)
+        if isinstance(value, (list, tuple, set)):  # type: ignore
+            conditions.append(attr.in_(value))
+        else:
+            conditions.append(attr == value)
+    if conditions:
+        stmt = select(func.count()).where(and_(*conditions))
+    else:
+        stmt = select(func.count())
+    result = db.execute(stmt).scalar_one()
+    return result
+
+
+def sum(db: Session, where: Dict[str, Any]) -> int:
+    conditions = []
+    for key, value in where.items():
+        attr = getattr(Deposit, key)
+        if isinstance(value, (list, tuple, set)):  # type: ignore
+            conditions.append(attr.in_(value))
+        else:
+            conditions.append(attr == value)
+    if conditions:
+        stmt = select(func.sum(Deposit.amount)).where(and_(*conditions))
+    else:
+        stmt = select(func.sum(Deposit.amount))
+    result = db.execute(stmt).scalar_one()
+    return result
 
 
 def list(db: Session,
-         goal_id: int,
+         where: Dict[str, Any],
          page: int,
-         limit: int) -> List[Deposit]:
-    if goal_id == -1:
-        return (
-            db.query(Deposit)
-            .order_by(Deposit.createdAt.desc())
-            .all()
-        )
-    return (
-        db.query(Deposit)
-        .filter(Deposit.goal_id == goal_id)
-        .order_by(Deposit.createdAt.desc())
-        .offset((page - 1) * limit)
-        .limit(limit)
-        .all()
-    )
+         limit: int) -> Sequence[Deposit]:
+    conditions = []
+    for key, value in where.items():
+        attr = getattr(Deposit, key)
+        if isinstance(value, (list, tuple, set)):  # type: ignore
+            conditions.append(attr.in_(value))
+        else:
+            conditions.append(attr == value)
+    stmt = select(Deposit)
+    if conditions:
+        stmt = stmt.where(and_(*conditions))
+
+    stmt = (stmt.order_by(Deposit.createdAt.desc())
+            .offset((page - 1) * limit)
+            .limit(limit))
+    result = db.execute(stmt).scalars().all()
+    return result
 
 
 def add(db: Session, deposit: DepositCreateSchema):
@@ -58,6 +89,6 @@ def add(db: Session, deposit: DepositCreateSchema):
     return new_goal
 
 
-def delete(db: Session, deposit: DepositSchema):
+def delete(db: Session, deposit: Deposit):
     db.delete(deposit)
     db.commit()
