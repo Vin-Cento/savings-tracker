@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Body, Depends, Query, status
 from sqlalchemy.orm import Session
+from datetime import datetime
 from sys import maxsize
 from database import get_db
 from schema.deposit_schema import (DepositCreateSchema,
@@ -28,8 +29,9 @@ def add(deposit: DepositCreateSchema, db: Session = Depends(get_db)):
 def list(id: List[int] = Body(default=[]),
          page: int = Query(1, ge=1, le=maxsize),
          limit: int = Query(10, ge=1, le=maxsize),
+         deposit_date: Optional[datetime] = datetime.min,
          db: Session = Depends(get_db)):
-    return deposit_service.list_deposit(db, id, page, limit)
+    return deposit_service.list_deposit(db, id, page, limit, deposit_date)
 
 
 @router.post("/total", response_model=int)

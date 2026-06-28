@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { fetchDeposit } from "../stores/depositSlice";
 import { fetchGoalCount } from "../composables/goalUtil";
 import type { DepositPaginationSchema } from "../client";
+import { fetchDepositUtil } from "../composables/depositUtil";
 
 function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,38 +21,42 @@ function HomePage() {
     dispatch(fetchDeposit({ id: [], page: 1, limit: 1000 }));
     fetchGoalCount(setCountActiveGoal);
     fetchGoalCount(setCountCompletedGoal, false);
+    fetchDepositUtil(setDeposit)
   }, [dispatch]);
 
   return (
     <>
-      <div className="flex gap-x-2 m-2">
-        <Link to={"/goals/management"} className="m-2 w-2/4 flex p-4 bg-linear-to-r from-red-700 to-amber-700 rounded-xl">
-          <div>
-            <h1 className="mb-5 text-sm">Total savings</h1>
-            <p className="text-5xl font-bold">{formatMoney(deposits.sum ? deposits.sum : 0)}</p>
-          </div>
-        </Link>
-        <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
-          <div>
-            <h1 className="mb-5 text-sm">Active goals</h1>
-            <p className="text-5xl font-bold text-orange-600">{countActiveGoal}</p>
-          </div>
-        </Link>
-        <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
-          <div>
-            <h1 className="mb-5 text-sm">Goals completed</h1>
-            <p className="text-5xl font-bold text-green-400">{countCompletedGoal}</p>
-          </div>
-        </Link>
-      </div>
-      <div className="flex gap-x-2 m-2">
-        <Link to={"/goals/management"} className="m-2 w-full flex p-4 items-center bg-zinc-800 rounded-xl" >
-          <div>
-            <h1 className="mb-5 text-sm">Goals completed</h1>
-            <p className="text-5xl font-bold text-green-400">{countCompletedGoal}</p>
-          </div>
-        </Link>
-      </div>
+      <main className="overflow-auto">
+        <div className="flex gap-x-2 m-2">
+          <Link to={"/goals/management"} className="m-2 w-2/4 flex p-4 bg-linear-to-r from-red-700 to-amber-700 rounded-xl">
+            <div>
+              <h1 className="mb-5 text-sm">Total savings</h1>
+              <p className="text-5xl font-bold">{formatMoney(deposits.sum ? deposits.sum : 0)}</p>
+            </div>
+          </Link>
+          <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
+            <div>
+              <h1 className="mb-5 text-sm">Active goals</h1>
+              <p className="text-5xl font-bold text-orange-600">{countActiveGoal}</p>
+            </div>
+          </Link>
+          <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
+            <div>
+              <h1 className="mb-5 text-sm">Goals completed</h1>
+              <p className="text-5xl font-bold text-green-400">{countCompletedGoal}</p>
+            </div>
+          </Link>
+        </div>
+        <div className="flex gap-x-2 m-2">
+          <Link to={"/goals/management"} className="m-2 w-full flex p-4 items-center bg-zinc-800 rounded-xl" >
+            <div>
+              <h1 className="mb-5 text-sm">Goals completed</h1>
+              <p className="text-5xl font-bold text-green-400">{countCompletedGoal}</p>
+              <pre>{JSON.stringify(deposit.data, null, 2)}</pre>
+            </div>
+          </Link>
+        </div>
+      </main>
     </>
   );
 }

@@ -1,6 +1,7 @@
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 
-from fastapi import status, HTTPException
+from fastapi import Query, status, HTTPException
 from sqlalchemy.orm import Session
 from repositories import deposit_repository
 from schema.deposit_schema import (DepositCreateSchema,
@@ -22,7 +23,9 @@ def get_deposit_total(db: Session,
 def list_deposit(db: Session,
                  goal_id: List[int],
                  page: int,
-                 limit: int) -> DepositPaginationSchema:
+                 limit: int,
+                 deposit_date: Optional[datetime] = datetime.min,
+                 ) -> DepositPaginationSchema:
     sum = 0
     total = deposit_repository.count(db, {"goal_id": goal_id})
     deposits = deposit_repository.fetch(
