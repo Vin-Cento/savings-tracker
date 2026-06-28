@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { listGoalsGet, deleteGoalsIdDelete, createGoalsPost } from "../client/sdk.gen";
+import { listGoalsGet, deleteGoalsIdDelete, upsertGoalsPost } from "../client/sdk.gen";
 import type { GoalCreateSchema, GoalPaginationSchema } from '../client/types.gen';
 import { emptyGoal } from "../constants/defaults.ts";
 
@@ -51,7 +51,7 @@ export const deleteGoal = createAsyncThunk<number, number>(
 export const addGoal = createAsyncThunk(
   'goals/addGoal',
   async (payload: GoalCreateSchema) => {
-    let { data, error } = await createGoalsPost({ body: payload })
+    let { data, error } = await upsertGoalsPost({ body: payload })
     if (error) {
       throw error
     }

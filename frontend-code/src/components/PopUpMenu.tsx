@@ -46,16 +46,16 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 text-white"
+      className="fixed inset-0 z-50 bg-black/50"
       onClick={() => setOpen(false)}
     >
       <div className="flex h-full items-center justify-center">
         <div
-          className="rounded-lg bg-amber-600 p-6"
+          className="rounded-lg bg-amber-600 p-10"
           onClick={(e) => e.stopPropagation()}
         >
           <form onSubmit={handleSubmit}>
-            <label htmlFor="name" className="block text-white mb-2">
+            <label htmlFor="name" className="block mb-2">
               Name:
             </label>
             <input
@@ -68,7 +68,7 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
               required
             />
 
-            <label htmlFor="target" className="block text-white mb-2">
+            <label htmlFor="target" className="block mb-2">
               Target:
             </label>
             <input
@@ -81,7 +81,7 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
               required
             />
 
-            <label htmlFor="deadline" className="block text-white mb-2">
+            <label htmlFor="deadline" className="block mb-2">
               Deadline:
             </label>
             <input

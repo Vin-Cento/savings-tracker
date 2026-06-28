@@ -39,5 +39,5 @@ class Deposit(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     amount: Mapped[int] = mapped_column(BigInteger)
     note: Mapped[str | None] = mapped_column(
-        Text, unique=True, index=True, nullable=True)
+        Text, nullable=True)
     goal_id: Mapped[int] = mapped_column(ForeignKey("goals.id"))

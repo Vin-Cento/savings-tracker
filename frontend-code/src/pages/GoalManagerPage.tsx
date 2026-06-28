@@ -5,8 +5,9 @@ import { fetchGoals, deleteGoal } from "../stores/goalSlice";
 import { sortingComparison } from "../composables/util";
 import { emptyGoal } from "../constants/defaults";
 
-import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaPiggyBank } from "react-icons/fa";
 import PopUpMenu from "../components/PopUpMenu"
+import DepositPopUpMenu from "../components/DepositPopUpMenu"
 
 import type { RootState, AppDispatch } from "../stores/store";
 import type { GoalSchema } from "../client/types.gen";
@@ -31,6 +32,7 @@ function GoalManagerPage() {
   } | null>(null);
 
   const [open, setOpen] = useState(false);
+  const [openDeposit, setOpenDeposit] = useState(false);
 
   useEffect(() => {
     dispatch(fetchGoals({ page: page, limit: PAGE_SIZE }));
@@ -42,6 +44,11 @@ function GoalManagerPage() {
 
   const handleEditGoal = (goal: GoalSchema) => {
     setOpen(true);
+    setGoalSelected(goal);
+  }
+
+  const handleDeposit = (goal: GoalSchema) => {
+    setOpenDeposit(true);
     setGoalSelected(goal);
   }
 
@@ -102,21 +109,21 @@ function GoalManagerPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="sticky top-0 z-30 h-14 bg-zinc-950 flex items-center">
           <div className="flex text-black w-4/5 m-auto">
-            <div className="flex w-4/5">
-              <input
-                type="text"
-                className="text-black rounded-l-xl bg-amber-50 w-full focus:outline-none pl-4"
-              />
-
-              <button className="bg-amber-50 hover:text-black rounded-r-lg p-2">
-                <FaSearch />
-              </button>
-            </div>
+            {/* <div className="flex w-4/5"> */}
+            {/*   <input */}
+            {/*     type="text" */}
+            {/*     className="text-black rounded-l-xl bg-amber-50 w-full focus:outline-none pl-4" */}
+            {/*   /> */}
+            {/**/}
+            {/*   <button className="bg-amber-50 hover:text-black rounded-r-lg p-2"> */}
+            {/*     <FaSearch /> */}
+            {/*   </button> */}
+            {/* </div> */}
 
             <div className="flex-1" />
 
             <button
-              className="p-1 rounded-xl bg-green-300 text-gray-700 font-bold"
+              className="p-1 rounded-xl bg-green-500 font-bold"
               onClick={() => {
                 setOpen(true);
                 setGoalSelected(emptyGoal);
@@ -127,9 +134,9 @@ function GoalManagerPage() {
           </div>
         </div>
 
-        <table className="w-4/5 rounded-xl text-white m-auto">
+        <table className="w-4/5 rounded-xl m-auto">
           <thead >
-            <tr className="bg-zinc-800 text-left h-12">
+            <tr className="text-left h-12">
 
               <th className="p-3 bg-zinc-800 sticky top-14 z-10">
                 <div className="flex items-center gap-2">
@@ -168,7 +175,7 @@ function GoalManagerPage() {
                 <td className="p-3">
                   <Link
                     to={`/goals/${goal.id}`}
-                    className="underline hover:text-amber-200"
+                    className="hover:text-blue-400 font-bold"
                   >
                     {goal.name}
                   </Link>
@@ -180,6 +187,13 @@ function GoalManagerPage() {
 
                 {/* Actions */}
                 <td className="items-center gap-2">
+                  <button
+                    onClick={() => handleDeposit(goal)}
+                    title="Deposit"
+                    className="p-1"
+                  >
+                    <FaPiggyBank className='text-sm' />
+                  </button>
                   <button
                     onClick={() => handleEditGoal(goal)}
                     title="Edit Goal"
@@ -209,7 +223,7 @@ function GoalManagerPage() {
           </tbody>
           <tfoot >
             <tr className="h-12">
-              <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3 text-white'>
+              <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3'>
                 <span className="flex items-center justify-center">
                   {page !== 1 && <button className="m-1" onClick={() => { setPage(page - 1) }}><FaArrowLeft className="text-sm" /></button>}
                   {visiblePages.map((pageNumber) => {
@@ -239,6 +253,7 @@ function GoalManagerPage() {
       </main>
 
       <PopUpMenu open={open} setOpen={setOpen} goal={goalSelected} />
+      <DepositPopUpMenu open={openDeposit} setOpen={setOpenDeposit} goal={goalSelected} />
     </>
   );
 }

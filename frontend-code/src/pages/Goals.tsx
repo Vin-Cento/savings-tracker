@@ -36,7 +36,7 @@ function GoalPage() {
   }, [id]);
 
   return (
-    <div className="m-2 flex text-white">
+    <div className="m-2 flex">
       <div className="w-100 h-100">
         <MyBarChart />
       </div>
