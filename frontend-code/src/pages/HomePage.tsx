@@ -27,7 +27,7 @@ function HomePage() {
 
   return (
     <>
-      <main className="overflow-autom max-w-5xl ml-auto mr-auto">
+      <main className="overflow-auto max-w-7xl ml-auto mr-auto">
         <div className="flex gap-x-2">
           <Link to={"/goals/management"} className="m-2 w-2/4 flex p-4 bg-linear-to-r from-red-700 to-amber-700 rounded-xl">
             <div>
@@ -51,7 +51,7 @@ function HomePage() {
         <div className="flex gap-x-2 m-2">
           <Link to={"/goals/management"} className="w-full flex p-4 items-center bg-zinc-800 rounded-xl" >
             <div className="w-full">
-              <h1 className="mb-5 text-sm">Monthly Deposits</h1>
+              <h1 className="text-sm">Monthly Deposits</h1>
               <div className="m-2 flex">
                 <div className="w-full h-50">
                   <DepositBarChart deposits={deposit.data ? deposit.data : []} />

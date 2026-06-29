@@ -131,7 +131,6 @@ export default function DepositBarChart({ deposits }: DepositBarChartProps) {
   // Prepare labels and data for the chart
   const chartLabels = last6Months;
   const chartData = last6Months.map(m => aggregation[m]);
-  console.log(chartData)
 
   const data: ChartData<'bar'> = {
     labels: chartLabels,
@@ -139,7 +138,9 @@ export default function DepositBarChart({ deposits }: DepositBarChartProps) {
       {
         label: "Deposits",
         data: chartData,
-        backgroundColor: "oklch(70.5% 0.213 47.604)", // Tailwind blue-500
+        backgroundColor: "oklch(64.6% 0.222 41.116)",
+        borderRadius: 8,
+        borderSkipped: false,
       },
     ],
   };
