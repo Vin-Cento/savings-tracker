@@ -1,11 +1,12 @@
-import { listDepositPost } from "../client"
+import { listDepositPost, type DepositPaginationSchema } from "../client"
 
-export async function fetchGoalCount(setCount: React.Dispatch<React.SetStateAction<number>>) {
+export async function fetchDepositUtil(setDeposit: React.Dispatch<React.SetStateAction<DepositPaginationSchema>>) {
   try {
-    // const result = await countGoalsCountGet({ query: { active: active } })
-    // setCount(result.data ? result.data : 0)
-    continue
+    const date = new Date();
+    date.setMonth(date.getMonth() - 6);
+    const result = await listDepositPost({ query: { deposit_date: date.toISOString() } })
+    setDeposit(result.data ? result.data : {} as DepositPaginationSchema)
   } catch (error) {
-    continue
+    console.error(error)
   }
 }

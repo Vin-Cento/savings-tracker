@@ -455,6 +455,10 @@ export type ListDepositPostData = {
          * Limit
          */
         limit?: number;
+        /**
+         * Deposit Date
+         */
+        deposit_date?: string | null;
     };
     url: '/deposit';
 };
