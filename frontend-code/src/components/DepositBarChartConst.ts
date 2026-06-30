@@ -13,7 +13,7 @@ export const barValueLabels: Plugin<"bar"> = {
     const xAxis = chart.scales.x;
 
     ctx.save();
-    ctx.fillStyle = "#71717b";
+    ctx.fillStyle = "#9f9fa9";
     ctx.font = "12px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -42,6 +42,10 @@ export const options: ChartOptions<"bar"> = {
       ticks: {
         color: "#ffffff",
         padding: 24, // pushes month labels down
+        font: {
+          size: 16, // increase font size here
+          weight: 'bold',
+        },
       },
       grid: {
         display: false,
