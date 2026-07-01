@@ -13,6 +13,7 @@ class GoalSchema(SchemaModel):
     name: str
     target: int
     active: bool
+    amount: int
     deadline: Optional[datetime] = None
 
     class Config:
