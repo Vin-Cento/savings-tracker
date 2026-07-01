@@ -13,6 +13,11 @@ import { listGoalsGetOptions } from "../client/@tanstack/react-query.gen";
 import { FaSort } from "react-icons/fa";
 import { FaSliders } from "react-icons/fa6";
 
+function calculateProgressPercent(amount: number, target: number): number {
+  if (target <= 0) return 0;
+  return Math.min(Math.round((amount / target) * 100), 100);
+}
+
 function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
   const { deposits } = useSelector(
@@ -23,7 +28,7 @@ function HomePage() {
   const [deposit, setDeposit] = useState<DepositPaginationSchema>({} as DepositPaginationSchema)
 
   const page = 1;
-  const limit = 15;
+  const limit = 25;
 
   const goalsQuery = useQuery({
     ...listGoalsGetOptions({
@@ -32,13 +37,13 @@ function HomePage() {
   });
 
   const gridPositions = [
-    "col-start-1 col-span-2 row-start-1 row-span-1",
+    "col-start-1 col-span-2 bg-linear-to-r from-red-700 to-amber-700 row-start-1 row-span-1",
     "col-start-3 col-span-3 row-start-1 row-span-2",
     "col-start-1 col-span-1 row-start-2 row-span-1",
     "col-start-2 col-span-1 row-start-2 row-span-1",
 
     "col-start-1 col-span-1 row-start-3 row-span-2",
-    "col-start-2 col-span-4 row-start-3 row-span-1",
+    "col-start-2 col-span-4 row-start-3 row-span-1 bg-linear-to-r from-red-700 to-amber-700 ",
     "col-start-2 col-span-1 row-start-4 row-span-1",
     "col-start-3 col-span-3 row-start-4 row-span-1",
   ];
@@ -115,16 +120,33 @@ function HomePage() {
                 key={goal.id}
                 className={`${getGridPositionClass(index)} bg-zinc-700 flex font-bold border border-gray-700 p-2 rounded-2xl`}
               >
-                <div className="w-full">
-                  <h3 className="font-bold">{goal.name}</h3>
-                  <p>Target: {goal.target}</p>
-                  <div className="w-full bg-zinc-600">
-                    <div className="h-5 w-75/100 bg-amber-50"></div>
+                <div className="w-full p-3 flex flex-col h-full">
+                  <h3 className="text-xl font-bold m-2">{goal.name}</h3>
+                  {/* have this fill the empty space */}
+                  <div className="flex-1" />
+                  <h3 className="text-4xl m-2">{`${calculateProgressPercent(goal.amount, goal.target)}%`}</h3>
+
+                  <div className="w-full m-2 bg-zinc-600 z-0 rounded-2xl">
+                    <div className={`h-5 bg-amber-600 z-10 rounded-2xl`}
+                      style={{
+                        width: `${calculateProgressPercent(goal.amount, goal.target)}%`,
+                      }}
+                    />
                   </div>
-                  <p>
-                    Deadline:{' '}
-                    {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'No deadline'}
-                  </p>
+                  <div className="flex">
+                    <p className="m-2">
+                      ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
+                    </p>
+                    <p className="m-2">
+                      {goal.deadline
+                        ? `Due ${new Date(goal.deadline).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}`
+                        : "No deadline"}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))
@@ -132,7 +154,7 @@ function HomePage() {
             <p>No goals available</p>
           )}
         </div>
-      </main>
+      </main >
     </>
   );
 }

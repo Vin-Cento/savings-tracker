@@ -147,6 +147,10 @@ export type GoalSchema = {
      */
     active: boolean;
     /**
+     * Amount
+     */
+    amount: number;
+    /**
      * Deadline
      */
     deadline?: string | null;
