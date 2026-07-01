@@ -16,6 +16,7 @@ def get(db: Session, goal_id: int) -> GoalSchema:
             Goal.active.label("active"),
             func.coalesce(func.sum(Deposit.amount), 0).label("amount"),
             Goal.deadline.label("deadline"),
+            Goal.createdAt.label("createdAt"),
         )
         .outerjoin(Deposit, Deposit.goal_id == Goal.id)
         .filter(Goal.id == goal_id)
@@ -24,10 +25,6 @@ def get(db: Session, goal_id: int) -> GoalSchema:
     )
     result = GoalSchema.model_validate(row)
     return result
-
-
-def count(active: bool, db: Session) -> int:
-    return db.query(Goal).filter(Goal.active == active).count()
 
 
 def list(db: Session, page: int, limit: int) -> List[GoalSchema]:
@@ -52,6 +49,10 @@ def list(db: Session, page: int, limit: int) -> List[GoalSchema]:
     return result
 
 
+def count(active: bool, db: Session) -> int:
+    return db.query(Goal).filter(Goal.active == active).count()
+
+
 def create(db: Session, goal: GoalCreateSchema):
     new_goal = Goal(
         name=goal.name,
@@ -66,7 +67,7 @@ def create(db: Session, goal: GoalCreateSchema):
     return new_goal
 
 
-def update(db: Session, existing_goal: Goal, goal: GoalCreateSchema):
+def update(db: Session, existing_goal: GoalSchema, goal: GoalCreateSchema):
     existing_goal.name = goal.name
     existing_goal.target = goal.target
     existing_goal.deadline = goal.deadline
@@ -77,6 +78,6 @@ def update(db: Session, existing_goal: Goal, goal: GoalCreateSchema):
     return existing_goal
 
 
-def delete(db: Session, goal: Goal):
+def delete(db: Session, goal: GoalSchema):
     db.delete(goal)
     db.commit()
