@@ -33,6 +33,7 @@ function PopUpMenu({ open, goal, setOpen }: PopUpMenuProps) {
       name: formData.get("name") as string, // you might want to validate this too
       target: Number(formData.get("target")), // consider validating too (e.g. isNaN)
       deadline: deadlineValue == "" ? null : new Date(deadlineValue).toISOString(),
+      amount: goal.amount,
       active: true,
     };
 

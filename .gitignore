@@ -45,3 +45,4 @@ Thumbs.db
 /backend-code/repositories/__pycache__
 /backend-code/routes/__pycache__
 /backend-code/services/__pycache__
+/backend-code/tests/__pycache__

@@ -158,6 +158,15 @@ function GoalManagerPage() {
 
               <th className="p-3 bg-zinc-800 sticky top-14 z-10">
                 <div className="flex items-center gap-2">
+                  <span>Deposit</span>
+                  <button onClick={() => handleSort("amount")}>
+                    <SortIcon attr="amount" />
+                  </button>
+                </div>
+              </th>
+
+              <th className="p-3 bg-zinc-800 sticky top-14 z-10">
+                <div className="flex items-center gap-2">
                   <span>DeadLine</span>
                   <button onClick={() => handleSort("deadline")}>
                     <SortIcon attr="deadline" />
@@ -181,6 +190,7 @@ function GoalManagerPage() {
                   </Link>
                 </td>
                 <td className="p-3">{formatMoney(goal.target)}</td>
+                <td className="p-3">{formatMoney(goal.amount)}</td>
                 <td className="p-3">
                   {goal.deadline ? formatTimeLocale(goal.deadline) : ""}
                 </td>
@@ -218,12 +228,13 @@ function GoalManagerPage() {
                 <td className="p-3 bg-orange-300">&nbsp;</td>
                 <td className="p-3 bg-orange-300">&nbsp;</td>
                 <td className="p-3 bg-orange-300">&nbsp;</td>
+                <td className="p-3 bg-orange-300">&nbsp;</td>
               </tr>
             ))}
           </tbody>
           <tfoot >
             <tr className="h-12">
-              <td colSpan={4} className='sticky bottom-0 z-10 bg-zinc-800 p-3'>
+              <td colSpan={5} className='sticky bottom-0 z-10 bg-zinc-800 p-3'>
                 <span className="flex items-center justify-center">
                   {page !== 1 && <button className="m-1" onClick={() => { setPage(page - 1) }}><FaArrowLeft className="text-sm" /></button>}
                   {visiblePages.map((pageNumber) => {

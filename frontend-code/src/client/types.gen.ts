@@ -93,7 +93,11 @@ export type GoalCreateSchema = {
     /**
      * Active
      */
-    active: boolean;
+    active?: boolean | null;
+    /**
+     * Amount
+     */
+    amount?: number;
     /**
      * Deadline
      */

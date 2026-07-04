@@ -9,7 +9,7 @@ from sqlalchemy import (
     ForeignKey,
     func,
 )
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -24,13 +24,16 @@ class Goal(Base):
     name: Mapped[str] = mapped_column(
         Text, unique=True, index=True, nullable=False)
     target: Mapped[int] = mapped_column(BigInteger)
-    total: Mapped[int] = mapped_column(
-        BigInteger, nullable=False, server_default="0")
     active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default='true')
     deadline: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
         nullable=True
+    )
+    deposits: Mapped[list["Deposit"]] = relationship(
+        back_populates="goal",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
 
@@ -40,4 +43,8 @@ class Deposit(Base):
     amount: Mapped[int] = mapped_column(BigInteger)
     note: Mapped[str | None] = mapped_column(
         Text, nullable=True)
-    goal_id: Mapped[int] = mapped_column(ForeignKey("goals.id"))
+    goal_id: Mapped[int] = mapped_column(
+        ForeignKey("goals.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    goal: Mapped["Goal"] = relationship(back_populates="deposits")

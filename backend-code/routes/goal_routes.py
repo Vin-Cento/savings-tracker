@@ -43,7 +43,11 @@ def upsert(
     goal: GoalCreateSchema,
     db: Session = Depends(get_db),
 ):
-    return goal_service.upsert_goal(db, goal)
+    new_goal = goal_service.upsert_goal(db, goal)
+    return GoalSchema(id=new_goal.id, createdAt=new_goal.createdAt,
+                      name=new_goal.name, target=new_goal.target,
+                      active=new_goal.active,
+                      amount=0, deadline=new_goal.deadline)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)

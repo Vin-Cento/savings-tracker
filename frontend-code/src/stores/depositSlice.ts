@@ -62,22 +62,6 @@ export const addDeposit = createAsyncThunk(
   }
 )
 
-
-// export const getTotalDeposit = createAsyncThunk(
-//   'deposits/getTotalDeposit',
-//   async (payload: DepositGetTotalSchema) => {
-//     let { data, error } = await totalDepositTotalPost({ body: payload })
-//     if (error) {
-//       throw error
-//     }
-//     if (!data) {
-//       throw new Error("No goal returned from API");
-//     }
-//
-//     return data
-//   }
-// )
-
 const depositsSlice = createSlice({
   name: "deposits",
   initialState,

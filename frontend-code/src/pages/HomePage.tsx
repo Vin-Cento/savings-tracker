@@ -126,8 +126,8 @@ function HomePage() {
                   <div className="flex-1" />
                   <h3 className="text-4xl m-2">{`${calculateProgressPercent(goal.amount, goal.target)}%`}</h3>
 
-                  <div className="w-full m-2 bg-zinc-600 z-0 rounded-2xl">
-                    <div className={`h-5 bg-amber-600 z-10 rounded-2xl`}
+                  <div className="w-full m-2 bg-zinc-600 rounded-2xl">
+                    <div className={`h-5 bg-amber-600 rounded-2xl`}
                       style={{
                         width: `${calculateProgressPercent(goal.amount, goal.target)}%`,
                       }}
