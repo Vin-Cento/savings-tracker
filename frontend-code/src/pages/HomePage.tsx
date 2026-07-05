@@ -8,7 +8,7 @@ import { FaSliders } from "react-icons/fa6";
 import { page, limit, gridPositions } from "./HomePage/constant"
 
 function calculateProgressPercent(amount: number, target: number): number {
-  if (target <= 0) return 0;
+  if (target <= 0) return 100;
   return Math.min(Math.round((amount / target) * 100), 100);
 }
 
