@@ -29,13 +29,13 @@ def add(deposit: DepositCreateSchema,
                          goal_id=res.goal_id, createdAt=res.createdAt)
 
 
-@router.post("", response_model=DepositPaginationSchema)
-def list(id: List[int] = Body(default=[]),
+@router.get("", response_model=DepositPaginationSchema)
+def list(goal_id: List[uuid.UUID] = Query(default=[]),
          page: int = Query(1, ge=1, le=maxsize),
          limit: int = Query(10, ge=1, le=maxsize),
          deposit_date: Optional[datetime] = datetime.min,
          db: Session = Depends(get_db)):
-    return deposit_service.list_deposit(db, id, page, limit, deposit_date)
+    return deposit_service.list_deposit(db, goal_id, page, limit, deposit_date)
 
 
 @router.post("/total", response_model=int)

@@ -22,7 +22,7 @@ def get_deposit_total(db: Session,
 
 
 def list_deposit(db: Session,
-                 goal_id: List[int],
+                 goal_id: List[uuid.UUID],
                  page: int,
                  limit: int,
                  deposit_date: Optional[datetime] = datetime.min,

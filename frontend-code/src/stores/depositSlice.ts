@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { DepositCreateSchema, DepositPaginationSchema } from '../client/types.gen';
 import { addDepositAddPost, deleteDepositIdDelete } from "../client";
-import { listDepositPost } from "../client/sdk.gen";
+//import { listDepositPost } from "../client/sdk.gen";
 
 interface DepositsState {
   deposits: DepositPaginationSchema;

@@ -448,13 +448,14 @@ export type AddDepositAddPostResponses = {
 
 export type AddDepositAddPostResponse = AddDepositAddPostResponses[keyof AddDepositAddPostResponses];
 
-export type ListDepositPostData = {
-    /**
-     * Id
-     */
-    body?: Array<number>;
+export type ListDepositGetData = {
+    body?: never;
     path?: never;
     query?: {
+        /**
+         * Goal Id
+         */
+        goal_id?: Array<string>;
         /**
          * Page
          */
@@ -471,23 +472,23 @@ export type ListDepositPostData = {
     url: '/deposit';
 };
 
-export type ListDepositPostErrors = {
+export type ListDepositGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ListDepositPostError = ListDepositPostErrors[keyof ListDepositPostErrors];
+export type ListDepositGetError = ListDepositGetErrors[keyof ListDepositGetErrors];
 
-export type ListDepositPostResponses = {
+export type ListDepositGetResponses = {
     /**
      * Successful Response
      */
     200: DepositPaginationSchema;
 };
 
-export type ListDepositPostResponse = ListDepositPostResponses[keyof ListDepositPostResponses];
+export type ListDepositGetResponse = ListDepositGetResponses[keyof ListDepositGetResponses];
 
 export type TotalDepositTotalPostData = {
     /**

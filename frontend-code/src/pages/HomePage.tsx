@@ -1,14 +1,10 @@
 import { Link } from "react-router-dom"
 import { formatMoney } from "../composables/format";
-import type { RootState, AppDispatch } from "../stores/store";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { fetchDeposit } from "../stores/depositSlice";
-import { type DepositPaginationSchema } from "../client";
-import { fetchDepositUtil } from "../composables/depositUtil";
+import type { RootState } from "../stores/store";
+import { useSelector } from "react-redux";
 import DepositBarChart from "../components/DepositBarChart";
 import { useQuery } from "@tanstack/react-query";
-import { countGoalsCountGetOptions, listGoalsGetOptions } from "../client/@tanstack/react-query.gen";
+import { countGoalsCountGetOptions, listDepositGetOptions, listGoalsGetOptions } from "../client/@tanstack/react-query.gen";
 import { FaSort } from "react-icons/fa";
 import { FaSliders } from "react-icons/fa6";
 import { page, limit, gridPositions } from "./HomePage/constant"
@@ -19,7 +15,6 @@ function calculateProgressPercent(amount: number, target: number): number {
 }
 
 function HomePage() {
-  const dispatch = useDispatch<AppDispatch>();
   const { deposits } = useSelector(
     (state: RootState) => state.deposits
   )
@@ -29,13 +24,7 @@ function HomePage() {
     return gridPositions[patternIndex];
   };
 
-  const [deposit, setDeposit] = useState<DepositPaginationSchema>({} as DepositPaginationSchema)
-
-  const goalsQuery = useQuery({
-    ...listGoalsGetOptions({
-      query: { page, limit },
-    }),
-  });
+  const goalsQuery = useQuery({ ...listGoalsGetOptions({ query: { page, limit }, }) });
   const goals = goalsQuery.data
 
   const activeCountQuery = useQuery({ ...countGoalsCountGetOptions({ query: { 'active': true } }) })
@@ -44,12 +33,8 @@ function HomePage() {
   const completeCountQuery = useQuery({ ...countGoalsCountGetOptions({ query: { 'active': false } }) })
   const completeCount = completeCountQuery.data
 
-  // const depositsQuery = useQuery({})
-
-  useEffect(() => {
-    dispatch(fetchDeposit({ id: [], page: 1, limit: 1000 }));
-    fetchDepositUtil(setDeposit)
-  }, [dispatch]);
+  const depositQuery = useQuery({ ...listDepositGetOptions({ query: { limit: limit, page: page } }) })
+  const deposit = depositQuery.data?.data
 
   return (
     <>
@@ -80,7 +65,7 @@ function HomePage() {
               <h1 className="text-sm">Monthly Deposits</h1>
               <div className="m-2 flex">
                 <div className="w-full h-50">
-                  <DepositBarChart deposits={deposit.data ? deposit.data : []} />
+                  <DepositBarChart deposits={deposit ? deposit : []} />
                 </div>
               </div>
             </div>
