@@ -1,4 +1,5 @@
 from typing import List, Optional
+import uuid
 from fastapi import APIRouter, Body, Depends, Query, status
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -16,13 +17,16 @@ router = APIRouter(
 
 
 @router.get("/{id}", response_model=DepositSchema)
-def get(id: int, db: Session = Depends(get_db)):
+def get(id: uuid.UUID, db: Session = Depends(get_db)):
     return deposit_service.get_deposit(db, id)
 
 
 @router.post("/add", response_model=DepositSchema)
-def add(deposit: DepositCreateSchema, db: Session = Depends(get_db)):
-    return deposit_service.add_deposit(db, deposit)
+def add(deposit: DepositCreateSchema,
+        db: Session = Depends(get_db)) -> DepositSchema:
+    res = deposit_service.add_deposit(db, deposit)
+    return DepositSchema(id=res.id, amount=res.amount, note=res.note,
+                         goal_id=res.goal_id, createdAt=res.createdAt)
 
 
 @router.post("", response_model=DepositPaginationSchema)

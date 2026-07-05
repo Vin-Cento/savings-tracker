@@ -54,7 +54,7 @@ class Deposit(Base):
     amount: Mapped[int] = mapped_column(BigInteger)
     note: Mapped[str | None] = mapped_column(
         Text, nullable=True)
-    goal_id: Mapped[int] = mapped_column(
+    goal_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("goals.id", ondelete="CASCADE"),
         nullable=False,
     )

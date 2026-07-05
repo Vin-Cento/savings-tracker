@@ -40,9 +40,7 @@ def count_goal(db: Session, active: bool) -> int:
 
 
 def upsert_goal(db: Session, goal: GoalCreateSchema):
-    print('upsert goal')
     if goal.id == uuid.UUID('f84f6b2d-e443-4206-bde2-e64357201a57'):
-        print('creating goal')
         return goal_repository.create(db, goal)
 
     new_goal = goal_repository.update(db, goal)

@@ -1,4 +1,5 @@
 from typing import List
+import uuid
 from pydantic import BaseModel, ConfigDict
 from schema.base_schema import (
     SchemaModel,
@@ -8,10 +9,10 @@ from schema.base_schema import (
 
 # Pydantic schema for Goal
 class DepositSchema(SchemaModel):
-    id: int
+    id: uuid.UUID
     amount: int
     note: str | None = None
-    goal_id: int
+    goal_id: uuid.UUID
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -24,8 +25,8 @@ class DepositPaginationSchema(Pagination):
 class DepositCreateSchema(BaseModel):
     amount: int
     note: str | None = None
-    goal_id: int
+    goal_id: uuid.UUID
 
 
 class DepositGetTotalSchema(BaseModel):
-    goals: List[int]
+    goals: List[uuid.UUID]

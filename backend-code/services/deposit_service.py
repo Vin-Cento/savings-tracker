@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
+import uuid
 
-from fastapi import Query, status, HTTPException
+from fastapi import status, HTTPException
 from sqlalchemy.orm import Session
 from repositories import deposit_repository
 from schema.deposit_schema import (DepositCreateSchema,
@@ -9,7 +10,7 @@ from schema.deposit_schema import (DepositCreateSchema,
                                    DepositSchema)
 
 
-def get_deposit(db: Session, id: int):
+def get_deposit(db: Session, id: uuid.UUID):
     deposit = deposit_repository.get(db, {"goal_id": id})
     return deposit
 
@@ -46,7 +47,8 @@ def list_deposit(db: Session,
 
 
 def add_deposit(db: Session, deposit: DepositCreateSchema):
-    return deposit_repository.add(db, deposit)
+    res = deposit_repository.add(db, deposit)
+    return res
 
 
 def delete_deposit(db: Session, id: int):
