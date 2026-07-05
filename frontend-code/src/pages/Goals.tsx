@@ -13,7 +13,7 @@ function GoalPage() {
     async function loadGoal() {
       if (!id) return;
 
-      const goalId = Number(id);
+      const goalId = String(id);
 
       if (Number.isNaN(goalId)) {
         console.error("Invalid goal id:", id);

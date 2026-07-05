@@ -4,14 +4,14 @@ import type { RootState, AppDispatch } from "../stores/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { fetchDeposit } from "../stores/depositSlice";
-import { fetchGoalCount } from "../composables/goalUtil";
-import type { DepositPaginationSchema } from "../client";
+import { type DepositPaginationSchema } from "../client";
 import { fetchDepositUtil } from "../composables/depositUtil";
 import DepositBarChart from "../components/DepositBarChart";
 import { useQuery } from "@tanstack/react-query";
-import { listGoalsGetOptions } from "../client/@tanstack/react-query.gen";
+import { countGoalsCountGetOptions, listGoalsGetOptions } from "../client/@tanstack/react-query.gen";
 import { FaSort } from "react-icons/fa";
 import { FaSliders } from "react-icons/fa6";
+import { page, limit, gridPositions } from "./HomePage/constant"
 
 function calculateProgressPercent(amount: number, target: number): number {
   if (target <= 0) return 0;
@@ -23,42 +23,31 @@ function HomePage() {
   const { deposits } = useSelector(
     (state: RootState) => state.deposits
   )
-  const [countActiveGoal, setCountActiveGoal] = useState<number>(0);
-  const [countCompletedGoal, setCountCompletedGoal] = useState<number>(0);
-  const [deposit, setDeposit] = useState<DepositPaginationSchema>({} as DepositPaginationSchema)
-
-  const page = 1;
-  const limit = 25;
-
-  const goalsQuery = useQuery({
-    ...listGoalsGetOptions({
-      query: { page, limit },
-    }),
-  });
-
-  const gridPositions = [
-    "col-start-1 col-span-2 bg-linear-to-r from-red-700 to-amber-700 row-start-1 row-span-1",
-    "col-start-3 col-span-3 row-start-1 row-span-2",
-    "col-start-1 col-span-1 row-start-2 row-span-1",
-    "col-start-2 col-span-1 row-start-2 row-span-1",
-
-    "col-start-1 col-span-1 row-start-3 row-span-2",
-    "col-start-2 col-span-4 row-start-3 row-span-1 bg-linear-to-r from-red-700 to-amber-700 ",
-    "col-start-2 col-span-1 row-start-4 row-span-1",
-    "col-start-3 col-span-3 row-start-4 row-span-1",
-  ];
 
   const getGridPositionClass = (index: number) => {
     const patternIndex = index % gridPositions.length;
     return gridPositions[patternIndex];
   };
 
+  const [deposit, setDeposit] = useState<DepositPaginationSchema>({} as DepositPaginationSchema)
+
+  const goalsQuery = useQuery({
+    ...listGoalsGetOptions({
+      query: { page, limit },
+    }),
+  });
   const goals = goalsQuery.data
+
+  const activeCountQuery = useQuery({ ...countGoalsCountGetOptions({ query: { 'active': true } }) })
+  const activeCount = activeCountQuery.data
+
+  const completeCountQuery = useQuery({ ...countGoalsCountGetOptions({ query: { 'active': false } }) })
+  const completeCount = completeCountQuery.data
+
+  // const depositsQuery = useQuery({})
 
   useEffect(() => {
     dispatch(fetchDeposit({ id: [], page: 1, limit: 1000 }));
-    fetchGoalCount(setCountActiveGoal);
-    fetchGoalCount(setCountCompletedGoal, false);
     fetchDepositUtil(setDeposit)
   }, [dispatch]);
 
@@ -75,13 +64,13 @@ function HomePage() {
           <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
             <div>
               <h1 className="mb-5 text-sm">Active goals</h1>
-              <p className="text-5xl font-bold text-orange-600">{countActiveGoal}</p>
+              <p className="text-5xl font-bold text-orange-600">{activeCount}</p>
             </div>
           </Link>
           <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
             <div>
               <h1 className="mb-5 text-sm">Goals completed</h1>
-              <p className="text-5xl font-bold text-green-400">{countCompletedGoal}</p>
+              <p className="text-5xl font-bold text-green-400">{completeCount}</p>
             </div>
           </Link>
         </div>

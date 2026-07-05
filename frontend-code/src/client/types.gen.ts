@@ -19,7 +19,7 @@ export type DepositCreateSchema = {
     /**
      * Goal Id
      */
-    goal_id: number;
+    goal_id: string;
 };
 
 /**
@@ -59,7 +59,7 @@ export type DepositSchema = {
     /**
      * Id
      */
-    id: number;
+    id: string;
     /**
      * Amount
      */
@@ -71,7 +71,7 @@ export type DepositSchema = {
     /**
      * Goal Id
      */
-    goal_id: number;
+    goal_id: string;
 };
 
 /**
@@ -215,9 +215,23 @@ export type ReadRootGetResponses = {
 export type CountGoalsCountGetData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Active
+         */
+        active?: boolean;
+    };
     url: '/goals/count';
 };
+
+export type CountGoalsCountGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CountGoalsCountGetError = CountGoalsCountGetErrors[keyof CountGoalsCountGetErrors];
 
 export type CountGoalsCountGetResponses = {
     /**
@@ -385,7 +399,7 @@ export type GetDepositIdGetData = {
         /**
          * Id
          */
-        id: number;
+        id: string;
     };
     query?: never;
     url: '/deposit/{id}';

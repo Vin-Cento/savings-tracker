@@ -1,3 +1,4 @@
+from typing import Annotated
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
@@ -18,7 +19,8 @@ router = APIRouter(
 
 
 @router.get("/count", response_model=int)
-def count(active: bool = True, db: Session = Depends(get_db)):
+def count(active: Annotated[bool, Query()] = True,
+          db: Session = Depends(get_db)):
     return goal_service.count_goal(db, active)
 
 
