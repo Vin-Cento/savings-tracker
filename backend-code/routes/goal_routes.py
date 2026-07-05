@@ -18,8 +18,8 @@ router = APIRouter(
 
 
 @router.get("/count", response_model=int)
-def count(db: Session = Depends(get_db)):
-    return goal_service.count_goal(db)
+def count(active: bool = True, db: Session = Depends(get_db)):
+    return goal_service.count_goal(db, active)
 
 
 @router.get("/{id}", response_model=GoalSchema)

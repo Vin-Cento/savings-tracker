@@ -1,9 +1,10 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 import uuid
 
 from fastapi import HTTPException, status
-from sqlalchemy import func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import and_
 
 from models.models import Deposit, Goal
 from schema.goal_schema import GoalCreateSchema, GoalSchema
@@ -32,7 +33,7 @@ def get(db: Session, goal_id: uuid.UUID) -> Optional[GoalSchema]:
     return GoalSchema.model_validate(row._mapping)
 
 
-def list(db: Session, page: int, limit: int) -> List[GoalSchema]:
+def fetch(db: Session, page: int, limit: int) -> List[GoalSchema]:
     rows = (
         db.query(
             Goal.id.label("id"),
@@ -54,8 +55,24 @@ def list(db: Session, page: int, limit: int) -> List[GoalSchema]:
     return result
 
 
-def count(db: Session) -> int:
-    return db.query(Goal).count()
+def count(db: Session, where: Optional[Dict[str, Any]] = None) -> int:
+    conditions = []
+
+    if where is None:
+        return db.query(Goal).count()
+
+    for key, value in where.items():
+        attr = getattr(Goal, key)
+        if isinstance(value, (list, tuple, set)):
+            conditions.append(attr.in_(value))
+        else:
+            conditions.append(attr == value)
+
+    stmt = select(func.count()).select_from(Goal)
+    if conditions:
+        stmt = stmt.where(and_(*conditions))
+
+    return db.execute(stmt).scalar_one()
 
 
 def create(db: Session, goal: GoalCreateSchema):
@@ -91,6 +108,5 @@ def update(db: Session, goal: GoalCreateSchema):
 
 
 def delete(db: Session, goal: GoalSchema):
-    print('in delete repo')
     db.execute(sqlalchemy_delete(Goal).where(Goal.id == goal.id))
     db.commit()

@@ -25,7 +25,7 @@ def count(db: Session, where: Dict[str, Any]) -> int:
     conditions = []
     for key, value in where.items():
         attr = getattr(Deposit, key)
-        if isinstance(value, (list, tuple, set)):  # type: ignore
+        if isinstance(value, (list, tuple, set)):
             conditions.append(attr.in_(value))
         else:
             conditions.append(attr == value)

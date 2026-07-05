@@ -4,6 +4,12 @@ from main import app
 client = TestClient(app)
 
 
+def test_count():
+    count_response = client.get("/goals/count?active=true")
+    assert count_response.status_code in [200, 204]
+    count_data = count_response.json()
+
+
 def test_create_get_delete_flow():
     create_response = client.post(
         "/goals",
@@ -21,6 +27,11 @@ def test_create_get_delete_flow():
     assert data["target"] == 2000
     assert data["active"] is True
     assert "id" in data
+
+    # count_response = client.get("/goals/count?active=true")
+    # assert count_response.status_code in [200, 204]
+    # count_data = count_response.json()
+    # count_data[]
 
     delete_response = client.delete(f"/goals/{data['id']}")
     assert delete_response.status_code in [200, 204]

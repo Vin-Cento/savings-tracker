@@ -21,8 +21,8 @@ def get_goal(db: Session, goal_id: uuid.UUID):
 
 
 def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
-    total = goal_repository.count(db=db)
-    goals = goal_repository.list(db, page, limit)
+    total = goal_repository.count(db=db, where={})
+    goals = goal_repository.fetch(db, page, limit)
 
     goals_schema = [GoalSchema.model_validate(item) for item in goals]
 
@@ -34,8 +34,8 @@ def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
     )
 
 
-def count_goal(db: Session) -> int:
-    result = goal_repository.count(db)
+def count_goal(db: Session, active: bool) -> int:
+    result = goal_repository.count(db, where={"active": active})
     return result
 
 
