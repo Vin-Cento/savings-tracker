@@ -3,13 +3,13 @@ import type { AppDispatch } from "../stores/store";
 import type { DepositCreateSchema, GoalSchema } from "../client";
 import { addDeposit } from "../stores/depositSlice";
 
-type DepositPopUpMenuProps = {
+type DepositPopUpFormProps = {
   open: boolean;
   goal: GoalSchema;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function DepositPopUpMenu({ open, goal, setOpen }: DepositPopUpMenuProps) {
+function AddDepositPopUpForm({ open, goal, setOpen }: DepositPopUpFormProps) {
   if (!open) return null;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -83,4 +83,4 @@ function DepositPopUpMenu({ open, goal, setOpen }: DepositPopUpMenuProps) {
   );
 }
 
-export default DepositPopUpMenu;
+export default AddDepositPopUpForm;

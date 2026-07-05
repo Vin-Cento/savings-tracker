@@ -6,8 +6,8 @@ import { sortingComparison } from "../composables/util";
 import { emptyGoal } from "../constants/defaults";
 
 import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaPiggyBank, FaSearch } from "react-icons/fa";
-import PopUpMenu from "../components/PopUpMenu"
-import DepositPopUpMenu from "../components/DepositPopUpMenu"
+import GoalPopUpForm from "../components/GoalPopUpForm"
+import AddDepositPopUpForm from "../components/AddDepositPopUpForm"
 
 import type { RootState, AppDispatch } from "../stores/store";
 import type { GoalSchema } from "../client/types.gen";
@@ -263,8 +263,8 @@ function GoalManagerPage() {
         </table>
       </main>
 
-      <PopUpMenu open={open} setOpen={setOpen} goal={goalSelected} />
-      <DepositPopUpMenu open={openDeposit} setOpen={setOpenDeposit} goal={goalSelected} />
+      <GoalPopUpForm open={open} setOpen={setOpen} goal={goalSelected} />
+      <AddDepositPopUpForm open={openDeposit} setOpen={setOpenDeposit} goal={goalSelected} />
     </>
   );
 }
