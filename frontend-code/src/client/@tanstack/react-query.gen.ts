@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { addDepositAddPost, countGoal, deleteDepositIdDelete, deleteGoal, fetchGoals, getDepositIdGet, getGoal, listDepositGet, type Options, readRootGet, totalDepositTotalPost, upsertGoal } from '../sdk.gen';
-import type { AddDepositAddPostData, AddDepositAddPostError, AddDepositAddPostResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositIdDeleteData, DeleteDepositIdDeleteError, DeleteDepositIdDeleteResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositIdGetData, GetDepositIdGetError, GetDepositIdGetResponse, GetGoalData, GetGoalError, GetGoalResponse, ListDepositGetData, ListDepositGetError, ListDepositGetResponse, ReadRootGetData, TotalDepositTotalPostData, TotalDepositTotalPostError, TotalDepositTotalPostResponse, UpsertGoalData, UpsertGoalError, UpsertGoalResponse } from '../types.gen';
+import { addDeposit, countGoal, deleteDepositIdDelete, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDepositTotalPost, upsertGoal } from '../sdk.gen';
+import type { AddDepositData, AddDepositError, AddDepositResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositIdDeleteData, DeleteDepositIdDeleteError, DeleteDepositIdDeleteResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositTotalPostData, TotalDepositTotalPostError, TotalDepositTotalPostResponse, UpsertGoalData, UpsertGoalError, UpsertGoalResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -259,14 +259,14 @@ export const deleteDepositIdDeleteMutation = (options?: Partial<Options<DeleteDe
     return mutationOptions;
 };
 
-export const getDepositIdGetQueryKey = (options: Options<GetDepositIdGetData>) => createQueryKey('getDepositIdGet', options);
+export const getDepositQueryKey = (options: Options<GetDepositData>) => createQueryKey('getDeposit', options);
 
 /**
  * Get
  */
-export const getDepositIdGetOptions = (options: Options<GetDepositIdGetData>) => queryOptions<GetDepositIdGetResponse, GetDepositIdGetError, GetDepositIdGetResponse, ReturnType<typeof getDepositIdGetQueryKey>>({
+export const getDepositOptions = (options: Options<GetDepositData>) => queryOptions<GetDepositResponse, GetDepositError, GetDepositResponse, ReturnType<typeof getDepositQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await getDepositIdGet({
+        const { data } = await getDeposit({
             ...options,
             ...queryKey[0],
             signal,
@@ -274,37 +274,37 @@ export const getDepositIdGetOptions = (options: Options<GetDepositIdGetData>) =>
         });
         return data;
     },
-    queryKey: getDepositIdGetQueryKey(options)
+    queryKey: getDepositQueryKey(options)
 });
 
-export const addDepositAddPostMutationKey = (options?: Partial<Options<AddDepositAddPostData>>) => createMutationKey('addDepositAddPost', options);
+export const addDepositMutationKey = (options?: Partial<Options<AddDepositData>>) => createMutationKey('addDeposit', options);
 
 /**
  * Add
  */
-export const addDepositAddPostMutation = (options?: Partial<Options<AddDepositAddPostData>>): UseMutationOptions<AddDepositAddPostResponse, AddDepositAddPostError, Options<AddDepositAddPostData>> => {
-    const mutationOptions: UseMutationOptions<AddDepositAddPostResponse, AddDepositAddPostError, Options<AddDepositAddPostData>> = {
+export const addDepositMutation = (options?: Partial<Options<AddDepositData>>): UseMutationOptions<AddDepositResponse, AddDepositError, Options<AddDepositData>> => {
+    const mutationOptions: UseMutationOptions<AddDepositResponse, AddDepositError, Options<AddDepositData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await addDepositAddPost({
+            const { data } = await addDeposit({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
             });
             return data;
         },
-        mutationKey: addDepositAddPostMutationKey(options)
+        mutationKey: addDepositMutationKey(options)
     };
     return mutationOptions;
 };
 
-export const listDepositGetQueryKey = (options?: Options<ListDepositGetData>) => createQueryKey('listDepositGet', options);
+export const fetchDepositsQueryKey = (options?: Options<FetchDepositsData>) => createQueryKey('fetchDeposits', options);
 
 /**
  * List
  */
-export const listDepositGetOptions = (options?: Options<ListDepositGetData>) => queryOptions<ListDepositGetResponse, ListDepositGetError, ListDepositGetResponse, ReturnType<typeof listDepositGetQueryKey>>({
+export const fetchDepositsOptions = (options?: Options<FetchDepositsData>) => queryOptions<FetchDepositsResponse, FetchDepositsError, FetchDepositsResponse, ReturnType<typeof fetchDepositsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await listDepositGet({
+        const { data } = await fetchDeposits({
             ...options,
             ...queryKey[0],
             signal,
@@ -312,27 +312,27 @@ export const listDepositGetOptions = (options?: Options<ListDepositGetData>) => 
         });
         return data;
     },
-    queryKey: listDepositGetQueryKey(options)
+    queryKey: fetchDepositsQueryKey(options)
 });
 
-export const listDepositGetInfiniteQueryKey = (options?: Options<ListDepositGetData>): QueryKey<Options<ListDepositGetData>> => createQueryKey('listDepositGet', options, true);
+export const fetchDepositsInfiniteQueryKey = (options?: Options<FetchDepositsData>): QueryKey<Options<FetchDepositsData>> => createQueryKey('fetchDeposits', options, true);
 
 /**
  * List
  */
-export const listDepositGetInfiniteOptions = (options?: Options<ListDepositGetData>) => {
-    const opts = infiniteQueryOptions<ListDepositGetResponse, ListDepositGetError, InfiniteData<ListDepositGetResponse>, QueryKey<Options<ListDepositGetData>>, number | Pick<QueryKey<Options<ListDepositGetData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+export const fetchDepositsInfiniteOptions = (options?: Options<FetchDepositsData>) => {
+    const opts = infiniteQueryOptions<FetchDepositsResponse, FetchDepositsError, InfiniteData<FetchDepositsResponse>, QueryKey<Options<FetchDepositsData>>, number | Pick<QueryKey<Options<FetchDepositsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
     {
         queryFn: async ({ pageParam, queryKey, signal }) => {
             // @ts-ignore
-            const page: Pick<QueryKey<Options<ListDepositGetData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+            const page: Pick<QueryKey<Options<FetchDepositsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
                 query: {
                     page: pageParam
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await listDepositGet({
+            const { data } = await fetchDeposits({
                 ...options,
                 ...params,
                 signal,
@@ -340,7 +340,7 @@ export const listDepositGetInfiniteOptions = (options?: Options<ListDepositGetDa
             });
             return data;
         },
-        queryKey: listDepositGetInfiniteQueryKey(options)
+        queryKey: fetchDepositsInfiniteQueryKey(options)
     });
     return opts as Omit<typeof opts, 'initialData'>;
 };

@@ -1,28 +1,42 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { formatMoney, formatTimeLocale } from '../composables/format'
-import { deleteGoalAsync } from "../stores/goalSlice";
 import { sortingComparison } from "../composables/util";
 import { emptyGoal } from "../constants/defaults";
-
 import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaPiggyBank, FaSearch } from "react-icons/fa";
 import GoalPopUpForm from "../components/GoalPopUpForm"
 import AddDepositPopUpForm from "../components/AddDepositPopUpForm"
-
-import type { AppDispatch } from "../stores/store";
 import type { GoalSchema } from "../client/types.gen";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchGoalsOptions,
+  deleteGoalMutation,
+} from "../client/@tanstack/react-query.gen";
 
 function GoalManagerPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  let PAGE_SIZE = 10;
+
+  const queryClient = useQueryClient();
+
+  const deleteGoal = useMutation({
+    ...deleteGoalMutation(),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: fetchGoalsOptions({
+          query: {
+            page,
+            limit: PAGE_SIZE,
+          },
+        }).queryKey,
+      });
+    },
+  });
 
 
   const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
   const [page, setPage] = useState(1);
 
-  let PAGE_SIZE = 15;
   const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page: page, limit: PAGE_SIZE } }) })
   const goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
 
@@ -37,7 +51,7 @@ function GoalManagerPage() {
   const [openDeposit, setOpenDeposit] = useState(false);
 
   const handleDeleteGoal = (id: string) => {
-    dispatch(deleteGoalAsync(id))
+    deleteGoal.mutate({ path: { id, }, });
   };
 
   const handleEditGoal = (goal: GoalSchema) => {

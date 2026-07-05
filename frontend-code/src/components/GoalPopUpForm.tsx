@@ -1,8 +1,7 @@
-import { useDispatch } from "react-redux";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PopupForm from "./PopUpForm";
-import { addGoal } from "../stores/goalSlice";
-import type { AppDispatch } from "../stores/store";
 import type { GoalCreateSchema, GoalSchema } from "../client";
+import { upsertGoalMutation, fetchGoalsQueryKey } from "../client/@tanstack/react-query.gen";
 
 type GoalPopUpFormProps = {
   open: boolean;
@@ -11,7 +10,21 @@ type GoalPopUpFormProps = {
 };
 
 function GoalPopUpMenu({ open, goal, setOpen }: GoalPopUpFormProps) {
-  const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
+
+  const upsertGoal = useMutation({
+    ...upsertGoalMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: fetchGoalsQueryKey(),
+      });
+
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,19 +41,15 @@ function GoalPopUpMenu({ open, goal, setOpen }: GoalPopUpFormProps) {
       id: goal.id,
       name: formData.get("name") as string,
       target: Number(formData.get("target")),
-      deadline: deadlineValue === ""
-        ? null
-        : new Date(deadlineValue).toISOString(),
+      deadline:
+        deadlineValue === "" ? null : new Date(deadlineValue).toISOString(),
       amount: goal.amount,
       active: true,
     };
 
-    try {
-      await dispatch(addGoal(payload)).unwrap();
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-    }
+    upsertGoal.mutate({
+      body: payload,
+    });
   };
 
   return (

@@ -393,7 +393,7 @@ export type DeleteDepositIdDeleteResponses = {
 
 export type DeleteDepositIdDeleteResponse = DeleteDepositIdDeleteResponses[keyof DeleteDepositIdDeleteResponses];
 
-export type GetDepositIdGetData = {
+export type GetDepositData = {
     body?: never;
     path: {
         /**
@@ -405,50 +405,50 @@ export type GetDepositIdGetData = {
     url: '/deposit/{id}';
 };
 
-export type GetDepositIdGetErrors = {
+export type GetDepositErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetDepositIdGetError = GetDepositIdGetErrors[keyof GetDepositIdGetErrors];
+export type GetDepositError = GetDepositErrors[keyof GetDepositErrors];
 
-export type GetDepositIdGetResponses = {
+export type GetDepositResponses = {
     /**
      * Successful Response
      */
     200: DepositSchema;
 };
 
-export type GetDepositIdGetResponse = GetDepositIdGetResponses[keyof GetDepositIdGetResponses];
+export type GetDepositResponse = GetDepositResponses[keyof GetDepositResponses];
 
-export type AddDepositAddPostData = {
+export type AddDepositData = {
     body: DepositCreateSchema;
     path?: never;
     query?: never;
     url: '/deposit/add';
 };
 
-export type AddDepositAddPostErrors = {
+export type AddDepositErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type AddDepositAddPostError = AddDepositAddPostErrors[keyof AddDepositAddPostErrors];
+export type AddDepositError = AddDepositErrors[keyof AddDepositErrors];
 
-export type AddDepositAddPostResponses = {
+export type AddDepositResponses = {
     /**
      * Successful Response
      */
     200: DepositSchema;
 };
 
-export type AddDepositAddPostResponse = AddDepositAddPostResponses[keyof AddDepositAddPostResponses];
+export type AddDepositResponse = AddDepositResponses[keyof AddDepositResponses];
 
-export type ListDepositGetData = {
+export type FetchDepositsData = {
     body?: never;
     path?: never;
     query?: {
@@ -472,23 +472,23 @@ export type ListDepositGetData = {
     url: '/deposit';
 };
 
-export type ListDepositGetErrors = {
+export type FetchDepositsErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ListDepositGetError = ListDepositGetErrors[keyof ListDepositGetErrors];
+export type FetchDepositsError = FetchDepositsErrors[keyof FetchDepositsErrors];
 
-export type ListDepositGetResponses = {
+export type FetchDepositsResponses = {
     /**
      * Successful Response
      */
     200: DepositPaginationSchema;
 };
 
-export type ListDepositGetResponse = ListDepositGetResponses[keyof ListDepositGetResponses];
+export type FetchDepositsResponse = FetchDepositsResponses[keyof FetchDepositsResponses];
 
 export type TotalDepositTotalPostData = {
     /**

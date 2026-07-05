@@ -1,7 +1,10 @@
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../stores/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { DepositCreateSchema, GoalSchema } from "../client";
-import { addDeposit } from "../stores/depositSlice";
+import {
+  addDepositMutation,
+  fetchGoalsQueryKey,
+  fetchDepositsQueryKey,
+} from "../client/@tanstack/react-query.gen";
 
 type DepositPopUpFormProps = {
   open: boolean;
@@ -10,36 +13,58 @@ type DepositPopUpFormProps = {
 };
 
 function AddDepositPopUpForm({ open, goal, setOpen }: DepositPopUpFormProps) {
-  if (!open) return null;
-  const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (
-    e: React.SubmitEvent<HTMLFormElement>  // Note: React.FormEvent, not SubmitEvent
-  ) => {
+  const addDepositMutationResult = useMutation({
+    ...addDepositMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: fetchGoalsQueryKey(),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: fetchDepositsQueryKey(),
+      });
+
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  if (!open) return null;
+
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
 
-    // Get the raw deadline value safely
     const amountValue = formData.get("amount");
     const noteValue = formData.get("note");
 
-    const amount: number = typeof amountValue === "string" ? Number(amountValue) : NaN;
-    const note: string | null = typeof noteValue === "string" ? noteValue : null;
+    const amount =
+      typeof amountValue === "string" ? Number(amountValue) : NaN;
 
+    const note =
+      typeof noteValue === "string" && noteValue.trim() !== ""
+        ? noteValue
+        : null;
+
+    if (Number.isNaN(amount)) {
+      console.error("Invalid amount");
+      return;
+    }
 
     const payload: DepositCreateSchema = {
       goal_id: goal.id,
-      amount: Number(amount),
-      note: note
+      amount,
+      note,
     };
 
-    try {
-      await dispatch(addDeposit(payload));
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-    }
+    addDepositMutationResult.mutate({
+      body: payload,
+    });
   };
 
   return (
@@ -56,29 +81,40 @@ function AddDepositPopUpForm({ open, goal, setOpen }: DepositPopUpFormProps) {
             <label htmlFor="amount" className="block mb-2">
               Deposit:
             </label>
+
             <input
               type="number"
               id="amount"
               name="amount"
               defaultValue={0}
               className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
-              placeholder="Enter target number"
+              placeholder="Enter deposit amount"
               required
             />
-            <label className="block mb-2">Notes:</label>
-            <textarea className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block"
-              id="note" name="note"
-              rows={4} cols={50}
-              placeholder="Enter your note here..."></textarea>
+
+            <label htmlFor="note" className="block mb-2">
+              Notes:
+            </label>
+
+            <textarea
+              className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block"
+              id="note"
+              name="note"
+              rows={4}
+              cols={50}
+              placeholder="Enter your note here..."
+            />
+
             <button
               type="submit"
-              className="bg-green-400 p-2 rounded-lg text-black">
-              submit
+              className="bg-green-400 p-2 rounded-lg text-black"
+              disabled={addDepositMutationResult.isPending}
+            >
+              {addDepositMutationResult.isPending ? "Submitting..." : "Submit"}
             </button>
           </form>
         </div>
       </div>
-
     </div>
   );
 }

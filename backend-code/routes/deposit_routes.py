@@ -1,6 +1,6 @@
 from typing import List, Optional
 import uuid
-from fastapi import APIRouter, Body, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from datetime import datetime
 from sys import maxsize
@@ -16,12 +16,12 @@ router = APIRouter(
 )
 
 
-@router.get("/{id}", response_model=DepositSchema)
+@router.get("/{id}", response_model=DepositSchema, operation_id='getDeposit')
 def get(id: uuid.UUID, db: Session = Depends(get_db)):
     return deposit_service.get_deposit(db, id)
 
 
-@router.post("/add", response_model=DepositSchema)
+@router.post("/add", response_model=DepositSchema, operation_id='addDeposit')
 def add(deposit: DepositCreateSchema,
         db: Session = Depends(get_db)) -> DepositSchema:
     res = deposit_service.add_deposit(db, deposit)
@@ -29,7 +29,8 @@ def add(deposit: DepositCreateSchema,
                          goal_id=res.goal_id, createdAt=res.createdAt)
 
 
-@router.get("", response_model=DepositPaginationSchema)
+@router.get("", response_model=DepositPaginationSchema,
+            operation_id='fetchDeposits')
 def list(goal_id: List[uuid.UUID] = Query(default=[]),
          page: int = Query(1, ge=1, le=maxsize),
          limit: int = Query(10, ge=1, le=maxsize),

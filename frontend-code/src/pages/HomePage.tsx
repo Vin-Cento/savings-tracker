@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { formatMoney } from "../composables/format";
 import DepositBarChart from "../components/DepositBarChart";
 import { useQuery } from "@tanstack/react-query";
-import { countGoalOptions, listDepositGetOptions, fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
+import { countGoalOptions, fetchDepositsOptions, fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
 import { FaSort } from "react-icons/fa";
 import { FaSliders } from "react-icons/fa6";
 import { page, limit, gridPositions } from "./HomePage/constant"
@@ -27,7 +27,7 @@ function HomePage() {
   const completeCountQuery = useQuery({ ...countGoalOptions({ query: { 'active': false } }) })
   const completeCount = completeCountQuery.data
 
-  const depositQuery = useQuery({ ...listDepositGetOptions({ query: { limit: limit, page: page } }) })
+  const depositQuery = useQuery({ ...fetchDepositsOptions({ query: { limit: limit, page: page } }) })
   const deposit = depositQuery.data?.data
   let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
 
