@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom"
 import { formatMoney } from "../composables/format";
-import type { RootState } from "../stores/store";
-import { useSelector } from "react-redux";
 import DepositBarChart from "../components/DepositBarChart";
 import { useQuery } from "@tanstack/react-query";
-import { countGoalsCountGetOptions, listDepositGetOptions, listGoalsGetOptions } from "../client/@tanstack/react-query.gen";
+import { countGoalOptions, listDepositGetOptions, fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
 import { FaSort } from "react-icons/fa";
 import { FaSliders } from "react-icons/fa6";
 import { page, limit, gridPositions } from "./HomePage/constant"
@@ -15,26 +13,23 @@ function calculateProgressPercent(amount: number, target: number): number {
 }
 
 function HomePage() {
-  const { deposits } = useSelector(
-    (state: RootState) => state.deposits
-  )
-
   const getGridPositionClass = (index: number) => {
     const patternIndex = index % gridPositions.length;
     return gridPositions[patternIndex];
   };
 
-  const goalsQuery = useQuery({ ...listGoalsGetOptions({ query: { page, limit }, }) });
+  const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page, limit }, }) });
   const goals = goalsQuery.data
 
-  const activeCountQuery = useQuery({ ...countGoalsCountGetOptions({ query: { 'active': true } }) })
+  const activeCountQuery = useQuery({ ...countGoalOptions({ query: { 'active': true } }) })
   const activeCount = activeCountQuery.data
 
-  const completeCountQuery = useQuery({ ...countGoalsCountGetOptions({ query: { 'active': false } }) })
+  const completeCountQuery = useQuery({ ...countGoalOptions({ query: { 'active': false } }) })
   const completeCount = completeCountQuery.data
 
   const depositQuery = useQuery({ ...listDepositGetOptions({ query: { limit: limit, page: page } }) })
   const deposit = depositQuery.data?.data
+  let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
 
   return (
     <>
@@ -43,7 +38,7 @@ function HomePage() {
           <Link to={"/goals/management"} className="m-2 w-2/4 flex p-4 bg-linear-to-r from-red-700 to-amber-700 rounded-xl">
             <div>
               <h1 className="mb-5 text-sm">Total savings</h1>
-              <p className="text-5xl font-bold">{formatMoney(deposits.sum ? deposits.sum : 0)}</p>
+              <p className="text-5xl font-bold">{formatMoney(totalDeposit)}</p>
             </div>
           </Link>
           <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >

@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AddDepositAddPostData, AddDepositAddPostErrors, AddDepositAddPostResponses, CountGoalsCountGetData, CountGoalsCountGetErrors, CountGoalsCountGetResponses, DeleteDepositIdDeleteData, DeleteDepositIdDeleteErrors, DeleteDepositIdDeleteResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, GetDepositIdGetData, GetDepositIdGetErrors, GetDepositIdGetResponses, GetGoalsIdGetData, GetGoalsIdGetErrors, GetGoalsIdGetResponses, ListDepositGetData, ListDepositGetErrors, ListDepositGetResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses, TotalDepositTotalPostData, TotalDepositTotalPostErrors, TotalDepositTotalPostResponses, UpsertGoalsPostData, UpsertGoalsPostErrors, UpsertGoalsPostResponses } from './types.gen';
+import type { AddDepositAddPostData, AddDepositAddPostErrors, AddDepositAddPostResponses, CountGoalData, CountGoalErrors, CountGoalResponses, DeleteDepositIdDeleteData, DeleteDepositIdDeleteErrors, DeleteDepositIdDeleteResponses, DeleteGoalData, DeleteGoalErrors, DeleteGoalResponses, FetchGoalsData, FetchGoalsErrors, FetchGoalsResponses, GetDepositIdGetData, GetDepositIdGetErrors, GetDepositIdGetResponses, GetGoalData, GetGoalErrors, GetGoalResponses, ListDepositGetData, ListDepositGetErrors, ListDepositGetResponses, ReadRootGetData, ReadRootGetResponses, TotalDepositTotalPostData, TotalDepositTotalPostErrors, TotalDepositTotalPostResponses, UpsertGoalData, UpsertGoalErrors, UpsertGoalResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -26,27 +26,27 @@ export const readRootGet = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Count
  */
-export const countGoalsCountGet = <ThrowOnError extends boolean = false>(options?: Options<CountGoalsCountGetData, ThrowOnError>): RequestResult<CountGoalsCountGetResponses, CountGoalsCountGetErrors, ThrowOnError> => (options?.client ?? client).get<CountGoalsCountGetResponses, CountGoalsCountGetErrors, ThrowOnError>({ url: '/goals/count', ...options });
+export const countGoal = <ThrowOnError extends boolean = false>(options?: Options<CountGoalData, ThrowOnError>): RequestResult<CountGoalResponses, CountGoalErrors, ThrowOnError> => (options?.client ?? client).get<CountGoalResponses, CountGoalErrors, ThrowOnError>({ url: '/goals/count', ...options });
 
 /**
  * Delete
  */
-export const deleteGoalsIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteGoalsIdDeleteData, ThrowOnError>): RequestResult<DeleteGoalsIdDeleteResponses, DeleteGoalsIdDeleteErrors, ThrowOnError> => (options.client ?? client).delete<DeleteGoalsIdDeleteResponses, DeleteGoalsIdDeleteErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
+export const deleteGoal = <ThrowOnError extends boolean = false>(options: Options<DeleteGoalData, ThrowOnError>): RequestResult<DeleteGoalResponses, DeleteGoalErrors, ThrowOnError> => (options.client ?? client).delete<DeleteGoalResponses, DeleteGoalErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
 
 /**
  * Get
  */
-export const getGoalsIdGet = <ThrowOnError extends boolean = false>(options: Options<GetGoalsIdGetData, ThrowOnError>): RequestResult<GetGoalsIdGetResponses, GetGoalsIdGetErrors, ThrowOnError> => (options.client ?? client).get<GetGoalsIdGetResponses, GetGoalsIdGetErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
+export const getGoal = <ThrowOnError extends boolean = false>(options: Options<GetGoalData, ThrowOnError>): RequestResult<GetGoalResponses, GetGoalErrors, ThrowOnError> => (options.client ?? client).get<GetGoalResponses, GetGoalErrors, ThrowOnError>({ url: '/goals/{id}', ...options });
 
 /**
  * List
  */
-export const listGoalsGet = <ThrowOnError extends boolean = false>(options?: Options<ListGoalsGetData, ThrowOnError>): RequestResult<ListGoalsGetResponses, ListGoalsGetErrors, ThrowOnError> => (options?.client ?? client).get<ListGoalsGetResponses, ListGoalsGetErrors, ThrowOnError>({ url: '/goals', ...options });
+export const fetchGoals = <ThrowOnError extends boolean = false>(options?: Options<FetchGoalsData, ThrowOnError>): RequestResult<FetchGoalsResponses, FetchGoalsErrors, ThrowOnError> => (options?.client ?? client).get<FetchGoalsResponses, FetchGoalsErrors, ThrowOnError>({ url: '/goals', ...options });
 
 /**
  * Upsert
  */
-export const upsertGoalsPost = <ThrowOnError extends boolean = false>(options: Options<UpsertGoalsPostData, ThrowOnError>): RequestResult<UpsertGoalsPostResponses, UpsertGoalsPostErrors, ThrowOnError> => (options.client ?? client).post<UpsertGoalsPostResponses, UpsertGoalsPostErrors, ThrowOnError>({
+export const upsertGoal = <ThrowOnError extends boolean = false>(options: Options<UpsertGoalData, ThrowOnError>): RequestResult<UpsertGoalResponses, UpsertGoalErrors, ThrowOnError> => (options.client ?? client).post<UpsertGoalResponses, UpsertGoalErrors, ThrowOnError>({
     url: '/goals',
     ...options,
     headers: {

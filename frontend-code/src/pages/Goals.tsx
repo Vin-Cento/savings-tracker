@@ -1,5 +1,5 @@
 import MyBarChart from "../components/MyBarChart"
-import { getGoalsIdGet } from "../client/sdk.gen";
+import { getGoal } from "../client/sdk.gen";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { GoalSchema } from "../client";
@@ -20,7 +20,7 @@ function GoalPage() {
         return;
       }
 
-      const { data, error } = await getGoalsIdGet({
+      const { data, error } = await getGoal({
         path: { id: goalId },
       });
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { listGoalsGet, deleteGoalsIdDelete, upsertGoalsPost } from "../client/sdk.gen";
+import { fetchGoals, deleteGoal, upsertGoal } from "../client/sdk.gen";
 import type { GoalCreateSchema, GoalPaginationSchema } from '../client/types.gen';
 import { emptyGoal } from "../constants/defaults.ts";
 
@@ -15,14 +15,14 @@ const initialState: GoalsState = {
   error: null,
 };
 
-export const fetchGoals = createAsyncThunk<
+export const fetchGoalsAsync = createAsyncThunk<
   GoalPaginationSchema,
   { page: number; limit: number }
 >
   (
     "goals/fetchGoals",
     async ({ page, limit }) => {
-      const { data, error } = await listGoalsGet({
+      const { data, error } = await fetchGoals({
         query: { page, limit },
       });
 
@@ -35,10 +35,10 @@ export const fetchGoals = createAsyncThunk<
     }
   );
 
-export const deleteGoal = createAsyncThunk<string, string>(
+export const deleteGoalAsync = createAsyncThunk<string, string>(
   "goals/deleteGoal",
   async (id) => {
-    const { error } = await deleteGoalsIdDelete({
+    const { error } = await deleteGoal({
       path: { id }
     })
     if (error) {
@@ -51,7 +51,7 @@ export const deleteGoal = createAsyncThunk<string, string>(
 export const addGoal = createAsyncThunk(
   'goals/addGoal',
   async (payload: GoalCreateSchema) => {
-    let { data, error } = await upsertGoalsPost({ body: payload })
+    let { data, error } = await upsertGoal({ body: payload })
     if (error) {
       throw error
     }
@@ -70,19 +70,19 @@ const goalsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchGoals.pending, (state) => {
+      .addCase(fetchGoalsAsync.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchGoals.fulfilled, (state, action) => {
+      .addCase(fetchGoalsAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.goals = action.payload;
       })
-      .addCase(fetchGoals.rejected, (state, action) => {
+      .addCase(fetchGoalsAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       })
-      .addCase(deleteGoal.fulfilled, (state, action) => {
+      .addCase(deleteGoalAsync.fulfilled, (state, action) => {
         state.goals.data = state.goals.data.filter((goal) => goal.id !== action.payload);
       })
       .addCase(addGoal.fulfilled, (state, action) => {

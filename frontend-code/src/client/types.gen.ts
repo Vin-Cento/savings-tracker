@@ -212,7 +212,7 @@ export type ReadRootGetResponses = {
     200: unknown;
 };
 
-export type CountGoalsCountGetData = {
+export type CountGoalData = {
     body?: never;
     path?: never;
     query?: {
@@ -224,27 +224,27 @@ export type CountGoalsCountGetData = {
     url: '/goals/count';
 };
 
-export type CountGoalsCountGetErrors = {
+export type CountGoalErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CountGoalsCountGetError = CountGoalsCountGetErrors[keyof CountGoalsCountGetErrors];
+export type CountGoalError = CountGoalErrors[keyof CountGoalErrors];
 
-export type CountGoalsCountGetResponses = {
+export type CountGoalResponses = {
     /**
-     * Response Count Goals Count Get
+     * Response Countgoal
      *
      * Successful Response
      */
     200: number;
 };
 
-export type CountGoalsCountGetResponse = CountGoalsCountGetResponses[keyof CountGoalsCountGetResponses];
+export type CountGoalResponse = CountGoalResponses[keyof CountGoalResponses];
 
-export type DeleteGoalsIdDeleteData = {
+export type DeleteGoalData = {
     body?: never;
     path: {
         /**
@@ -256,25 +256,25 @@ export type DeleteGoalsIdDeleteData = {
     url: '/goals/{id}';
 };
 
-export type DeleteGoalsIdDeleteErrors = {
+export type DeleteGoalErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteGoalsIdDeleteError = DeleteGoalsIdDeleteErrors[keyof DeleteGoalsIdDeleteErrors];
+export type DeleteGoalError = DeleteGoalErrors[keyof DeleteGoalErrors];
 
-export type DeleteGoalsIdDeleteResponses = {
+export type DeleteGoalResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteGoalsIdDeleteResponse = DeleteGoalsIdDeleteResponses[keyof DeleteGoalsIdDeleteResponses];
+export type DeleteGoalResponse = DeleteGoalResponses[keyof DeleteGoalResponses];
 
-export type GetGoalsIdGetData = {
+export type GetGoalData = {
     body?: never;
     path: {
         /**
@@ -286,25 +286,25 @@ export type GetGoalsIdGetData = {
     url: '/goals/{id}';
 };
 
-export type GetGoalsIdGetErrors = {
+export type GetGoalErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetGoalsIdGetError = GetGoalsIdGetErrors[keyof GetGoalsIdGetErrors];
+export type GetGoalError = GetGoalErrors[keyof GetGoalErrors];
 
-export type GetGoalsIdGetResponses = {
+export type GetGoalResponses = {
     /**
      * Successful Response
      */
     200: GoalSchema;
 };
 
-export type GetGoalsIdGetResponse = GetGoalsIdGetResponses[keyof GetGoalsIdGetResponses];
+export type GetGoalResponse = GetGoalResponses[keyof GetGoalResponses];
 
-export type ListGoalsGetData = {
+export type FetchGoalsData = {
     body?: never;
     path?: never;
     query?: {
@@ -320,48 +320,48 @@ export type ListGoalsGetData = {
     url: '/goals';
 };
 
-export type ListGoalsGetErrors = {
+export type FetchGoalsErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ListGoalsGetError = ListGoalsGetErrors[keyof ListGoalsGetErrors];
+export type FetchGoalsError = FetchGoalsErrors[keyof FetchGoalsErrors];
 
-export type ListGoalsGetResponses = {
+export type FetchGoalsResponses = {
     /**
      * Successful Response
      */
     200: GoalPaginationSchema;
 };
 
-export type ListGoalsGetResponse = ListGoalsGetResponses[keyof ListGoalsGetResponses];
+export type FetchGoalsResponse = FetchGoalsResponses[keyof FetchGoalsResponses];
 
-export type UpsertGoalsPostData = {
+export type UpsertGoalData = {
     body: GoalCreateSchema;
     path?: never;
     query?: never;
     url: '/goals';
 };
 
-export type UpsertGoalsPostErrors = {
+export type UpsertGoalErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpsertGoalsPostError = UpsertGoalsPostErrors[keyof UpsertGoalsPostErrors];
+export type UpsertGoalError = UpsertGoalErrors[keyof UpsertGoalErrors];
 
-export type UpsertGoalsPostResponses = {
+export type UpsertGoalResponses = {
     /**
      * Successful Response
      */
     201: GoalSchema;
 };
 
-export type UpsertGoalsPostResponse = UpsertGoalsPostResponses[keyof UpsertGoalsPostResponses];
+export type UpsertGoalResponse = UpsertGoalResponses[keyof UpsertGoalResponses];
 
 export type DeleteDepositIdDeleteData = {
     body?: never;

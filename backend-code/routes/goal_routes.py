@@ -18,18 +18,18 @@ router = APIRouter(
 )
 
 
-@router.get("/count", response_model=int)
+@router.get("/count", response_model=int, operation_id='countGoal')
 def count(active: Annotated[bool, Query()] = True,
           db: Session = Depends(get_db)):
     return goal_service.count_goal(db, active)
 
 
-@router.get("/{id}", response_model=GoalSchema)
+@router.get("/{id}", response_model=GoalSchema, operation_id='getGoal')
 def get(id: uuid.UUID, db: Session = Depends(get_db)):
     return goal_service.get_goal(db, id)
 
 
-@router.get("", response_model=GoalPaginationSchema)
+@router.get("", response_model=GoalPaginationSchema, operation_id='fetchGoals')
 def list(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -42,6 +42,7 @@ def list(
     "",
     response_model=GoalSchema,
     status_code=status.HTTP_201_CREATED,
+    operation_id='upsertGoal'
 )
 def upsert(
     goal: GoalCreateSchema,
@@ -54,7 +55,8 @@ def upsert(
                       amount=0, deadline=new_goal.deadline)
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT,
+               operation_id='deleteGoal')
 def delete(id: uuid.UUID, db: Session = Depends(get_db)):
     goal_service.delete_goal(db, id)
     return None

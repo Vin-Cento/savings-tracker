@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatMoney, formatTimeLocale } from '../composables/format'
-import { fetchGoals, deleteGoal } from "../stores/goalSlice";
+import { fetchGoalsAsync, deleteGoalAsync } from "../stores/goalSlice";
 import { sortingComparison } from "../composables/util";
 import { emptyGoal } from "../constants/defaults";
 
@@ -35,11 +35,11 @@ function GoalManagerPage() {
   const [openDeposit, setOpenDeposit] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchGoals({ page: page, limit: PAGE_SIZE }));
+    dispatch(fetchGoalsAsync({ page: page, limit: PAGE_SIZE }));
   }, [dispatch, page]);
 
   const handleDeleteGoal = (id: string) => {
-    dispatch(deleteGoal(id))
+    dispatch(deleteGoalAsync(id))
   };
 
   const handleEditGoal = (goal: GoalSchema) => {
