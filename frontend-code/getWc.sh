@@ -1,0 +1,1 @@
+find . \( -path './assets' -o -path './node_modules' -o -path './src/client' -o -path './src/api' -o -path './vite.config.ts' -o -path './openapi-ts.config.ts' \) -prune -o -type f \( -name '*.ts' -o -name '*.tsx' \) -print0 | xargs -0 wc -l
