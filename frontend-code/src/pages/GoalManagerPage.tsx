@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { formatMoney, formatTimeLocale } from '../composables/format'
-import { fetchGoalsAsync, deleteGoalAsync } from "../stores/goalSlice";
+import { deleteGoalAsync } from "../stores/goalSlice";
 import { sortingComparison } from "../composables/util";
 import { emptyGoal } from "../constants/defaults";
 
@@ -9,21 +9,23 @@ import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRigh
 import GoalPopUpForm from "../components/GoalPopUpForm"
 import AddDepositPopUpForm from "../components/AddDepositPopUpForm"
 
-import type { RootState, AppDispatch } from "../stores/store";
+import type { AppDispatch } from "../stores/store";
 import type { GoalSchema } from "../client/types.gen";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
 
 
-  const { goals } = useSelector(
-    (state: RootState) => state.goals
-  )
   const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
   const [page, setPage] = useState(1);
 
   let PAGE_SIZE = 15;
+  const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page: page, limit: PAGE_SIZE } }) })
+  const goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
+
   const totalPages = Math.ceil(goals.total / PAGE_SIZE);
   const emptyRows = Math.max(0, PAGE_SIZE - goals.data.length);
 
@@ -33,10 +35,6 @@ function GoalManagerPage() {
 
   const [open, setOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchGoalsAsync({ page: page, limit: PAGE_SIZE }));
-  }, [dispatch, page]);
 
   const handleDeleteGoal = (id: string) => {
     dispatch(deleteGoalAsync(id))
