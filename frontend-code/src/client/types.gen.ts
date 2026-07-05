@@ -81,7 +81,7 @@ export type GoalCreateSchema = {
     /**
      * Id
      */
-    id: number;
+    id: string;
     /**
      * Name
      */
@@ -137,7 +137,7 @@ export type GoalSchema = {
     /**
      * Id
      */
-    id: number;
+    id: string;
     /**
      * Name
      */
@@ -215,23 +215,9 @@ export type ReadRootGetResponses = {
 export type CountGoalsCountGetData = {
     body?: never;
     path?: never;
-    query?: {
-        /**
-         * Active
-         */
-        active?: boolean;
-    };
+    query?: never;
     url: '/goals/count';
 };
-
-export type CountGoalsCountGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CountGoalsCountGetError = CountGoalsCountGetErrors[keyof CountGoalsCountGetErrors];
 
 export type CountGoalsCountGetResponses = {
     /**
@@ -250,7 +236,7 @@ export type DeleteGoalsIdDeleteData = {
         /**
          * Id
          */
-        id: number;
+        id: string;
     };
     query?: never;
     url: '/goals/{id}';
@@ -280,7 +266,7 @@ export type GetGoalsIdGetData = {
         /**
          * Id
          */
-        id: number;
+        id: string;
     };
     query?: never;
     url: '/goals/{id}';

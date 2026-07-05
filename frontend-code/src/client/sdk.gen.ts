@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AddDepositAddPostData, AddDepositAddPostErrors, AddDepositAddPostResponses, CountGoalsCountGetData, CountGoalsCountGetErrors, CountGoalsCountGetResponses, DeleteDepositIdDeleteData, DeleteDepositIdDeleteErrors, DeleteDepositIdDeleteResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, GetDepositIdGetData, GetDepositIdGetErrors, GetDepositIdGetResponses, GetGoalsIdGetData, GetGoalsIdGetErrors, GetGoalsIdGetResponses, ListDepositPostData, ListDepositPostErrors, ListDepositPostResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses, TotalDepositTotalPostData, TotalDepositTotalPostErrors, TotalDepositTotalPostResponses, UpsertGoalsPostData, UpsertGoalsPostErrors, UpsertGoalsPostResponses } from './types.gen';
+import type { AddDepositAddPostData, AddDepositAddPostErrors, AddDepositAddPostResponses, CountGoalsCountGetData, CountGoalsCountGetResponses, DeleteDepositIdDeleteData, DeleteDepositIdDeleteErrors, DeleteDepositIdDeleteResponses, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteErrors, DeleteGoalsIdDeleteResponses, GetDepositIdGetData, GetDepositIdGetErrors, GetDepositIdGetResponses, GetGoalsIdGetData, GetGoalsIdGetErrors, GetGoalsIdGetResponses, ListDepositPostData, ListDepositPostErrors, ListDepositPostResponses, ListGoalsGetData, ListGoalsGetErrors, ListGoalsGetResponses, ReadRootGetData, ReadRootGetResponses, TotalDepositTotalPostData, TotalDepositTotalPostErrors, TotalDepositTotalPostResponses, UpsertGoalsPostData, UpsertGoalsPostErrors, UpsertGoalsPostResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -26,7 +26,7 @@ export const readRootGet = <ThrowOnError extends boolean = false>(options?: Opti
 /**
  * Count
  */
-export const countGoalsCountGet = <ThrowOnError extends boolean = false>(options?: Options<CountGoalsCountGetData, ThrowOnError>) => (options?.client ?? client).get<CountGoalsCountGetResponses, CountGoalsCountGetErrors, ThrowOnError>({ url: '/goals/count', ...options });
+export const countGoalsCountGet = <ThrowOnError extends boolean = false>(options?: Options<CountGoalsCountGetData, ThrowOnError>) => (options?.client ?? client).get<CountGoalsCountGetResponses, unknown, ThrowOnError>({ url: '/goals/count', ...options });
 
 /**
  * Delete

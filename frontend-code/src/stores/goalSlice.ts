@@ -35,7 +35,7 @@ export const fetchGoals = createAsyncThunk<
     }
   );
 
-export const deleteGoal = createAsyncThunk<number, number>(
+export const deleteGoal = createAsyncThunk<string, string>(
   "goals/deleteGoal",
   async (id) => {
     const { error } = await deleteGoalsIdDelete({

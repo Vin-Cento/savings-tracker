@@ -1,4 +1,5 @@
 from typing import List, Optional
+import uuid
 
 from fastapi import HTTPException, status
 from sqlalchemy import func
@@ -9,7 +10,7 @@ from schema.goal_schema import GoalCreateSchema, GoalSchema
 from sqlalchemy import delete as sqlalchemy_delete
 
 
-def get(db: Session, goal_id: int) -> Optional[GoalSchema]:
+def get(db: Session, goal_id: uuid.UUID) -> Optional[GoalSchema]:
     row = (
         db.query(
             Goal.id.label("id"),
@@ -53,8 +54,8 @@ def list(db: Session, page: int, limit: int) -> List[GoalSchema]:
     return result
 
 
-def count(active: bool, db: Session) -> int:
-    return db.query(Goal).filter(Goal.active == active).count()
+def count(db: Session) -> int:
+    return db.query(Goal).count()
 
 
 def create(db: Session, goal: GoalCreateSchema):

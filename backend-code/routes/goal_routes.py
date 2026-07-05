@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -16,12 +18,12 @@ router = APIRouter(
 
 
 @router.get("/count", response_model=int)
-def count(active: bool = True, db: Session = Depends(get_db)):
-    return goal_service.count_goal(active, db)
+def count(db: Session = Depends(get_db)):
+    return goal_service.count_goal(db)
 
 
 @router.get("/{id}", response_model=GoalSchema)
-def get(id: int, db: Session = Depends(get_db)):
+def get(id: uuid.UUID, db: Session = Depends(get_db)):
     return goal_service.get_goal(db, id)
 
 
@@ -51,6 +53,6 @@ def upsert(
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(id: int, db: Session = Depends(get_db)):
+def delete(id: uuid.UUID, db: Session = Depends(get_db)):
     goal_service.delete_goal(db, id)
     return None

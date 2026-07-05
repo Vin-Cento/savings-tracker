@@ -1,7 +1,7 @@
 import type { DepositSchema, GoalSchema } from "../client/types.gen.ts";
 
 export const emptyGoal: GoalSchema = {
-  id: -1, name: '', target: 0, active: true, deadline: null, createdAt: new Date().toISOString()
+  id: "f84f6b2d-e443-4206-bde2-e64357201a57", name: '', target: 0, active: true, deadline: null, createdAt: new Date().toISOString(), amount: 0,
 };
 
 export const emptyDeposit: DepositSchema = {

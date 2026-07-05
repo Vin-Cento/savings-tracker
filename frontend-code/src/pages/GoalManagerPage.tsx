@@ -38,7 +38,7 @@ function GoalManagerPage() {
     dispatch(fetchGoals({ page: page, limit: PAGE_SIZE }));
   }, [dispatch, page]);
 
-  const handleDeleteGoal = (id: number) => {
+  const handleDeleteGoal = (id: string) => {
     dispatch(deleteGoal(id))
   };
 

@@ -4,7 +4,7 @@ import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOption
 
 import { client } from '../client.gen';
 import { addDepositAddPost, countGoalsCountGet, deleteDepositIdDelete, deleteGoalsIdDelete, getDepositIdGet, getGoalsIdGet, listDepositPost, listGoalsGet, type Options, readRootGet, totalDepositTotalPost, upsertGoalsPost } from '../sdk.gen';
-import type { AddDepositAddPostData, AddDepositAddPostError, AddDepositAddPostResponse, CountGoalsCountGetData, CountGoalsCountGetError, CountGoalsCountGetResponse, DeleteDepositIdDeleteData, DeleteDepositIdDeleteError, DeleteDepositIdDeleteResponse, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteError, DeleteGoalsIdDeleteResponse, GetDepositIdGetData, GetDepositIdGetError, GetDepositIdGetResponse, GetGoalsIdGetData, GetGoalsIdGetError, GetGoalsIdGetResponse, ListDepositPostData, ListDepositPostError, ListDepositPostResponse, ListGoalsGetData, ListGoalsGetError, ListGoalsGetResponse, ReadRootGetData, TotalDepositTotalPostData, TotalDepositTotalPostError, TotalDepositTotalPostResponse, UpsertGoalsPostData, UpsertGoalsPostError, UpsertGoalsPostResponse } from '../types.gen';
+import type { AddDepositAddPostData, AddDepositAddPostError, AddDepositAddPostResponse, CountGoalsCountGetData, CountGoalsCountGetResponse, DeleteDepositIdDeleteData, DeleteDepositIdDeleteError, DeleteDepositIdDeleteResponse, DeleteGoalsIdDeleteData, DeleteGoalsIdDeleteError, DeleteGoalsIdDeleteResponse, GetDepositIdGetData, GetDepositIdGetError, GetDepositIdGetResponse, GetGoalsIdGetData, GetGoalsIdGetError, GetGoalsIdGetResponse, ListDepositPostData, ListDepositPostError, ListDepositPostResponse, ListGoalsGetData, ListGoalsGetError, ListGoalsGetResponse, ReadRootGetData, TotalDepositTotalPostData, TotalDepositTotalPostError, TotalDepositTotalPostResponse, UpsertGoalsPostData, UpsertGoalsPostError, UpsertGoalsPostResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -62,7 +62,7 @@ export const countGoalsCountGetQueryKey = (options?: Options<CountGoalsCountGetD
 /**
  * Count
  */
-export const countGoalsCountGetOptions = (options?: Options<CountGoalsCountGetData>) => queryOptions<CountGoalsCountGetResponse, CountGoalsCountGetError, CountGoalsCountGetResponse, ReturnType<typeof countGoalsCountGetQueryKey>>({
+export const countGoalsCountGetOptions = (options?: Options<CountGoalsCountGetData>) => queryOptions<CountGoalsCountGetResponse, DefaultError, CountGoalsCountGetResponse, ReturnType<typeof countGoalsCountGetQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await countGoalsCountGet({
             ...options,

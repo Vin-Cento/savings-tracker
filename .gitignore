@@ -46,3 +46,4 @@ Thumbs.db
 /backend-code/routes/__pycache__
 /backend-code/services/__pycache__
 /backend-code/tests/__pycache__
+/backend-code/migrations/versions

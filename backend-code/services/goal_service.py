@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from schema.goal_schema import (GoalCreateSchema,
@@ -6,7 +8,7 @@ from schema.goal_schema import (GoalCreateSchema,
 from repositories import goal_repository
 
 
-def get_goal(db: Session, goal_id: int):
+def get_goal(db: Session, goal_id: uuid.UUID):
     goal = goal_repository.get(db, goal_id)
 
     if not goal:
@@ -19,7 +21,7 @@ def get_goal(db: Session, goal_id: int):
 
 
 def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
-    total = goal_repository.count(active=True, db=db)
+    total = goal_repository.count(db=db)
     goals = goal_repository.list(db, page, limit)
 
     goals_schema = [GoalSchema.model_validate(item) for item in goals]
@@ -32,13 +34,15 @@ def list_goal(db: Session, page: int, limit: int) -> GoalPaginationSchema:
     )
 
 
-def count_goal(active: bool, db: Session) -> int:
-    result = goal_repository.count(active, db)
+def count_goal(db: Session) -> int:
+    result = goal_repository.count(db)
     return result
 
 
 def upsert_goal(db: Session, goal: GoalCreateSchema):
-    if goal.id == -1:
+    print('upsert goal')
+    if goal.id == uuid.UUID('f84f6b2d-e443-4206-bde2-e64357201a57'):
+        print('creating goal')
         return goal_repository.create(db, goal)
 
     new_goal = goal_repository.update(db, goal)
@@ -49,7 +53,7 @@ def upsert_goal(db: Session, goal: GoalCreateSchema):
                       createdAt=new_goal.createdAt)
 
 
-def delete_goal(db: Session, goal_id: int):
+def delete_goal(db: Session, goal_id: uuid.UUID):
     goal = goal_repository.get(db, goal_id)
 
     if not goal:

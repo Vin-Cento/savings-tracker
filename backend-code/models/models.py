@@ -2,14 +2,17 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 from sqlalchemy import (
+    UUID,
     Boolean,
     Text,
     BigInteger,
     DateTime,
     ForeignKey,
     func,
+    text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+import uuid
 
 
 class Base(DeclarativeBase):
@@ -20,7 +23,11 @@ class Base(DeclarativeBase):
 
 class Goal(Base):
     __tablename__ = "goals"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+    )
     name: Mapped[str] = mapped_column(
         Text, unique=True, index=True, nullable=False)
     target: Mapped[int] = mapped_column(BigInteger)
@@ -39,7 +46,11 @@ class Goal(Base):
 
 class Deposit(Base):
     __tablename__ = "deposits"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+    )
     amount: Mapped[int] = mapped_column(BigInteger)
     note: Mapped[str | None] = mapped_column(
         Text, nullable=True)

@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+import uuid
 from pydantic import BaseModel, ConfigDict
 from schema.base_schema import (
     SchemaModel,
@@ -9,7 +10,7 @@ from schema.base_schema import (
 
 # Pydantic schema for Goal
 class GoalSchema(SchemaModel):
-    id: int
+    id: uuid.UUID
     name: str
     target: int
     active: bool
@@ -23,7 +24,7 @@ class GoalPaginationSchema(Pagination):
 
 
 class GoalCreateSchema(BaseModel):
-    id: int
+    id: uuid.UUID
     name: str
     target: int
     active: Optional[bool] = True
