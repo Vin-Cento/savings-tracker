@@ -51,7 +51,6 @@ function GoalManagerPage() {
     attr: string; direction: 'asc' | 'desc' | null;
   } | null>(null);
 
-  const [open, setOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
 
   const handleDeleteGoal = (id: string) => {
