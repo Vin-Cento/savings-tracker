@@ -12,15 +12,19 @@ import {
   fetchGoalsOptions,
   deleteGoalMutation,
 } from "../client/@tanstack/react-query.gen";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../stores/store";
+import { openAddGoalPopup } from "../stores/popupSlice";
+import { setGoal } from "../stores/goalSlice";
 
 function GoalManagerPage() {
+  const dispatch = useDispatch<AppDispatch>();
   let PAGE_SIZE = 10;
 
   const queryClient = useQueryClient();
 
   const deleteGoal = useMutation({
     ...deleteGoalMutation(),
-
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: fetchGoalsOptions({
@@ -55,8 +59,8 @@ function GoalManagerPage() {
   };
 
   const handleEditGoal = (goal: GoalSchema) => {
-    setOpen(true);
-    setGoalSelected(goal);
+    dispatch(setGoal({ goal: goal }))
+    dispatch(openAddGoalPopup())
   }
 
   const handleDeposit = (goal: GoalSchema) => {
@@ -121,28 +125,15 @@ function GoalManagerPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="sticky top-0 z-30 h-14 bg-zinc-950 flex items-center">
           <div className="flex text-black w-3/5 m-auto">
-            <div className="flex w-4/5">
+            <div className="flex w-full">
               <input
                 type="text"
                 className="text-black rounded-l-xl bg-amber-50 w-full focus:outline-none pl-4"
               />
-
-              <button className="bg-amber-50 hover:text-black rounded-r-lg p-2">
+              <button className="bg-amber-50 hover:text-black rounded-r-xl p-2">
                 <FaSearch />
               </button>
             </div>
-
-            <div className="flex-1" />
-
-            <button
-              className="p-1 rounded-xl bg-green-500 font-bold"
-              onClick={() => {
-                setOpen(true);
-                setGoalSelected(emptyGoal);
-              }}
-            >
-              Create Goal
-            </button>
           </div>
         </div>
 
@@ -275,7 +266,7 @@ function GoalManagerPage() {
         </table>
       </main>
 
-      <GoalPopUpForm open={open} setOpen={setOpen} goal={goalSelected} />
+      <GoalPopUpForm />
       <AddDepositPopUpForm open={openDeposit} setOpen={setOpenDeposit} goal={goalSelected} />
     </>
   );

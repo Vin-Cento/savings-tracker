@@ -1,12 +1,12 @@
 import type {
-  Dispatch,
   ReactNode,
-  SetStateAction,
 } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../stores/store";
+import { closePopup } from "../stores/popupSlice";
 
 type PopupFormProps = {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void | Promise<void>;
   children: ReactNode;
   submitLabel?: string;
@@ -14,17 +14,18 @@ type PopupFormProps = {
 
 function PopUpForm({
   open,
-  setOpen,
   onSubmit,
   children,
   submitLabel = "Submit",
 }: PopupFormProps) {
+
   if (!open) return null;
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <div
       className="fixed inset-0 z-50 bg-black/50"
-      onClick={() => setOpen(false)}
+      onClick={() => dispatch(closePopup())}
     >
       <div className="flex h-full items-center justify-center">
         <div

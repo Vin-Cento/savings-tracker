@@ -9,6 +9,15 @@ function Navbar() {
           <img src={logoImage} alt="logo" />
         </Link>
       </li>
+      <div className="flex-1" />
+      <button
+        className="pl-2 pr-2 p-1 m-2 bg-green-500 text-black rounded-xl font-bold"
+        onClick={() => {
+          console.log('create goal')
+        }}
+      >
+        Create Goal
+      </button>
     </nav>
   )
 }
