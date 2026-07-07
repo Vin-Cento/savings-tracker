@@ -1,20 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { DepositCreateSchema, GoalSchema } from "../client";
+import type { DepositCreateSchema } from "../client";
 import {
   addDepositMutation,
   fetchGoalsQueryKey,
   fetchDepositsQueryKey,
 } from "../client/@tanstack/react-query.gen";
+import { closePopup } from "../stores/popupSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../stores/store";
+import PopUpForm from "./PopUpForm";
 
-type DepositPopUpFormProps = {
-  open: boolean;
-  goal: GoalSchema;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+function AddDepositPopUpForm() {
+  const dispatch = useDispatch<AppDispatch>();
 
-function AddDepositPopUpForm({ open, goal, setOpen }: DepositPopUpFormProps) {
   const queryClient = useQueryClient();
-
   const addDepositMutationResult = useMutation({
     ...addDepositMutation(),
     onSuccess: () => {
@@ -26,14 +25,12 @@ function AddDepositPopUpForm({ open, goal, setOpen }: DepositPopUpFormProps) {
         queryKey: fetchDepositsQueryKey(),
       });
 
-      setOpen(false);
+      dispatch(closePopup())
     },
     onError: (error) => {
       console.error(error);
     },
   });
-
-  if (!open) return null;
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,55 +64,45 @@ function AddDepositPopUpForm({ open, goal, setOpen }: DepositPopUpFormProps) {
     });
   };
 
+  const { popup } = useSelector(
+    (state: RootState) => state.popup
+  );
+
+  const { goal } = useSelector(
+    (state: RootState) => state.goal
+  );
+
+  if (!open) return null;
+
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/50"
-      onClick={() => setOpen(false)}
-    >
-      <div className="flex h-full items-center justify-center">
-        <div
-          className="rounded-lg bg-amber-600 p-10"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="amount" className="block mb-2">
-              Deposit:
-            </label>
+    <PopUpForm open={popup == 'addDeposit'} onSubmit={handleSubmit}>
+      <label htmlFor="amount" className="block mb-2">
+        Deposit:
+      </label>
 
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              defaultValue={0}
-              className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
-              placeholder="Enter deposit amount"
-              required
-            />
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        defaultValue={0}
+        className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
+        placeholder="Enter deposit amount"
+        required
+      />
 
-            <label htmlFor="note" className="block mb-2">
-              Notes:
-            </label>
+      <label htmlFor="note" className="block mb-2">
+        Notes:
+      </label>
 
-            <textarea
-              className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block"
-              id="note"
-              name="note"
-              rows={4}
-              cols={50}
-              placeholder="Enter your note here..."
-            />
-
-            <button
-              type="submit"
-              className="bg-green-400 p-2 rounded-lg text-black"
-              disabled={addDepositMutationResult.isPending}
-            >
-              {addDepositMutationResult.isPending ? "Submitting..." : "Submit"}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+      <textarea
+        className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block"
+        id="note"
+        name="note"
+        rows={4}
+        cols={50}
+        placeholder="Enter your note here..."
+      />
+    </PopUpForm >
   );
 }
 

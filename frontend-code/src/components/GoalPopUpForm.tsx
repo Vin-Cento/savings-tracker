@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import PopupForm from "./PopUpForm";
+import PopUpForm from "./PopUpForm";
 import type { GoalCreateSchema } from "../client";
 import { upsertGoalMutation, fetchGoalsQueryKey } from "../client/@tanstack/react-query.gen";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,10 +7,9 @@ import type { AppDispatch, RootState } from "../stores/store";
 import { closePopup, openAddGoalPopup } from "../stores/popupSlice";
 
 function GoalPopUpMenu() {
-  const queryClient = useQueryClient();
-
   const dispatch = useDispatch<AppDispatch>();
 
+  const queryClient = useQueryClient();
   const upsertGoal = useMutation({
     ...upsertGoalMutation(),
     onSuccess: () => {
@@ -62,7 +61,7 @@ function GoalPopUpMenu() {
   );
 
   return (
-    <PopupForm open={popup == 'addGoal'} onSubmit={handleSubmit}>
+    <PopUpForm open={popup == 'addGoal'} onSubmit={handleSubmit}>
       <label htmlFor="name" className="block mb-2">
         Name:
       </label>
@@ -103,7 +102,7 @@ function GoalPopUpMenu() {
             : ""
         }
       />
-    </PopupForm>
+    </PopUpForm>
   );
 }
 

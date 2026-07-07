@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { formatMoney, formatTimeLocale } from '../composables/format'
 import { sortingComparison } from "../composables/util";
-import { emptyGoal } from "../constants/defaults";
 import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaPiggyBank, FaSearch } from "react-icons/fa";
 import GoalPopUpForm from "../components/GoalPopUpForm"
 import AddDepositPopUpForm from "../components/AddDepositPopUpForm"
@@ -14,7 +13,7 @@ import {
 } from "../client/@tanstack/react-query.gen";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../stores/store";
-import { openAddGoalPopup } from "../stores/popupSlice";
+import { openAddDepositPopup, openAddGoalPopup } from "../stores/popupSlice";
 import { setGoal } from "../stores/goalSlice";
 
 function GoalManagerPage() {
@@ -38,7 +37,6 @@ function GoalManagerPage() {
   });
 
 
-  const [goalSelected, setGoalSelected] = useState<GoalSchema>(emptyGoal);
   const [page, setPage] = useState(1);
 
   const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page: page, limit: PAGE_SIZE } }) })
@@ -51,8 +49,6 @@ function GoalManagerPage() {
     attr: string; direction: 'asc' | 'desc' | null;
   } | null>(null);
 
-  const [openDeposit, setOpenDeposit] = useState(false);
-
   const handleDeleteGoal = (id: string) => {
     deleteGoal.mutate({ path: { id, }, });
   };
@@ -63,8 +59,8 @@ function GoalManagerPage() {
   }
 
   const handleDeposit = (goal: GoalSchema) => {
-    setOpenDeposit(true);
-    setGoalSelected(goal);
+    dispatch(setGoal({ goal: goal }))
+    dispatch(openAddDepositPopup())
   }
 
   const handleSort = (attr: string) => {
@@ -266,7 +262,7 @@ function GoalManagerPage() {
       </main>
 
       <GoalPopUpForm />
-      <AddDepositPopUpForm open={openDeposit} setOpen={setOpenDeposit} goal={goalSelected} />
+      <AddDepositPopUpForm />
     </>
   );
 }
