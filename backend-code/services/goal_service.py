@@ -47,6 +47,7 @@ def upsert_goal(db: Session, goal: GoalCreateSchema):
     return GoalSchema(id=new_goal.id, name=new_goal.name,
                       target=new_goal.target, active=new_goal.active,
                       amount=goal.amount,
+                      completed=new_goal.completed,
                       deadline=new_goal.deadline,
                       createdAt=new_goal.createdAt)
 

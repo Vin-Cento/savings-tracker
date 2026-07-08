@@ -14,6 +14,7 @@ class GoalSchema(SchemaModel):
     name: str
     target: int
     active: bool
+    completed: bool
     amount: int
     deadline: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
@@ -28,5 +29,6 @@ class GoalCreateSchema(BaseModel):
     name: str
     target: int
     active: Optional[bool] = True
+    completed: Optional[bool] = False
     amount: int = 0
     deadline: Optional[datetime] = None

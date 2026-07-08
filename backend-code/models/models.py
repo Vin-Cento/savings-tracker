@@ -33,6 +33,8 @@ class Goal(Base):
     target: Mapped[int] = mapped_column(BigInteger)
     active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default='true')
+    completed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default='false')
     deadline: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
         nullable=True

@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 import uuid
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, select
+from sqlalchemy import Row, func, select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import and_
 
@@ -18,6 +18,7 @@ def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
             Goal.name.label("name"),
             Goal.target.label("target"),
             Goal.active.label("active"),
+            Goal.completed.label("completed"),
             func.coalesce(func.sum(Deposit.amount), 0).label("amount"),
             Goal.deadline.label("deadline"),
             Goal.createdAt.label("createdAt"),
@@ -37,12 +38,13 @@ def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
 
 
 def fetch(db: Session, page: int, limit: int) -> List[GoalSchema]:
-    rows = (
+    rows: list[Row] = (
         db.query(
             Goal.id.label("id"),
             Goal.name.label("name"),
             Goal.target.label("target"),
             Goal.active.label("active"),
+            Goal.completed.label("completed"),
             func.coalesce(func.sum(Deposit.amount), 0).label("amount"),
             Goal.deadline.label("deadline"),
             Goal.createdAt.label("createdAt"),
@@ -101,8 +103,8 @@ def update(db: Session, goal: GoalCreateSchema):
         )
 
     db_goal.name = goal.name
-    db_goal.target = goal.target
     db_goal.deadline = goal.deadline
+    db_goal.target = goal.target
 
     db.commit()
     db.refresh(db_goal)

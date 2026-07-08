@@ -52,6 +52,7 @@ def upsert(
     return GoalSchema(id=new_goal.id, createdAt=new_goal.createdAt,
                       name=new_goal.name, target=new_goal.target,
                       active=new_goal.active,
+                      completed=new_goal.completed,
                       amount=0, deadline=new_goal.deadline)
 
 

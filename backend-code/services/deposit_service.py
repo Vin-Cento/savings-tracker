@@ -50,8 +50,13 @@ def add_deposit(db: Session, deposit: DepositCreateSchema):
     goal = goal_repository.get(db, deposit.goal_id)
     remaining = goal.target - goal.amount - deposit.amount
     if remaining >= 0:
+        if remaining == 0:
+            # goal_schema = GoalCreateSchema(id=goal.id)
+            # goal_repository.update()
+            pass
         res = deposit_repository.add(db, deposit)
     else:
+        # remainder is always negative so we are adding
         deposit.amount = deposit.amount + remaining
         res = deposit_repository.add(db, deposit)
     return res
