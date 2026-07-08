@@ -6,6 +6,11 @@ import { countGoalOptions, fetchDepositsOptions, fetchGoalsOptions } from "../cl
 import { FaSort } from "react-icons/fa";
 import { FaSliders } from "react-icons/fa6";
 import { page, limit, gridPositions } from "./HomePage/constant"
+import GoalPopUpMenu from "../components/GoalPopUpForm";
+import type { GoalSchema } from "../client";
+import { useState } from "react";
+import { getNextSortConfig, sortByConfig, type SortConfig } from "../composables/sortUtil";
+import { sortingComparison } from "../composables/util";
 
 function calculateProgressPercent(amount: number, target: number): number {
   if (target <= 0) return 100;
@@ -19,7 +24,7 @@ function HomePage() {
   };
 
   const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page, limit }, }) });
-  const goals = goalsQuery.data
+  const goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
 
   const activeCountQuery = useQuery({ ...countGoalOptions({ query: { 'active': true } }) })
   const activeCount = activeCountQuery.data
@@ -31,6 +36,20 @@ function HomePage() {
   const deposit = depositQuery.data?.data
   let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
 
+  const [sortConfig, setSortConfig] = useState<SortConfig<GoalSchema>>(null);
+
+  const handleSort = (attr: keyof GoalSchema) => {
+    setSortConfig((currentSortConfig) =>
+      getNextSortConfig(currentSortConfig, attr)
+    );
+  };
+
+  const sortedGoals = sortByConfig(
+    goals.data,
+    sortConfig,
+    sortingComparison
+  );
+  const [showFilters, setShowFilters] = useState(false);
   return (
     <>
       <main className="overflow-auto min-w-6xl max-w-7xl ml-auto mr-auto">
@@ -69,12 +88,40 @@ function HomePage() {
         <div className="flex gap-x-2 m-2 mt-9">
           <h1 className="font-extrabold text-2xl">Your goals</h1>
           <div className="flex-1" />
-          <button className="bg-zinc-700 pl-4 pr-4 pt-1 pb-1 rounded-xl">
-            <div className="flex items-center">
-              <FaSliders className="mr-2" />
-              Filters
-            </div>
-          </button>
+          <div className="relative">
+            <button className="bg-zinc-700 pl-4 pr-4 pt-1 pb-1 rounded-xl"
+              onClick={() => setShowFilters((prev) => !prev)}
+            >
+              <div className="flex items-center">
+                <FaSliders className="mr-2" />
+                Filters
+              </div>
+            </button>
+
+            {showFilters && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50">
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Active Goals
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Completed Goals
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Due This Month
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Overdue
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Progress &gt; 50%
+                </button>
+              </div>
+            )}
+          </div>
           <button className="bg-zinc-700 pl-4 pr-4 rounded-xl">
             <div className="flex items-center">
               <FaSort className="mr-2" />
@@ -84,28 +131,35 @@ function HomePage() {
         </div>
         <div className="grid grid-cols-3 gap-2 w-full">
           {Array.isArray(goals?.data) && goals.data.length > 0 ? (
-            goals.data.map((goal, index) => (
+            sortedGoals.map((goal, index) => (
               <div
                 key={goal.id}
                 className={`${getGridPositionClass(index)} bg-zinc-700 flex font-bold border border-gray-700 p-2 rounded-2xl`}
               >
                 <div className="w-full p-3 flex flex-col h-full">
                   <h3 className="text-xl font-bold m-2">{goal.name}</h3>
-                  {/* have this fill the empty space */}
+
+                  {/* fills empty space */}
                   <div className="flex-1" />
-                  <h3 className="text-4xl m-2">{`${calculateProgressPercent(goal.amount, goal.target)}%`}</h3>
+
+                  <h3 className="text-4xl m-2">
+                    {`${calculateProgressPercent(goal.amount, goal.target)}%`}
+                  </h3>
 
                   <div className="w-full m-2 bg-zinc-600 rounded-2xl">
-                    <div className={`h-5 bg-amber-600 rounded-2xl`}
+                    <div
+                      className="h-5 bg-amber-600 rounded-2xl"
                       style={{
                         width: `${calculateProgressPercent(goal.amount, goal.target)}%`,
                       }}
                     />
                   </div>
+
                   <div className="flex">
                     <p className="m-2">
                       ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
                     </p>
+
                     <p className="m-2">
                       {goal.deadline
                         ? `Due ${new Date(goal.deadline).toLocaleDateString("en-GB", {
@@ -124,6 +178,7 @@ function HomePage() {
           )}
         </div>
       </main >
+      <GoalPopUpMenu />
     </>
   );
 }

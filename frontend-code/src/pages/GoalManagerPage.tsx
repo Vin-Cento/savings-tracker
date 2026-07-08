@@ -15,6 +15,11 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../stores/store";
 import { openAddDepositPopup, openAddGoalPopup } from "../stores/popupSlice";
 import { setGoal } from "../stores/goalSlice";
+import {
+  getNextSortConfig,
+  sortByConfig,
+  type SortConfig,
+} from "../composables/sortUtil";
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,9 +50,7 @@ function GoalManagerPage() {
   const totalPages = Math.ceil(goals.total / PAGE_SIZE);
   const emptyRows = Math.max(0, PAGE_SIZE - goals.data.length);
 
-  const [sortConfig, setSortConfig] = useState<{
-    attr: string; direction: 'asc' | 'desc' | null;
-  } | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig<GoalSchema>>(null);
 
   const handleDeleteGoal = (id: string) => {
     deleteGoal.mutate({ path: { id, }, });
@@ -63,37 +66,20 @@ function GoalManagerPage() {
     dispatch(openAddDepositPopup())
   }
 
-  const handleSort = (attr: string) => {
-    let direction: "asc" | "desc" | null = "asc";
-
-    if (sortConfig?.attr === attr) {
-      if (sortConfig.direction === "asc") direction = "desc";
-      else if (sortConfig.direction === "desc") direction = null;
-      else direction = "asc";
-    }
-
-    setSortConfig({ attr, direction });
+  const handleSort = (attr: keyof GoalSchema) => {
+    setSortConfig((currentSortConfig) =>
+      getNextSortConfig(currentSortConfig, attr)
+    );
   };
 
-  const sortedGoals = [...goals.data].sort((a, b) => {
-    if (!sortConfig || sortConfig.direction === null) return 0; // No sorting
-
-    const attr = sortConfig.attr as keyof typeof a;
-
-    const aValue = a[attr];
-    const bValue = b[attr];
-
-    if (aValue == null && bValue == null) return 0;
-    if (aValue == null) return 1;
-    if (bValue == null) return -1;
-
-    let comparison = sortingComparison(aValue, bValue)
-
-    return sortConfig.direction === "asc" ? -comparison : comparison;
-  });
+  const sortedGoals = sortByConfig(
+    goals.data,
+    sortConfig,
+    sortingComparison
+  );
 
 
-  const SortIcon = ({ attr }: { attr: string }) => {
+  const SortIcon = ({ attr }: { attr: keyof GoalSchema }) => {
     if (sortConfig?.attr !== attr || sortConfig.direction === null) {
       return <FaSort className="text-sm" />;
     }
