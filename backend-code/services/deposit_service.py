@@ -8,6 +8,7 @@ from repositories import deposit_repository, goal_repository
 from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
+from schema.goal_schema import GoalCreateSchema
 
 
 def get_deposit(db: Session, id: uuid.UUID):
@@ -51,9 +52,16 @@ def add_deposit(db: Session, deposit: DepositCreateSchema):
     remaining = goal.target - goal.amount - deposit.amount
     if remaining >= 0:
         if remaining == 0:
-            # goal_schema = GoalCreateSchema(id=goal.id)
-            # goal_repository.update()
-            pass
+            goal = goal_repository.get(db, deposit.goal_id)
+            goal_schema = (
+                GoalCreateSchema(
+                    id=goal.id,
+                    name=goal.name,
+                    target=goal.target,
+                    completed=True
+                )
+            )
+            goal_repository.update(db, goal_schema)
         res = deposit_repository.add(db, deposit)
     else:
         # remainder is always negative so we are adding

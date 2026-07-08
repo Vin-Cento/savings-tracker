@@ -72,3 +72,71 @@ def test_list_goals():
     assert delete_response.status_code in [200, 204]
     get_response = client.get(f"/goals/{create_data['id']}")
     assert get_response.status_code == 404
+
+
+def test_add_deposit():
+    goal_payload = {
+        "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
+        "name": generate_random_string(10),
+        "target": 1000,
+        "deadline": None,
+    }
+
+    goal_res = client.post("/goals", json=goal_payload)
+    assert goal_res.status_code == 201
+
+    goal = goal_res.json()
+
+    deposit_payload = {
+        "amount": 250,
+        "note": "first deposit",
+        "goal_id": goal["id"],
+    }
+
+    res = client.post("/deposits/add", json=deposit_payload)
+
+    assert res.status_code == 200
+
+    data = res.json()
+
+    assert data["amount"] == 250
+    assert data["note"] == "first deposit"
+    assert data["goal_id"] == goal["id"]
+    assert "id" in data
+    assert "createdAt" in data
+
+
+def test_max_out_deposit():
+    goal_payload = {
+        "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
+        "name": generate_random_string(10),
+        "target": 1000,
+        "deadline": None,
+    }
+
+    goal_res = client.post("/goals", json=goal_payload)
+    assert goal_res.status_code == 201
+
+    goal = goal_res.json()
+
+    deposit_payload = {
+        "amount": 10000,
+        "note": "first deposit",
+        "goal_id": goal["id"],
+    }
+
+    res = client.post("/deposits/add", json=deposit_payload)
+
+    assert res.status_code == 200
+
+    data = res.json()
+
+    assert data["amount"] == 250
+    assert data["note"] == "first deposit"
+    assert data["goal_id"] == goal["id"]
+    assert "id" in data
+    assert "createdAt" in data
+
+    get_response = client.get(f"/goals/{data['id']}")
+    goal = get_response.json()
+    assert goal.amount == goal.target
