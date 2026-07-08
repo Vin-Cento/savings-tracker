@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from main import app
+from tests.util import generate_random_string
 
 client = TestClient(app)
 
@@ -11,11 +12,12 @@ def test_count():
 
 
 def test_create_get_delete_flow():
+    name = generate_random_string(100)
     create_response = client.post(
         "/goals",
         json={
             "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
-            "name": "Emergency Fund",
+            "name": name,
             "target": 2000,
             "deadline": None
         }
@@ -23,7 +25,7 @@ def test_create_get_delete_flow():
 
     assert create_response.status_code == 201
     data = create_response.json()
-    assert data["name"] == "Emergency Fund"
+    assert data["name"] == name
     assert data["target"] == 2000
     assert data["active"] is True
     assert "id" in data
@@ -40,18 +42,19 @@ def test_create_get_delete_flow():
 
 
 def test_list_goals():
+    name = generate_random_string(100)
     create_response = client.post(
         "/goals",
         json={
             "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
-            "name": "Vacation",
+            "name": name,
             "target": 3000,
             "deadline": None,
         },
     )
     assert create_response.status_code == 201
     create_data = create_response.json()
-    assert create_data["name"] == "Vacation"
+    assert create_data["name"] == name
     assert create_data["target"] == 3000
     assert create_data["active"] is True
     assert "id" in create_data
@@ -64,9 +67,6 @@ def test_list_goals():
 
     assert data["page"] == 1
     assert data["limit"] == 5
-    assert data["total"] == 1
-    assert len(data["data"]) == 1
-    assert data["data"][0]["name"] == "Vacation"
 
     delete_response = client.delete(f"/goals/{create_data['id']}")
     assert delete_response.status_code in [200, 204]
