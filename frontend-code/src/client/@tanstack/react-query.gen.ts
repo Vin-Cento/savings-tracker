@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { addDeposit, countGoal, deleteDepositIdDelete, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDepositTotalPost, upsertGoal } from '../sdk.gen';
-import type { AddDepositData, AddDepositError, AddDepositResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositIdDeleteData, DeleteDepositIdDeleteError, DeleteDepositIdDeleteResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositTotalPostData, TotalDepositTotalPostError, TotalDepositTotalPostResponse, UpsertGoalData, UpsertGoalError, UpsertGoalResponse } from '../types.gen';
+import { addDeposit, countGoal, deleteDeposit, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDeposit, upsertGoal } from '../sdk.gen';
+import type { AddDepositData, AddDepositError, AddDepositResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositData, DeleteDepositError, DeleteDepositResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositData, TotalDepositError, TotalDepositResponse, UpsertGoalData, UpsertGoalError, UpsertGoalResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -239,22 +239,22 @@ export const upsertGoalMutation = (options?: Partial<Options<UpsertGoalData>>): 
     return mutationOptions;
 };
 
-export const deleteDepositIdDeleteMutationKey = (options?: Partial<Options<DeleteDepositIdDeleteData>>) => createMutationKey('deleteDepositIdDelete', options);
+export const deleteDepositMutationKey = (options?: Partial<Options<DeleteDepositData>>) => createMutationKey('deleteDeposit', options);
 
 /**
  * Delete
  */
-export const deleteDepositIdDeleteMutation = (options?: Partial<Options<DeleteDepositIdDeleteData>>): UseMutationOptions<DeleteDepositIdDeleteResponse, DeleteDepositIdDeleteError, Options<DeleteDepositIdDeleteData>> => {
-    const mutationOptions: UseMutationOptions<DeleteDepositIdDeleteResponse, DeleteDepositIdDeleteError, Options<DeleteDepositIdDeleteData>> = {
+export const deleteDepositMutation = (options?: Partial<Options<DeleteDepositData>>): UseMutationOptions<DeleteDepositResponse, DeleteDepositError, Options<DeleteDepositData>> => {
+    const mutationOptions: UseMutationOptions<DeleteDepositResponse, DeleteDepositError, Options<DeleteDepositData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await deleteDepositIdDelete({
+            const { data } = await deleteDeposit({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
             });
             return data;
         },
-        mutationKey: deleteDepositIdDeleteMutationKey(options)
+        mutationKey: deleteDepositMutationKey(options)
     };
     return mutationOptions;
 };
@@ -345,22 +345,22 @@ export const fetchDepositsInfiniteOptions = (options?: Options<FetchDepositsData
     return opts as Omit<typeof opts, 'initialData'>;
 };
 
-export const totalDepositTotalPostMutationKey = (options?: Partial<Options<TotalDepositTotalPostData>>) => createMutationKey('totalDepositTotalPost', options);
+export const totalDepositMutationKey = (options?: Partial<Options<TotalDepositData>>) => createMutationKey('totalDeposit', options);
 
 /**
  * Total
  */
-export const totalDepositTotalPostMutation = (options?: Partial<Options<TotalDepositTotalPostData>>): UseMutationOptions<TotalDepositTotalPostResponse, TotalDepositTotalPostError, Options<TotalDepositTotalPostData>> => {
-    const mutationOptions: UseMutationOptions<TotalDepositTotalPostResponse, TotalDepositTotalPostError, Options<TotalDepositTotalPostData>> = {
+export const totalDepositMutation = (options?: Partial<Options<TotalDepositData>>): UseMutationOptions<TotalDepositResponse, TotalDepositError, Options<TotalDepositData>> => {
+    const mutationOptions: UseMutationOptions<TotalDepositResponse, TotalDepositError, Options<TotalDepositData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await totalDepositTotalPost({
+            const { data } = await totalDeposit({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
             });
             return data;
         },
-        mutationKey: totalDepositTotalPostMutationKey(options)
+        mutationKey: totalDepositMutationKey(options)
     };
     return mutationOptions;
 };

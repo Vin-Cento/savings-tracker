@@ -363,7 +363,7 @@ export type UpsertGoalResponses = {
 
 export type UpsertGoalResponse = UpsertGoalResponses[keyof UpsertGoalResponses];
 
-export type DeleteDepositIdDeleteData = {
+export type DeleteDepositData = {
     body?: never;
     path: {
         /**
@@ -375,23 +375,23 @@ export type DeleteDepositIdDeleteData = {
     url: '/deposit/{id}';
 };
 
-export type DeleteDepositIdDeleteErrors = {
+export type DeleteDepositErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteDepositIdDeleteError = DeleteDepositIdDeleteErrors[keyof DeleteDepositIdDeleteErrors];
+export type DeleteDepositError = DeleteDepositErrors[keyof DeleteDepositErrors];
 
-export type DeleteDepositIdDeleteResponses = {
+export type DeleteDepositResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteDepositIdDeleteResponse = DeleteDepositIdDeleteResponses[keyof DeleteDepositIdDeleteResponses];
+export type DeleteDepositResponse = DeleteDepositResponses[keyof DeleteDepositResponses];
 
 export type GetDepositData = {
     body?: never;
@@ -490,7 +490,7 @@ export type FetchDepositsResponses = {
 
 export type FetchDepositsResponse = FetchDepositsResponses[keyof FetchDepositsResponses];
 
-export type TotalDepositTotalPostData = {
+export type TotalDepositData = {
     /**
      * Goals
      */
@@ -500,22 +500,22 @@ export type TotalDepositTotalPostData = {
     url: '/deposit/total';
 };
 
-export type TotalDepositTotalPostErrors = {
+export type TotalDepositErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type TotalDepositTotalPostError = TotalDepositTotalPostErrors[keyof TotalDepositTotalPostErrors];
+export type TotalDepositError = TotalDepositErrors[keyof TotalDepositErrors];
 
-export type TotalDepositTotalPostResponses = {
+export type TotalDepositResponses = {
     /**
-     * Response Total Deposit Total Post
+     * Response Totaldeposit
      *
      * Successful Response
      */
     200: number;
 };
 
-export type TotalDepositTotalPostResponse = TotalDepositTotalPostResponses[keyof TotalDepositTotalPostResponses];
+export type TotalDepositResponse = TotalDepositResponses[keyof TotalDepositResponses];
