@@ -4,7 +4,7 @@ import uuid
 
 from fastapi import status, HTTPException
 from sqlalchemy.orm import Session
-from repositories import deposit_repository
+from repositories import deposit_repository, goal_repository
 from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
@@ -47,7 +47,13 @@ def list_deposit(db: Session,
 
 
 def add_deposit(db: Session, deposit: DepositCreateSchema):
-    res = deposit_repository.add(db, deposit)
+    goal = goal_repository.get(db, deposit.goal_id)
+    remaining = goal.target - goal.amount - deposit.amount
+    if remaining >= 0:
+        res = deposit_repository.add(db, deposit)
+    else:
+        deposit.amount = deposit.amount + remaining
+        res = deposit_repository.add(db, deposit)
     return res
 
 

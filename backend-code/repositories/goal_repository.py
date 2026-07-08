@@ -11,7 +11,7 @@ from schema.goal_schema import GoalCreateSchema, GoalSchema
 from sqlalchemy import delete as sqlalchemy_delete
 
 
-def get(db: Session, goal_id: uuid.UUID) -> Optional[GoalSchema]:
+def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
     row = (
         db.query(
             Goal.id.label("id"),
@@ -28,7 +28,10 @@ def get(db: Session, goal_id: uuid.UUID) -> Optional[GoalSchema]:
         .first()
     )
     if row is None:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Goal {goal_id} not found",
+        )
 
     return GoalSchema.model_validate(row._mapping)
 

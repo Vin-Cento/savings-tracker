@@ -39,11 +39,12 @@ def list(goal_id: List[uuid.UUID] = Query(default=[]),
     return deposit_service.list_deposit(db, goal_id, page, limit, deposit_date)
 
 
-@router.post("/total", response_model=int)
+@router.post("/total", response_model=int, operation_id="totalDeposit")
 def total(goals: List[int], db: Session = Depends(get_db)):
     return deposit_service.get_deposit_total(db, goals)
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT,
+               operation_id="deleteDeposit")
 def delete(id: int, db: Session = Depends(get_db)):
     return deposit_service.delete_deposit(db, id)
