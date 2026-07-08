@@ -88,7 +88,7 @@ function HomePage() {
         <div className="flex gap-x-2 m-2 mt-9">
           <h1 className="font-extrabold text-2xl">Your goals</h1>
           <div className="flex-1" />
-          <div className="relative">
+          <div className="relative" >
             <button className="bg-zinc-700 pl-4 pr-4 pt-1 pb-1 rounded-xl"
               onClick={() => setShowFilters((prev) => !prev)}
             >
@@ -99,7 +99,9 @@ function HomePage() {
             </button>
 
             {showFilters && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50">
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50"
+                onMouseLeave={() => setShowFilters(false)}
+              >
                 <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
                   Active Goals
                 </button>
@@ -122,12 +124,40 @@ function HomePage() {
               </div>
             )}
           </div>
-          <button className="bg-zinc-700 pl-4 pr-4 rounded-xl">
-            <div className="flex items-center">
-              <FaSort className="mr-2" />
-              Sort by
-            </div>
-          </button>
+          <div>
+            <button className="bg-zinc-700 pl-4 pr-4 rounded-xl">
+              <div className="flex items-center">
+                <FaSort className="mr-2" />
+                Sort by
+              </div>
+            </button>
+
+            {showFilters && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50"
+                onMouseLeave={() => setShowFilters(false)}
+              >
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Active Goals
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Completed Goals
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Due This Month
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Overdue
+                </button>
+
+                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
+                  Progress &gt; 50%
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-2 w-full">
           {Array.isArray(goals?.data) && goals.data.length > 0 ? (
