@@ -23,7 +23,7 @@ import {
 
 function GoalManagerPage() {
   const dispatch = useDispatch<AppDispatch>();
-  let PAGE_SIZE = 10;
+  let PAGE_SIZE = 20;
 
   const queryClient = useQueryClient();
 

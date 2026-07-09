@@ -50,6 +50,7 @@ function HomePage() {
     sortingComparison
   );
   const [showFilters, setShowFilters] = useState(false);
+  const [showSort, setShowSort] = useState(false);
   return (
     <>
       <main className="overflow-auto min-w-6xl max-w-7xl ml-auto mr-auto">
@@ -124,17 +125,19 @@ function HomePage() {
               </div>
             )}
           </div>
-          <div>
-            <button className="bg-zinc-700 pl-4 pr-4 rounded-xl">
+          <div className="relative">
+            <button className="bg-zinc-700 pl-4 pr-4 pt-1 pb-1 rounded-xl"
+              onClick={() => setShowSort((prev) => !prev)}
+            >
               <div className="flex items-center">
                 <FaSort className="mr-2" />
                 Sort by
               </div>
             </button>
 
-            {showFilters && (
+            {showSort && (
               <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50"
-                onMouseLeave={() => setShowFilters(false)}
+                onMouseLeave={() => setShowSort(false)}
               >
                 <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
                   Active Goals

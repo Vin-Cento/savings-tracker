@@ -9,6 +9,10 @@ from sqlalchemy.sql import and_
 from models.models import Deposit, Goal
 from schema.goal_schema import GoalCreateSchema, GoalSchema
 from sqlalchemy import delete as sqlalchemy_delete
+from core.logging import logging
+from sqlalchemy.dialects import postgresql
+
+logger = logging.getLogger("goal repo")
 
 
 def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
@@ -76,6 +80,10 @@ def count(db: Session, where: Optional[Dict[str, Any]] = None) -> int:
     stmt = select(func.count()).select_from(Goal)
     if conditions:
         stmt = stmt.where(and_(*conditions))
+
+    compiled = stmt.compile(dialect=postgresql.dialect(),
+                            compile_kwargs={"literal_binds": True})
+    logger.info("SQL QUERY:\n%s", compiled)
 
     return db.execute(stmt).scalar_one()
 

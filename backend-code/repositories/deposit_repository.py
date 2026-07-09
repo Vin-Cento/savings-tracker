@@ -82,6 +82,9 @@ def fetch(db: Session,
     stmt = (stmt.order_by(Deposit.createdAt.desc())
             .offset((page - 1) * limit)
             .limit(limit))
+    compiled = stmt.compile(dialect=postgresql.dialect(),
+                            compile_kwargs={"literal_binds": True})
+    logger.info("SQL QUERY:\n%s", compiled)
     result = db.execute(stmt).scalars().all()
     return result
 
