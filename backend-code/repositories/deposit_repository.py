@@ -3,6 +3,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, select
 from models.models import Deposit
 from schema.deposit_schema import DepositCreateSchema
+from core.logging import logging
+from sqlalchemy.dialects import postgresql
+
+logger = logging.getLogger("deposit repo")
 
 
 def get(db: Session, where: Dict[str, Any]) -> Optional[Deposit]:
@@ -26,15 +30,20 @@ def count(db: Session, where: Dict[str, Any]) -> int:
     for key, value in where.items():
         attr = getattr(Deposit, key)
         if isinstance(value, (list, tuple, set)):
+            if len(value) == 0:
+                continue
             conditions.append(attr.in_(value))
         else:
             conditions.append(attr == value)
+
+    stmt = select(func.count()).select_from(Deposit)
     if conditions:
-        stmt = select(func.count()).where(and_(*conditions))
-    else:
-        stmt = select(func.count())
-    result = db.execute(stmt).scalar_one()
-    return result
+        stmt = stmt.where(and_(*conditions))
+
+    compiled = stmt.compile(dialect=postgresql.dialect(),
+                            compile_kwargs={"literal_binds": True})
+    logger.info("SQL QUERY:\n%s", compiled)
+    return db.execute(stmt).scalar_one()
 
 
 def total(db: Session, where: Dict[str, Any]) -> int:
@@ -60,7 +69,7 @@ def fetch(db: Session,
     conditions = []
     for key, value in where.items():
         attr = getattr(Deposit, key)
-        if isinstance(value, (list, tuple, set)):  # type: ignore
+        if isinstance(value, (list, tuple, set)):
             if len(value) == 0:
                 continue
             conditions.append(attr.in_(value))
