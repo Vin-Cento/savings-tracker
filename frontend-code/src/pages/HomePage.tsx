@@ -11,6 +11,7 @@ import type { GoalSchema } from "../client";
 import { useState } from "react";
 import { getNextSortConfig, sortByConfig, type SortConfig } from "../composables/sortUtil";
 import { sortingComparison } from "../composables/util";
+import DropdownButton from "../components/DropdownButton";
 
 function calculateProgressPercent(amount: number, target: number): number {
   if (target <= 0) return 100;
@@ -49,8 +50,6 @@ function HomePage() {
     sortConfig,
     sortingComparison
   );
-  const [showFilters, setShowFilters] = useState(false);
-  const [showSort, setShowSort] = useState(false);
   return (
     <>
       <main className="overflow-auto min-w-6xl max-w-7xl ml-auto mr-auto">
@@ -90,76 +89,30 @@ function HomePage() {
           <h1 className="font-extrabold text-2xl">Your goals</h1>
           <div className="flex-1" />
           <div className="relative" >
-            <button className="bg-zinc-700 pl-4 pr-4 pt-1 pb-1 rounded-xl"
-              onClick={() => setShowFilters((prev) => !prev)}
-            >
-              <div className="flex items-center">
-                <FaSliders className="mr-2" />
-                Filters
-              </div>
-            </button>
-
-            {showFilters && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50"
-                onMouseLeave={() => setShowFilters(false)}
-              >
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Active Goals
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Completed Goals
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Due This Month
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Overdue
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Progress &gt; 50%
-                </button>
-              </div>
-            )}
+            <DropdownButton
+              label="Filters"
+              icon={<FaSliders />}
+              items={[
+                { label: "Active Goals" },
+                { label: "Completed Goals" },
+                { label: "Due This Month" },
+                { label: "Overdue" },
+                { label: "Progress > 50%" },
+              ]}
+            />
           </div>
           <div className="relative">
-            <button className="bg-zinc-700 pl-4 pr-4 pt-1 pb-1 rounded-xl"
-              onClick={() => setShowSort((prev) => !prev)}
-            >
-              <div className="flex items-center">
-                <FaSort className="mr-2" />
-                Sort by
-              </div>
-            </button>
-
-            {showSort && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50"
-                onMouseLeave={() => setShowSort(false)}
-              >
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Active Goals
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Completed Goals
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Due This Month
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Overdue
-                </button>
-
-                <button className="w-full text-left px-4 py-2 hover:bg-zinc-700">
-                  Progress &gt; 50%
-                </button>
-              </div>
-            )}
+            <DropdownButton
+              label="Filters"
+              icon={<FaSort />}
+              items={[
+                { label: "Active Goals" },
+                { label: "Completed Goals" },
+                { label: "Due This Month" },
+                { label: "Overdue" },
+                { label: "Progress > 50%" },
+              ]}
+            />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 w-full">
