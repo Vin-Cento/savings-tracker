@@ -50,20 +50,19 @@ def list_deposit(db: Session,
 def add_deposit(db: Session, deposit: DepositCreateSchema):
     goal = goal_repository.get(db, deposit.goal_id)
     remaining = goal.target - goal.amount - deposit.amount
-    if remaining >= 0:
-        if remaining == 0:
-            goal = goal_repository.get(db, deposit.goal_id)
-            goal_schema = (
-                GoalCreateSchema(
-                    id=goal.id,
-                    name=goal.name,
-                    target=goal.target,
-                    completed=True
-                )
-            )
-            goal_repository.update(db, goal_schema)
+    if remaining > 0:
         res = deposit_repository.add(db, deposit)
     else:
+        goal = goal_repository.get(db, deposit.goal_id)
+        goal_schema = (
+            GoalCreateSchema(
+                id=goal.id,
+                name=goal.name,
+                target=goal.target,
+                completed=True
+            )
+        )
+        goal_repository.update(db, goal_schema)
         # remainder is always negative so we are adding
         deposit.amount = deposit.amount + remaining
         res = deposit_repository.add(db, deposit)

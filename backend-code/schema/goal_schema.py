@@ -29,6 +29,6 @@ class GoalCreateSchema(BaseModel):
     name: str
     target: int
     active: Optional[bool] = True
-    completed: Optional[bool] = False
+    completed: bool = False
     amount: int = 0
     deadline: Optional[datetime] = None

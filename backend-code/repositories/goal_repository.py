@@ -113,6 +113,7 @@ def update(db: Session, goal: GoalCreateSchema):
     db_goal.name = goal.name
     db_goal.deadline = goal.deadline
     db_goal.target = goal.target
+    db_goal.completed = goal.completed
 
     db.commit()
     db.refresh(db_goal)

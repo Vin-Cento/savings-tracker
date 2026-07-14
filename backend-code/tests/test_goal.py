@@ -1,63 +1,55 @@
+import uuid
+
 from fastapi.testclient import TestClient
 from main import app
+from schema.deposit_schema import DepositSchema
 from tests.util import generate_random_string
+from schema.goal_schema import GoalSchema
 
 client = TestClient(app)
 
 
-def test_count():
-    count_response = client.get("/goals/count?active=true")
-    assert count_response.status_code in [200, 204]
-    count_data = count_response.json()
-
-
 def test_create_get_delete_flow():
     name = generate_random_string(100)
-    create_response = client.post(
-        "/goals",
-        json={
-            "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
-            "name": name,
-            "target": 2000,
-            "deadline": None
-        }
-    )
+    target = 3000
+    goal_payload = {
+        "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
+        "name": name,
+        "target": target,
+        "deadline": None,
+    }
+    create_response = client.post("/goals", json=goal_payload)
 
     assert create_response.status_code == 201
-    data = create_response.json()
-    assert data["name"] == name
-    assert data["target"] == 2000
-    assert data["active"] is True
-    assert "id" in data
 
-    # count_response = client.get("/goals/count?active=true")
-    # assert count_response.status_code in [200, 204]
-    # count_data = count_response.json()
-    # count_data[]
+    create_data = GoalSchema.model_validate(create_response.json())
+    assert create_data.name == name
+    assert create_data.target == target
+    assert create_data.active is True
+    assert isinstance(create_data.id, uuid.UUID)
 
-    delete_response = client.delete(f"/goals/{data['id']}")
+    delete_response = client.delete(f"/goals/{create_data.id}")
     assert delete_response.status_code in [200, 204]
-    get_response = client.get(f"/goals/{data['id']}")
+    get_response = client.get(f"/goals/{create_data.id}")
     assert get_response.status_code == 404
 
 
 def test_list_goals():
     name = generate_random_string(100)
-    create_response = client.post(
-        "/goals",
-        json={
-            "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
-            "name": name,
-            "target": 3000,
-            "deadline": None,
-        },
-    )
+    goal_payload = {
+        "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
+        "name": name,
+        "target": 3000,
+        "deadline": None,
+    }
+    create_response = client.post("/goals", json=goal_payload)
     assert create_response.status_code == 201
-    create_data = create_response.json()
-    assert create_data["name"] == name
-    assert create_data["target"] == 3000
-    assert create_data["active"] is True
-    assert "id" in create_data
+
+    create_data = GoalSchema.model_validate(create_response.json())
+    assert create_data.name == name
+    assert create_data.target == 3000
+    assert create_data.active is True
+    assert isinstance(create_data.id, uuid.UUID)
 
     response = client.get("/goals/", params={"page": 1, "limit": 5})
 
@@ -68,75 +60,69 @@ def test_list_goals():
     assert data["page"] == 1
     assert data["limit"] == 5
 
-    delete_response = client.delete(f"/goals/{create_data['id']}")
+    delete_response = client.delete(f"/goals/{create_data.id}")
     assert delete_response.status_code in [200, 204]
-    get_response = client.get(f"/goals/{create_data['id']}")
+    get_response = client.get(f"/goals/{create_data.id}")
     assert get_response.status_code == 404
 
 
 def test_add_deposit():
     goal_payload = {
         "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
-        "name": generate_random_string(10),
-        "target": 1000,
-        "deadline": None,
+        "name": generate_random_string(100),
+        "target": 2000,
+        "deadline": None
     }
-
-    goal_res = client.post("/goals", json=goal_payload)
-    assert goal_res.status_code == 201
-
-    goal = goal_res.json()
+    create_response = client.post("/goals", json=goal_payload)
+    assert create_response.status_code == 201
+    goal = GoalSchema.model_validate(create_response.json())
 
     deposit_payload = {
         "amount": 250,
         "note": "first deposit",
-        "goal_id": goal["id"],
+        "goal_id": str(goal.id),
     }
+    deposit_res = client.post("/deposit/add", json=deposit_payload)
+    print(deposit_res)
+    assert deposit_res.status_code == 200
+    deposit = DepositSchema.model_validate(deposit_res.json())
 
-    res = client.post("/deposits/add", json=deposit_payload)
-
-    assert res.status_code == 200
-
-    data = res.json()
-
-    assert data["amount"] == 250
-    assert data["note"] == "first deposit"
-    assert data["goal_id"] == goal["id"]
-    assert "id" in data
-    assert "createdAt" in data
+    assert deposit.amount == 250
+    assert deposit.note == "first deposit"
+    assert deposit.goal_id == goal.id
 
 
 def test_max_out_deposit():
+    goal_max_amount = 1000
     goal_payload = {
         "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
         "name": generate_random_string(10),
-        "target": 1000,
+        "target": goal_max_amount,
         "deadline": None,
     }
 
     goal_res = client.post("/goals", json=goal_payload)
     assert goal_res.status_code == 201
 
-    goal = goal_res.json()
+    goal = GoalSchema.model_validate(goal_res.json())
 
     deposit_payload = {
         "amount": 10000,
         "note": "first deposit",
-        "goal_id": goal["id"],
+        "goal_id": str(goal.id),
     }
 
-    res = client.post("/deposits/add", json=deposit_payload)
+    deposit_res = client.post("/deposit/add", json=deposit_payload)
 
-    assert res.status_code == 200
+    assert deposit_res.status_code == 200
 
-    data = res.json()
+    deposit = DepositSchema.model_validate(deposit_res.json())
 
-    assert data["amount"] == 250
-    assert data["note"] == "first deposit"
-    assert data["goal_id"] == goal["id"]
-    assert "id" in data
-    assert "createdAt" in data
+    assert deposit.amount == goal_max_amount
+    assert deposit.note == "first deposit"
+    assert deposit.goal_id == goal.id
 
-    get_response = client.get(f"/goals/{data['id']}")
-    goal = get_response.json()
-    assert goal.amount == goal.target
+    goal_res_updated = client.get(f"/goals/{str(deposit.goal_id)}")
+    goal_updated = GoalSchema.model_validate(goal_res_updated.json())
+    assert deposit.amount == goal_updated.target
+    assert goal.completed != goal_updated.completed

@@ -1,5 +1,5 @@
 export const page = 1;
-export const limit = 25;
+export const limit = 20;
 export const gridPositions = [
   "col-start-1 col-span-2 row-start-1 row-span-1 bg-linear-to-r from-red-700 to-amber-700",
   "col-start-3 col-span-1 row-start-1 row-span-2",

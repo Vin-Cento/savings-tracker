@@ -14,7 +14,7 @@ import { sortingComparison } from "../composables/util";
 import DropdownButton from "../components/DropdownButton";
 
 function calculateProgressPercent(amount: number, target: number): number {
-  if (target <= 0) return 100;
+  if (target <= 0) return -1;
   return Math.min(Math.round((amount / target) * 100), 100);
 }
 
@@ -128,23 +128,32 @@ function HomePage() {
                   {/* fills empty space */}
                   <div className="flex-1" />
 
-                  <h3 className="text-4xl m-2">
-                    {`${calculateProgressPercent(goal.amount, goal.target)}%`}
-                  </h3>
-
-                  <div className="w-full m-2 bg-zinc-600 rounded-2xl">
-                    <div
-                      className="h-5 bg-amber-600 rounded-2xl"
-                      style={{
-                        width: `${calculateProgressPercent(goal.amount, goal.target)}%`,
-                      }}
-                    />
-                  </div>
+                  {calculateProgressPercent(goal.amount, goal.target) !== -1 && (
+                    <>
+                      <h3 className="text-4xl m-2">
+                        {`${calculateProgressPercent(goal.amount, goal.target)}%`}
+                      </h3>
+                      <div className="w-full m-2 bg-zinc-600 rounded-2xl">
+                        <div
+                          className="h-5 bg-amber-600 rounded-2xl"
+                          style={{
+                            width: `${calculateProgressPercent(goal.amount, goal.target)}%`,
+                          }}
+                        />
+                      </div>
+                    </>
+                  )}
 
                   <div className="flex">
-                    <p className="m-2">
-                      ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
-                    </p>
+                    {calculateProgressPercent(goal.amount, goal.target) !== -1 ?
+                      (
+                        <p className="m-2">
+                          ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
+                        </p>
+                      )
+                      :
+                      (<p className="m-2">No Target</p>)
+                    }
 
                     <p className="m-2">
                       {goal.deadline
@@ -160,7 +169,9 @@ function HomePage() {
               </div>
             ))
           ) : (
-            <p>No goals available</p>
+            <div>
+              <p>No goals available</p>
+            </div>
           )}
         </div>
       </main >

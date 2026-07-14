@@ -56,6 +56,25 @@ def upsert(
                       amount=0, deadline=new_goal.deadline)
 
 
+@router.post(
+    "/bulk",
+    response_model=GoalSchema,
+    status_code=status.HTTP_201_CREATED,
+    operation_id='upsertBulkGoal'
+)
+def bulk_upsert(
+    goal: GoalCreateSchema,
+    db: Session = Depends(get_db),
+):
+    new_goal = goal_service.bulk_upsert_goal(db, goal)
+    print(new_goal)
+    # return GoalSchema(id=new_goal.id, createdAt=new_goal.createdAt,
+    #                   name=new_goal.name, target=new_goal.target,
+    #                   active=new_goal.active,
+    #                   completed=new_goal.completed,
+    #                   amount=0, deadline=new_goal.deadline)
+
+
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT,
                operation_id='deleteGoal')
 def delete(id: uuid.UUID, db: Session = Depends(get_db)):

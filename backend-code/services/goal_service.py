@@ -52,6 +52,10 @@ def upsert_goal(db: Session, goal: GoalCreateSchema):
                       createdAt=new_goal.createdAt)
 
 
+def bulk_upsert_goal(db: Session, goal: GoalCreateSchema):
+    pass
+
+
 def delete_goal(db: Session, goal_id: uuid.UUID):
     goal = goal_repository.get(db, goal_id)
 
