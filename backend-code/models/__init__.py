@@ -1,3 +1,4 @@
-from .base import Base
+from models.base import Base
+from models.models import DepositRow, GoalRow
 
-__all__ = ["Base"]
+__all__ = ["Base", "DepositRow", "GoalRow"]

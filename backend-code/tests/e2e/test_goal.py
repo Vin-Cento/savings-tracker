@@ -13,7 +13,6 @@ def test_create_get_delete_flow():
     name = generate_random_string(100)
     target = 3000
     goal_payload = {
-        "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
         "name": name,
         "target": target,
         "deadline": None,
@@ -27,6 +26,7 @@ def test_create_get_delete_flow():
     assert create_data.target == target
     assert create_data.active is True
     assert isinstance(create_data.id, uuid.UUID)
+    print('create_data.id', create_data.id)
 
     delete_response = client.delete(f"/goals/{create_data.id}")
     assert delete_response.status_code in [200, 204]
@@ -37,7 +37,6 @@ def test_create_get_delete_flow():
 def test_list_goals():
     name = generate_random_string(100)
     goal_payload = {
-        "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
         "name": name,
         "target": 3000,
         "deadline": None,
@@ -122,6 +121,7 @@ def test_max_out_deposit():
     assert deposit.note == "first deposit"
     assert deposit.goal_id == goal.id
 
+    print('deposit.goal_id ', deposit.goal_id)
     goal_res_updated = client.get(f"/goals/{str(deposit.goal_id)}")
     goal_updated = GoalSchema.model_validate(goal_res_updated.json())
     assert deposit.amount == goal_updated.target

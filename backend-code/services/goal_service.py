@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from schema.goal_schema import (GoalCreateSchema,
                                 GoalPaginationSchema,
-                                GoalSchema)
+                                GoalSchema, GoalUpdateSchema)
 from repositories import goal_repository
 
 
@@ -39,17 +39,25 @@ def count_goal(db: Session, active: bool) -> int:
     return result
 
 
-def upsert_goal(db: Session, goal: GoalCreateSchema):
+def upsert_goal(db: Session, goal: GoalUpdateSchema):
     if goal.id == uuid.UUID('f84f6b2d-e443-4206-bde2-e64357201a57'):
-        return goal_repository.create(db, goal)
+        return goal_repository.create(db, GoalCreateSchema(
+            name=goal.name,
+            target=goal.target, active=goal.active,
+            amount=goal.amount,
+            completed=goal.completed,
+            deadline=goal.deadline,
+        ))
 
     new_goal = goal_repository.update(db, goal)
-    return GoalSchema(id=new_goal.id, name=new_goal.name,
-                      target=new_goal.target, active=new_goal.active,
-                      amount=goal.amount,
-                      completed=new_goal.completed,
-                      deadline=new_goal.deadline,
-                      createdAt=new_goal.createdAt)
+    return GoalSchema(
+        id=new_goal.id, name=new_goal.name,
+        target=new_goal.target, active=new_goal.active,
+        amount=goal.amount,
+        completed=new_goal.completed,
+        deadline=new_goal.deadline,
+        createdAt=new_goal.createdAt
+    )
 
 
 def bulk_upsert_goal(db: Session, goal: GoalCreateSchema):

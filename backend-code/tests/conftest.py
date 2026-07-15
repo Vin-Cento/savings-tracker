@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from main import app
-from database import get_db
+from core.dependencies import get_session
 from models import Base
 
 
@@ -43,7 +43,7 @@ def client(db):
     def override_get_db():
         yield db
 
-    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_session] = override_get_db
 
     with TestClient(app) as test_client:
         yield test_client

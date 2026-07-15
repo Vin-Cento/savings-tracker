@@ -6,8 +6,8 @@ from sqlalchemy import Row, func, select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import and_
 
-from models.models import Deposit, Goal
-from schema.goal_schema import GoalCreateSchema, GoalSchema
+from models.models import DepositRow, GoalRow
+from schema.goal_schema import GoalCreateSchema, GoalSchema, GoalUpdateSchema
 from sqlalchemy import delete as sqlalchemy_delete
 from core.logging import logging
 from sqlalchemy.dialects import postgresql
@@ -18,18 +18,18 @@ logger = logging.getLogger("goal repo")
 def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
     row = (
         db.query(
-            Goal.id.label("id"),
-            Goal.name.label("name"),
-            Goal.target.label("target"),
-            Goal.active.label("active"),
-            Goal.completed.label("completed"),
-            func.coalesce(func.sum(Deposit.amount), 0).label("amount"),
-            Goal.deadline.label("deadline"),
-            Goal.createdAt.label("createdAt"),
+            GoalRow.id.label("id"),
+            GoalRow.name.label("name"),
+            GoalRow.target.label("target"),
+            GoalRow.active.label("active"),
+            GoalRow.completed.label("completed"),
+            func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
+            GoalRow.deadline.label("deadline"),
+            GoalRow.createdAt.label("createdAt"),
         )
-        .outerjoin(Deposit, Deposit.goal_id == Goal.id)
-        .filter(Goal.id == goal_id)
-        .group_by(Goal.id)
+        .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
+        .filter(GoalRow.id == goal_id)
+        .group_by(GoalRow.id)
         .first()
     )
     if row is None:
@@ -44,18 +44,18 @@ def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
 def fetch(db: Session, page: int, limit: int) -> List[GoalSchema]:
     rows: list[Row] = (
         db.query(
-            Goal.id.label("id"),
-            Goal.name.label("name"),
-            Goal.target.label("target"),
-            Goal.active.label("active"),
-            Goal.completed.label("completed"),
-            func.coalesce(func.sum(Deposit.amount), 0).label("amount"),
-            Goal.deadline.label("deadline"),
-            Goal.createdAt.label("createdAt"),
+            GoalRow.id.label("id"),
+            GoalRow.name.label("name"),
+            GoalRow.target.label("target"),
+            GoalRow.active.label("active"),
+            GoalRow.completed.label("completed"),
+            func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
+            GoalRow.deadline.label("deadline"),
+            GoalRow.createdAt.label("createdAt"),
         )
-        .outerjoin(Deposit, Deposit.goal_id == Goal.id)
-        .group_by(Goal.id)
-        .order_by(Goal.createdAt.desc())
+        .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
+        .group_by(GoalRow.id)
+        .order_by(GoalRow.createdAt.desc())
         .offset((page - 1) * limit)
         .limit(limit)
         .all()
@@ -68,16 +68,16 @@ def count(db: Session, where: Optional[Dict[str, Any]] = None) -> int:
     conditions = []
 
     if where is None:
-        return db.query(Goal).count()
+        return db.query(GoalRow).count()
 
     for key, value in where.items():
-        attr = getattr(Goal, key)
+        attr = getattr(GoalRow, key)
         if isinstance(value, (list, tuple, set)):
             conditions.append(attr.in_(value))
         else:
             conditions.append(attr == value)
 
-    stmt = select(func.count()).select_from(Goal)
+    stmt = select(func.count()).select_from(GoalRow)
     if conditions:
         stmt = stmt.where(and_(*conditions))
 
@@ -89,7 +89,7 @@ def count(db: Session, where: Optional[Dict[str, Any]] = None) -> int:
 
 
 def create(db: Session, goal: GoalCreateSchema):
-    new_goal = Goal(
+    new_goal = GoalRow(
         name=goal.name,
         target=goal.target,
         deadline=goal.deadline,
@@ -101,8 +101,8 @@ def create(db: Session, goal: GoalCreateSchema):
     return new_goal
 
 
-def update(db: Session, goal: GoalCreateSchema):
-    db_goal = db.get(Goal, goal.id)
+def update(db: Session, goal: GoalUpdateSchema):
+    db_goal = db.get(GoalRow, goal.id)
 
     if db_goal is None:
         raise HTTPException(
@@ -122,5 +122,5 @@ def update(db: Session, goal: GoalCreateSchema):
 
 
 def delete(db: Session, goal: GoalSchema):
-    db.execute(sqlalchemy_delete(Goal).where(Goal.id == goal.id))
+    db.execute(sqlalchemy_delete(GoalRow).where(GoalRow.id == goal.id))
     db.commit()

@@ -8,20 +8,14 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
-    func,
     text,
 )
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
+from models.base import Base
 
 
-class Base(DeclarativeBase):
-    createdAt: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=func.now()
-    )
-
-
-class Goal(Base):
+class GoalRow(Base):
     __tablename__ = "goals"
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -39,14 +33,14 @@ class Goal(Base):
         DateTime(timezone=True),
         nullable=True
     )
-    deposits: Mapped[list["Deposit"]] = relationship(
+    deposits: Mapped[list["DepositRow"]] = relationship(
         back_populates="goal",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
 
 
-class Deposit(Base):
+class DepositRow(Base):
     __tablename__ = "deposits"
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -60,4 +54,4 @@ class Deposit(Base):
         ForeignKey("goals.id", ondelete="CASCADE"),
         nullable=False,
     )
-    goal: Mapped["Goal"] = relationship(back_populates="deposits")
+    goal: Mapped["GoalRow"] = relationship(back_populates="deposits")
