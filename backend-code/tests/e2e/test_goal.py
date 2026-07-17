@@ -9,7 +9,7 @@ from schema.goal_schema import GoalSchema
 client = TestClient(app)
 
 
-def test_create_get_delete_flow():
+def test_create_get_delete_flow(client):
     name = generate_random_string(100)
     target = 3000
     goal_payload = {
@@ -26,11 +26,10 @@ def test_create_get_delete_flow():
     assert create_data.target == target
     assert create_data.active is True
     assert isinstance(create_data.id, uuid.UUID)
-    print('create_data.id', create_data.id)
 
-    delete_response = client.delete(f"/goals/{create_data.id}")
+    delete_response = client.delete(f"/goals/{str(create_data.id)}")
     assert delete_response.status_code in [200, 204]
-    get_response = client.get(f"/goals/{create_data.id}")
+    get_response = client.get(f"/goals/{str(create_data.id)}")
     assert get_response.status_code == 404
 
 

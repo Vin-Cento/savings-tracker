@@ -48,3 +48,7 @@ Thumbs.db
 /backend-code/tests/__pycache__
 /backend-code/migrations/versions
 /backend-code/core/__pycache__
+/backend-code/migrations/__pycache__
+/backend-code/domain/__pycache__
+/backend-code/tests/e2e/__pycache__
+/backend-code/tests/unit/__pycache__

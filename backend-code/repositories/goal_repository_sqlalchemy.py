@@ -1,8 +1,8 @@
-from operator import and_
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.elements import ColumnElement
 from domain.goal import Goal
 from models.models import DepositRow, GoalRow
 from schema.goal_schema import GoalCreateSchema, GoalSchema
@@ -34,8 +34,9 @@ class GoalRepository:
 
         return GoalSchema.model_validate(row._mapping)
 
-    def fetch(self, page: int, limit: int) -> List[GoalSchema]:
-        goal_rows = (
+    def fetch( self, where: ColumnElement[bool] | None = None,
+        *, page: int = 1, limit: int = 10,) -> List[GoalSchema]:
+        stmt = (
             self.session.query(
                 GoalRow.id.label("id"),
                 GoalRow.name.label("name"),
@@ -48,11 +49,19 @@ class GoalRepository:
             )
             .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
             .group_by(GoalRow.id)
+        )
+
+        if where is not None:
+            stmt = stmt.where(where)
+
+        goal_rows = (
+            stmt
             .order_by(GoalRow.createdAt.desc())
             .offset((page - 1) * limit)
             .limit(limit)
             .all()
         )
+
         return [GoalSchema.model_validate(goal_row) for goal_row in goal_rows]
 
     def add(self, goal: GoalCreateSchema) -> GoalSchema:
@@ -100,20 +109,8 @@ class GoalRepository:
         self.session.flush()
         return self.get(goal.id)
 
-    def count(self, where: Optional[Dict[str, Any]] = None) -> int:
-        conditions = []
-        if where is None:
-            return self.session.query(GoalRow).count()
-
-        for key, value in where.items():
-            attr = getattr(GoalRow, key)
-            if isinstance(value, (list, tuple, set)):
-                conditions.append(attr.in_(value))
-            else:
-                conditions.append(attr == value)
-
+    def count(self, where: Optional[ColumnElement[bool]] = None) -> int:
         stmt = select(func.count()).select_from(GoalRow)
-        if conditions:
-            stmt = stmt.where(and_(*conditions))
-
-        return self.session.execute(stmt).scalar_one()
+        if where is not None:
+            stmt = stmt.where(where)
+        return self.session.scalar(stmt) or 0

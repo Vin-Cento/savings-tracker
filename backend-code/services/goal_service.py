@@ -43,8 +43,8 @@ def upsert_goal(db: Session, goal: GoalUpdateSchema):
     if goal.id == uuid.UUID('f84f6b2d-e443-4206-bde2-e64357201a57'):
         return goal_repository.create(db, GoalCreateSchema(
             name=goal.name,
-            target=goal.target, active=goal.active,
-            amount=goal.amount,
+            target=goal.target, 
+            active=goal.active or True,
             completed=goal.completed,
             deadline=goal.deadline,
         ))

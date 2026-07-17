@@ -27,9 +27,8 @@ class GoalPaginationSchema(Pagination):
 class GoalCreateSchema(BaseModel):
     name: str
     target: int
-    active: Optional[bool] = True
+    active: bool = True
     completed: bool = False
-    amount: int = 0
     deadline: Optional[datetime] = None
 
 

@@ -1,10 +1,8 @@
-from typing import Annotated
 import uuid
-
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-
+from starlette.status import HTTP_404_NOT_FOUND
 from core.dependencies import GoalServiceDependency, get_session
 from schema.goal_schema import (
     GoalPaginationSchema,
@@ -24,15 +22,15 @@ class GoalNotFoundError(Exception):
     pass
 
 
-@router.get("/{id}", response_model=GoalSchema, operation_id='getGoal')
+@router.get("/{id}", response_model=GoalSchema, operation_id="getGoal")
 def get_goal(id: uuid.UUID, service: GoalServiceDependency):
-    try:
-        return service.get_goal(id)
-    except GoalNotFoundError as exc:
+    goal = service.get_goal(id)
+    if goal is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
+            detail="Goal Not Found",
         )
+    return goal
 
 
 @router.get("", response_model=GoalPaginationSchema, operation_id='fetchGoals')
@@ -48,7 +46,7 @@ def list(
     "",
     response_model=GoalSchema,
     status_code=status.HTTP_201_CREATED,
-    operation_id='upsertGoal'
+    operation_id='addGoal'
 )
 def add(
     service: GoalServiceDependency,
@@ -70,7 +68,7 @@ def add(
     "/{id}",
     response_model=GoalSchema,
     status_code=status.HTTP_201_CREATED,
-    operation_id='upsertGoal'
+    operation_id='updateGoal'
 )
 def update(
     goal: GoalUpdateSchema,
