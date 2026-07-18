@@ -36,7 +36,6 @@ class GoalUpdateSchema(BaseModel):
     id: uuid.UUID
     name: str
     target: int
-    active: Optional[bool] = True
+    active: bool = True
     completed: bool = False
-    amount: int = 0
     deadline: Optional[datetime] = None

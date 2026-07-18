@@ -3,9 +3,8 @@ from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.elements import ColumnElement
-from domain.goal import Goal
 from models.models import DepositRow, GoalRow
-from schema.goal_schema import GoalCreateSchema, GoalSchema
+from schema.goal_schema import GoalCreateSchema, GoalSchema, GoalUpdateSchema
 
 
 class GoalRepository:
@@ -73,6 +72,7 @@ class GoalRepository:
 
         self.session.add(row)
         self.session.flush()
+        self.session.commit()
         return GoalSchema(
             id=row.id,
             name=row.name,
@@ -90,11 +90,11 @@ class GoalRepository:
             return False
 
         self.session.delete(row)
-        self.session.flush()
+        self.session.commit()
 
         return True
 
-    def update(self, goal: Goal) -> GoalSchema | None:
+    def update(self, goal: GoalUpdateSchema) -> GoalSchema | None:
         goal_row = self.session.get(GoalRow, goal.id)
 
         if goal_row is None:
@@ -106,7 +106,7 @@ class GoalRepository:
         goal_row.deadline = goal.deadline
         goal_row.completed = goal.completed
 
-        self.session.flush()
+        self.session.commit()
         return self.get(goal.id)
 
     def count(self, where: Optional[ColumnElement[bool]] = None) -> int:

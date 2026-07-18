@@ -3,8 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.sql.elements import ColumnElement
 
-from domain.goal import Goal
-from schema.goal_schema import GoalCreateSchema, GoalSchema
+from schema.goal_schema import GoalCreateSchema, GoalSchema, GoalUpdateSchema
 
 
 class GoalRepositoryProtocol(Protocol):
@@ -21,7 +20,7 @@ class GoalRepositoryProtocol(Protocol):
     def delete(self, goal_id: UUID) -> bool:
         ...
 
-    def update(self, goal: Goal) -> GoalSchema | None:
+    def update(self, goal: GoalUpdateSchema) -> GoalSchema | None:
         ...
 
     def count(self, where: Optional[ColumnElement[bool]] = None) -> int:

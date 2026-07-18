@@ -2,7 +2,7 @@ from uuid import uuid4
 from models.models import GoalRow
 from services.goal_service_class import GoalService
 from tests.util import generate_random_string
-from schema.goal_schema import GoalCreateSchema
+from schema.goal_schema import GoalCreateSchema, GoalUpdateSchema
 
 def test_get_none(goal_service: GoalService):
     goal_get = goal_service.get_goal(uuid4())
@@ -35,3 +35,27 @@ def test_fetch_goal(goal_service: GoalService):
     goals_below = goal_service.list_goal(GoalRow.target > 1000, limit=1000)
     assert goals.total == goal_count
     assert goals_below.total > 0
+
+def test_update_goal(goal_service: GoalService):
+    name = generate_random_string(10)
+    goal = goal_service.add_goal(GoalCreateSchema(name=name, target=10))
+    assert goal.name == name
+    assert goal.target == 10
+    new_goal = goal_service.update_goal(
+        GoalUpdateSchema(id=goal.id,name="new name", target=1000, 
+                         active=goal.active, completed=goal.completed, 
+                         deadline=goal.deadline)
+    )
+    assert new_goal != None
+    assert new_goal.name == "new name"
+    assert new_goal.target == 1000
+
+def test_delete_goal(goal_service: GoalService):
+    name = generate_random_string(10)
+    goal = goal_service.add_goal(GoalCreateSchema(name=name, target=10))
+    assert goal.name == name
+    assert goal.target == 10
+    deleted = goal_service.delete_goal(goal.id)
+    assert deleted ==True
+    deleted_goal = goal_service.get_goal(goal.id)
+    assert deleted_goal is None

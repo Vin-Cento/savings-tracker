@@ -39,25 +39,25 @@ def count_goal(db: Session, active: bool) -> int:
     return result
 
 
-def upsert_goal(db: Session, goal: GoalUpdateSchema):
-    if goal.id == uuid.UUID('f84f6b2d-e443-4206-bde2-e64357201a57'):
-        return goal_repository.create(db, GoalCreateSchema(
-            name=goal.name,
-            target=goal.target, 
-            active=goal.active or True,
-            completed=goal.completed,
-            deadline=goal.deadline,
-        ))
-
-    new_goal = goal_repository.update(db, goal)
-    return GoalSchema(
-        id=new_goal.id, name=new_goal.name,
-        target=new_goal.target, active=new_goal.active,
-        amount=goal.amount,
-        completed=new_goal.completed,
-        deadline=new_goal.deadline,
-        createdAt=new_goal.createdAt
-    )
+# def upsert_goal(db: Session, goal: GoalUpdateSchema):
+#     if goal.id == uuid.UUID('f84f6b2d-e443-4206-bde2-e64357201a57'):
+#         return goal_repository.create(db, GoalCreateSchema(
+#             name=goal.name,
+#             target=goal.target, 
+#             active=goal.active or True,
+#             completed=goal.completed,
+#             deadline=goal.deadline,
+#         ))
+#
+#     new_goal = goal_repository.update(db, goal)
+#     return GoalSchema(
+#         id=new_goal.id, name=new_goal.name,
+#         target=new_goal.target, active=new_goal.active,
+#         amount=goal.amount,
+#         completed=new_goal.completed,
+#         deadline=new_goal.deadline,
+#         createdAt=new_goal.createdAt
+#     )
 
 
 def bulk_upsert_goal(db: Session, goal: GoalCreateSchema):
@@ -73,4 +73,4 @@ def delete_goal(db: Session, goal_id: uuid.UUID):
             detail=f"Goal with id {goal_id} not found",
         )
 
-    goal_repository.delete(db, goal)
+    return goal_repository.delete(db, goal)

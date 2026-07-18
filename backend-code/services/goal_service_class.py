@@ -3,7 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.sql.elements import ColumnElement
 from repositories.goal_repository_protocol import GoalRepositoryProtocol
-from schema.goal_schema import GoalCreateSchema, GoalPaginationSchema, GoalSchema
+from schema.goal_schema import GoalCreateSchema, GoalPaginationSchema, GoalSchema, GoalUpdateSchema
 
 
 class GoalNotFoundError(Exception):
@@ -23,8 +23,8 @@ class GoalService:
     def get_goal(self, goal_id: UUID) -> GoalSchema | None:
         return self.repository.get(goal_id)
 
-    def update_goal(self, goal: GoalCreateSchema) -> GoalSchema:
-        return self.repository.add(goal)
+    def update_goal(self, goal: GoalUpdateSchema) -> GoalSchema | None:
+        return self.repository.update(goal)
 
     def delete_goal(self, goal_id: UUID)-> bool:
         return self.repository.delete(goal_id)

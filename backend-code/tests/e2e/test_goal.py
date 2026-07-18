@@ -49,7 +49,7 @@ def test_list_goals():
     assert create_data.active is True
     assert isinstance(create_data.id, uuid.UUID)
 
-    response = client.get("/goals/", params={"page": 1, "limit": 5})
+    response = client.get("/goals", params={"page": 1, "limit": 5})
 
     assert response.status_code == 200
 
@@ -81,7 +81,6 @@ def test_add_deposit():
         "goal_id": str(goal.id),
     }
     deposit_res = client.post("/deposit/add", json=deposit_payload)
-    print(deposit_res)
     assert deposit_res.status_code == 200
     deposit = DepositSchema.model_validate(deposit_res.json())
 
@@ -120,7 +119,6 @@ def test_max_out_deposit():
     assert deposit.note == "first deposit"
     assert deposit.goal_id == goal.id
 
-    print('deposit.goal_id ', deposit.goal_id)
     goal_res_updated = client.get(f"/goals/{str(deposit.goal_id)}")
     goal_updated = GoalSchema.model_validate(goal_res_updated.json())
     assert deposit.amount == goal_updated.target
