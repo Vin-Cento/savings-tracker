@@ -59,3 +59,7 @@ def test_delete_goal(goal_service: GoalService):
     assert deleted ==True
     deleted_goal = goal_service.get_goal(goal.id)
     assert deleted_goal is None
+
+def test_delete_none(goal_service: GoalService):
+    deleted_goal = goal_service.delete_goal(uuid4())
+    assert deleted_goal == False

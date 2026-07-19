@@ -90,7 +90,10 @@ def bulk_upsert(
     return goal_service.bulk_upsert_goal(session, goal)
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT,
-               operation_id='deleteGoal')
-def delete(id: uuid.UUID, session: Session = Depends(get_session)):
-    return goal_service.delete_goal(session, id)
+@router.delete(
+    "/{id}", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    operation_id='deleteGoal'
+)
+def delete(id: uuid.UUID, service: GoalServiceDependency):
+    return service.delete_goal(id)
