@@ -10,6 +10,7 @@ from schema.goal_schema import (
     GoalUpdateSchema,
 )
 from services import goal_service
+from models.models import GoalRow
 
 router = APIRouter(
     prefix="/goals",
@@ -19,6 +20,11 @@ router = APIRouter(
 
 class GoalNotFoundError(Exception):
     pass
+
+
+@router.get("/count", response_model=int, operation_id="countGoal")
+def count_goal(service: GoalServiceDependency, active: bool = Query(True)):
+    return service.count_goal(GoalRow.active == active)
 
 
 @router.get("/{id}", response_model=GoalSchema, operation_id="getGoal")
@@ -77,6 +83,7 @@ def update(
         )
     return new_goal
 
+
 @router.post(
     "/bulk",
     response_model=GoalSchema,
@@ -91,7 +98,7 @@ def bulk_upsert(
 
 
 @router.delete(
-    "/{id}", 
+    "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     operation_id='deleteGoal'
 )

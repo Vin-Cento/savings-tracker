@@ -1,16 +1,32 @@
 import uuid
 
-from fastapi.testclient import TestClient
-from main import app
 from schema.deposit_schema import DepositSchema
 from tests.util import generate_random_string
-from schema.goal_schema import GoalSchema
+from schema.goal_schema import GoalSchema, GoalCreateSchema
+from services.goal_service_class import GoalService
 
-client = TestClient(app)
+
+def test_count_goal(client, goal_service: GoalService):
+    goal_count = 10
+    for _ in range(goal_count):
+        goal_service.add_goal(GoalCreateSchema(
+            name=generate_random_string(10), target=3000))
+    for _ in range(int(goal_count)):
+        goal_service.add_goal(GoalCreateSchema(
+            name=generate_random_string(10), target=3000, active=False))
+    true_resp = client.get('/goals/count?active=True')
+    assert true_resp.status_code == 200
+    true_count = int(true_resp.json())
+    assert goal_count == true_count
+
+    false_resp = client.get('/goals/count?active=False')
+    assert false_resp.status_code == 200
+    false_count = int(true_resp.json())
+    assert goal_count == false_count
 
 
 def test_create_get_delete_flow(client):
-    name = generate_random_string(100)
+    name = generate_random_string(10)
     target = 3000
     goal_payload = {
         "name": name,
@@ -33,8 +49,8 @@ def test_create_get_delete_flow(client):
     assert get_response.status_code == 404
 
 
-def test_list_goals():
-    name = generate_random_string(100)
+def test_list_goals(client):
+    name = generate_random_string(10)
     goal_payload = {
         "name": name,
         "target": 3000,
@@ -64,10 +80,10 @@ def test_list_goals():
     assert get_response.status_code == 404
 
 
-def test_add_deposit():
+def test_add_deposit(client):
     goal_payload = {
         "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
-        "name": generate_random_string(100),
+        "name": generate_random_string(10),
         "target": 2000,
         "deadline": None
     }
@@ -89,7 +105,7 @@ def test_add_deposit():
     assert deposit.goal_id == goal.id
 
 
-def test_max_out_deposit():
+def test_max_out_deposit(client):
     goal_max_amount = 1000
     goal_payload = {
         "id": "f84f6b2d-e443-4206-bde2-e64357201a57",
