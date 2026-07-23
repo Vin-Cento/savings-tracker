@@ -45,6 +45,11 @@ function HomePage() {
     );
   };
 
+  const handleSort1 = () => {
+    console.log('alert')
+  }
+
+
   const sortedGoals = sortByConfig(
     goals.data,
     sortConfig,
@@ -93,7 +98,7 @@ function HomePage() {
               label="Filters"
               icon={<FaSliders />}
               items={[
-                { label: "Active Goals" },
+                { label: "Active Goals", onClick: () => { console.log('active goal') } },
                 { label: "Completed Goals" },
                 { label: "Due This Month" },
                 { label: "Overdue" },
@@ -106,7 +111,7 @@ function HomePage() {
               label="Filters"
               icon={<FaSort />}
               items={[
-                { label: "Active Goals" },
+                { label: "Active Goals", },
                 { label: "Completed Goals" },
                 { label: "Due This Month" },
                 { label: "Overdue" },

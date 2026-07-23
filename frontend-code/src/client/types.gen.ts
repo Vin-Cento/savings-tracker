@@ -79,10 +79,6 @@ export type DepositSchema = {
  */
 export type GoalCreateSchema = {
     /**
-     * Id
-     */
-    id: string;
-    /**
      * Name
      */
     name: string;
@@ -93,11 +89,11 @@ export type GoalCreateSchema = {
     /**
      * Active
      */
-    active?: boolean | null;
+    active?: boolean;
     /**
-     * Amount
+     * Completed
      */
-    amount?: number;
+    completed?: boolean;
     /**
      * Deadline
      */
@@ -151,9 +147,43 @@ export type GoalSchema = {
      */
     active: boolean;
     /**
+     * Completed
+     */
+    completed: boolean;
+    /**
      * Amount
      */
     amount: number;
+    /**
+     * Deadline
+     */
+    deadline?: string | null;
+};
+
+/**
+ * GoalUpdateSchema
+ */
+export type GoalUpdateSchema = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Target
+     */
+    target: number;
+    /**
+     * Active
+     */
+    active?: boolean;
+    /**
+     * Completed
+     */
+    completed?: boolean;
     /**
      * Deadline
      */
@@ -304,6 +334,36 @@ export type GetGoalResponses = {
 
 export type GetGoalResponse = GetGoalResponses[keyof GetGoalResponses];
 
+export type UpdateGoalData = {
+    body: GoalUpdateSchema;
+    path: {
+        /**
+         * Id
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/goals/{id}';
+};
+
+export type UpdateGoalErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateGoalError = UpdateGoalErrors[keyof UpdateGoalErrors];
+
+export type UpdateGoalResponses = {
+    /**
+     * Successful Response
+     */
+    201: GoalSchema;
+};
+
+export type UpdateGoalResponse = UpdateGoalResponses[keyof UpdateGoalResponses];
+
 export type FetchGoalsData = {
     body?: never;
     path?: never;
@@ -338,30 +398,55 @@ export type FetchGoalsResponses = {
 
 export type FetchGoalsResponse = FetchGoalsResponses[keyof FetchGoalsResponses];
 
-export type UpsertGoalData = {
+export type AddGoalData = {
     body: GoalCreateSchema;
     path?: never;
     query?: never;
     url: '/goals';
 };
 
-export type UpsertGoalErrors = {
+export type AddGoalErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpsertGoalError = UpsertGoalErrors[keyof UpsertGoalErrors];
+export type AddGoalError = AddGoalErrors[keyof AddGoalErrors];
 
-export type UpsertGoalResponses = {
+export type AddGoalResponses = {
     /**
      * Successful Response
      */
     201: GoalSchema;
 };
 
-export type UpsertGoalResponse = UpsertGoalResponses[keyof UpsertGoalResponses];
+export type AddGoalResponse = AddGoalResponses[keyof AddGoalResponses];
+
+export type UpsertBulkGoalData = {
+    body: GoalCreateSchema;
+    path?: never;
+    query?: never;
+    url: '/goals/bulk';
+};
+
+export type UpsertBulkGoalErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpsertBulkGoalError = UpsertBulkGoalErrors[keyof UpsertBulkGoalErrors];
+
+export type UpsertBulkGoalResponses = {
+    /**
+     * Successful Response
+     */
+    201: GoalSchema;
+};
+
+export type UpsertBulkGoalResponse = UpsertBulkGoalResponses[keyof UpsertBulkGoalResponses];
 
 export type DeleteDepositData = {
     body?: never;
