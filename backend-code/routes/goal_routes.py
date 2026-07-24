@@ -39,7 +39,7 @@ def get_goal(id: uuid.UUID, service: GoalServiceDependency):
 
 
 @router.get("", response_model=GoalPaginationSchema, operation_id='fetchGoals')
-def list(
+def fetch(
     service: GoalServiceDependency,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -72,7 +72,7 @@ def add(
 )
 def update(
     goal: GoalUpdateSchema,
-    id: uuid.UUID,
+    # id: uuid.UUID,
     service: GoalServiceDependency,
 ):
     new_goal = service.update_goal(goal)
