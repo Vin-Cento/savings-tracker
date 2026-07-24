@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -33,8 +33,8 @@ class GoalRepository:
 
         return GoalSchema.model_validate(row._mapping)
 
-    def fetch( self, where: ColumnElement[bool] | None = None,
-        *, page: int = 1, limit: int = 10,) -> List[GoalSchema]:
+    def fetch(self, where: list[ColumnElement[bool]] | None = None,
+              *, page: int = 1, limit: int = 10,) -> List[GoalSchema]:
         stmt = (
             self.session.query(
                 GoalRow.id.label("id"),
@@ -51,7 +51,7 @@ class GoalRepository:
         )
 
         if where is not None:
-            stmt = stmt.where(where)
+            stmt = stmt.filter(*where)
 
         goal_rows = (
             stmt
@@ -109,8 +109,8 @@ class GoalRepository:
         self.session.commit()
         return self.get(goal.id)
 
-    def count(self, where: Optional[ColumnElement[bool]] = None) -> int:
+    def count(self, where: list[ColumnElement[bool]] | None = None) -> int:
         stmt = select(func.count()).select_from(GoalRow)
         if where is not None:
-            stmt = stmt.where(where)
+            stmt = stmt.filter(*where)
         return self.session.scalar(stmt) or 0

@@ -1,15 +1,14 @@
 import uuid
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Query, status
 from fastapi.exceptions import HTTPException
-from sqlalchemy.orm import Session
-from core.dependencies import GoalServiceDependency, get_session
+from sqlalchemy import ColumnElement
+from core.dependencies import GoalServiceDependency
 from schema.goal_schema import (
     GoalPaginationSchema,
     GoalSchema,
     GoalCreateSchema,
     GoalUpdateSchema,
 )
-from services import goal_service
 from models.models import GoalRow
 
 router = APIRouter(
@@ -23,8 +22,16 @@ class GoalNotFoundError(Exception):
 
 
 @router.get("/count", response_model=int, operation_id="countGoal")
-def count_goal(service: GoalServiceDependency, active: bool = Query(True)):
-    return service.count_goal(GoalRow.active == active)
+def count_goal(service: GoalServiceDependency,
+               active: bool | None = Query(None),
+               completed: bool | None = Query(None)
+               ):
+    where: list[ColumnElement[bool]] = []
+    if completed != None:
+        where.append(GoalRow.completed == completed)
+    if active != None:
+        where.append(GoalRow.active == active)
+    return service.count_goal(where)
 
 
 @router.get("/{id}", response_model=GoalSchema, operation_id="getGoal")
@@ -39,7 +46,7 @@ def get_goal(id: uuid.UUID, service: GoalServiceDependency):
 
 
 @router.get("", response_model=GoalPaginationSchema, operation_id='fetchGoals')
-def fetch(
+def fetch_goal(
     service: GoalServiceDependency,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -53,7 +60,7 @@ def fetch(
     status_code=status.HTTP_201_CREATED,
     operation_id='addGoal'
 )
-def add(
+def add_goal(
     service: GoalServiceDependency,
     goal: GoalCreateSchema,
 ):
@@ -70,7 +77,7 @@ def add(
     status_code=status.HTTP_201_CREATED,
     operation_id='updateGoal'
 )
-def update(
+def update_goal(
     goal: GoalUpdateSchema,
     # id: uuid.UUID,
     service: GoalServiceDependency,
@@ -84,17 +91,17 @@ def update(
     return new_goal
 
 
-@router.post(
-    "/bulk",
-    response_model=GoalSchema,
-    status_code=status.HTTP_201_CREATED,
-    operation_id='upsertBulkGoal'
-)
-def bulk_upsert(
-    goal: GoalCreateSchema,
-    session: Session = Depends(get_session),
-):
-    return goal_service.bulk_upsert_goal(session, goal)
+# @router.post(
+#     "/bulk",
+#     response_model=GoalSchema,
+#     status_code=status.HTTP_201_CREATED,
+#     operation_id='upsertBulkGoal'
+# )
+# def bulk_upsert(
+#     goal: GoalCreateSchema,
+#     session: Session = Depends(get_session),
+# ):
+#     return goal_service.bulk_upsert_goal(session, goal)
 
 
 @router.delete(
@@ -102,5 +109,5 @@ def bulk_upsert(
     status_code=status.HTTP_204_NO_CONTENT,
     operation_id='deleteGoal'
 )
-def delete(id: uuid.UUID, service: GoalServiceDependency):
+def delete_goal(id: uuid.UUID, service: GoalServiceDependency):
     return service.delete_goal(id)
