@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { addDeposit, addGoal, countGoal, deleteDeposit, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDeposit, updateGoal, upsertBulkGoal } from '../sdk.gen';
-import type { AddDepositData, AddDepositError, AddDepositResponse, AddGoalData, AddGoalError, AddGoalResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositData, DeleteDepositError, DeleteDepositResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositData, TotalDepositError, TotalDepositResponse, UpdateGoalData, UpdateGoalError, UpdateGoalResponse, UpsertBulkGoalData, UpsertBulkGoalError, UpsertBulkGoalResponse } from '../types.gen';
+import { addDeposit, addGoal, countGoal, deleteDeposit, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDeposit, updateGoal } from '../sdk.gen';
+import type { AddDepositData, AddDepositError, AddDepositResponse, AddGoalData, AddGoalError, AddGoalResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositData, DeleteDepositError, DeleteDepositResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositData, TotalDepositError, TotalDepositResponse, UpdateGoalData, UpdateGoalError, UpdateGoalResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -107,7 +107,7 @@ const createMutationKey = <TOptions extends Partial<Options>>(id: string, option
 export const deleteGoalMutationKey = (options?: Partial<Options<DeleteGoalData>>) => createMutationKey('deleteGoal', options);
 
 /**
- * Delete
+ * Delete Goal
  */
 export const deleteGoalMutation = (options?: Partial<Options<DeleteGoalData>>): UseMutationOptions<DeleteGoalResponse, DeleteGoalError, Options<DeleteGoalData>> => {
     const mutationOptions: UseMutationOptions<DeleteGoalResponse, DeleteGoalError, Options<DeleteGoalData>> = {
@@ -145,7 +145,7 @@ export const getGoalOptions = (options: Options<GetGoalData>) => queryOptions<Ge
 export const updateGoalMutationKey = (options?: Partial<Options<UpdateGoalData>>) => createMutationKey('updateGoal', options);
 
 /**
- * Update
+ * Update Goal
  */
 export const updateGoalMutation = (options?: Partial<Options<UpdateGoalData>>): UseMutationOptions<UpdateGoalResponse, UpdateGoalError, Options<UpdateGoalData>> => {
     const mutationOptions: UseMutationOptions<UpdateGoalResponse, UpdateGoalError, Options<UpdateGoalData>> = {
@@ -165,7 +165,7 @@ export const updateGoalMutation = (options?: Partial<Options<UpdateGoalData>>): 
 export const fetchGoalsQueryKey = (options?: Options<FetchGoalsData>) => createQueryKey('fetchGoals', options);
 
 /**
- * List
+ * Fetch Goal
  */
 export const fetchGoalsOptions = (options?: Options<FetchGoalsData>) => queryOptions<FetchGoalsResponse, FetchGoalsError, FetchGoalsResponse, ReturnType<typeof fetchGoalsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -212,7 +212,7 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
 export const fetchGoalsInfiniteQueryKey = (options?: Options<FetchGoalsData>): QueryKey<Options<FetchGoalsData>> => createQueryKey('fetchGoals', options, true);
 
 /**
- * List
+ * Fetch Goal
  */
 export const fetchGoalsInfiniteOptions = (options?: Options<FetchGoalsData>) => {
     const opts = infiniteQueryOptions<FetchGoalsResponse, FetchGoalsError, InfiniteData<FetchGoalsResponse>, QueryKey<Options<FetchGoalsData>>, number | Pick<QueryKey<Options<FetchGoalsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
@@ -242,7 +242,7 @@ export const fetchGoalsInfiniteOptions = (options?: Options<FetchGoalsData>) => 
 export const addGoalMutationKey = (options?: Partial<Options<AddGoalData>>) => createMutationKey('addGoal', options);
 
 /**
- * Add
+ * Add Goal
  */
 export const addGoalMutation = (options?: Partial<Options<AddGoalData>>): UseMutationOptions<AddGoalResponse, AddGoalError, Options<AddGoalData>> => {
     const mutationOptions: UseMutationOptions<AddGoalResponse, AddGoalError, Options<AddGoalData>> = {
@@ -255,26 +255,6 @@ export const addGoalMutation = (options?: Partial<Options<AddGoalData>>): UseMut
             return data;
         },
         mutationKey: addGoalMutationKey(options)
-    };
-    return mutationOptions;
-};
-
-export const upsertBulkGoalMutationKey = (options?: Partial<Options<UpsertBulkGoalData>>) => createMutationKey('upsertBulkGoal', options);
-
-/**
- * Bulk Upsert
- */
-export const upsertBulkGoalMutation = (options?: Partial<Options<UpsertBulkGoalData>>): UseMutationOptions<UpsertBulkGoalResponse, UpsertBulkGoalError, Options<UpsertBulkGoalData>> => {
-    const mutationOptions: UseMutationOptions<UpsertBulkGoalResponse, UpsertBulkGoalError, Options<UpsertBulkGoalData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await upsertBulkGoal({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        },
-        mutationKey: upsertBulkGoalMutationKey(options)
     };
     return mutationOptions;
 };

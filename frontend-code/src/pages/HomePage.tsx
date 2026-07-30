@@ -27,13 +27,13 @@ function HomePage() {
   const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page, limit }, }) });
   const goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
 
-  const activeCountQuery = useQuery({ ...countGoalOptions({ query: { 'active': true } }) })
+  const activeCountQuery = useQuery({ ...countGoalOptions({ query: { active: true } }) })
   const activeCount = activeCountQuery.data
 
-  const completeCountQuery = useQuery({ ...countGoalOptions({ query: { 'active': false } }) })
+  const completeCountQuery = useQuery({ ...countGoalOptions({ query: { completed: true } }) })
   const completeCount = completeCountQuery.data
 
-  const depositQuery = useQuery({ ...fetchDepositsOptions({ query: { limit: limit, page: page } }) })
+  const depositQuery = useQuery({ ...fetchDepositsOptions({ query: { limit: limit, page: page, } }) })
   const deposit = depositQuery.data?.data
   let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
 

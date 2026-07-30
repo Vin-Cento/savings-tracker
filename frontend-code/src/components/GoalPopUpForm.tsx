@@ -5,10 +5,11 @@ import { updateGoalMutation, addGoalMutation, fetchGoalsQueryKey } from "../clie
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../stores/store";
 import { closePopup, openAddGoalPopup } from "../stores/popupSlice";
+import { useState } from "react";
 
 function GoalPopUpMenu() {
   const dispatch = useDispatch<AppDispatch>();
-
+  const [target, setTarget] = useState("");
   const queryClient = useQueryClient();
   const upsertGoal = useMutation({
     ...updateGoalMutation(),
@@ -106,9 +107,15 @@ function GoalPopUpMenu() {
         Target:
       </label>
       <input
-        type="number"
         id="target"
         name="target"
+        value={target}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (/^\d*\.?\d{0,2}$/.test(value)) {
+            setTarget(value);
+          }
+        }}
         defaultValue={goal.target}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         placeholder="Enter target number"

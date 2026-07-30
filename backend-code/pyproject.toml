@@ -1,0 +1,2 @@
+[tool.pycodestyle]
+ignore = ["E712"]

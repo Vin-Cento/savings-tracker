@@ -1,9 +1,11 @@
-from typing import Any, Dict, Optional
 from uuid import UUID
 
 from sqlalchemy.sql.elements import ColumnElement
 from repositories.goal_repository_protocol import GoalRepositoryProtocol
-from schema.goal_schema import GoalCreateSchema, GoalPaginationSchema, GoalSchema, GoalUpdateSchema
+from schema.goal_schema import (
+    GoalCreateSchema, GoalPaginationSchema,
+    GoalSchema, GoalUpdateSchema
+)
 
 
 class GoalNotFoundError(Exception):
@@ -17,7 +19,8 @@ class GoalService:
     def add_goal(self, goal: GoalCreateSchema) -> GoalSchema:
         return self.repository.add(goal)
 
-    def count_goal(self, where: Optional[ColumnElement[bool]] = None) -> int:
+    def count_goal(self,
+                   where: list[ColumnElement[bool]] | None = None) -> int:
         return self.repository.count(where)
 
     def get_goal(self, goal_id: UUID) -> GoalSchema | None:
@@ -26,12 +29,12 @@ class GoalService:
     def update_goal(self, goal: GoalUpdateSchema) -> GoalSchema | None:
         return self.repository.update(goal)
 
-    def delete_goal(self, goal_id: UUID)-> bool:
+    def delete_goal(self, goal_id: UUID) -> bool:
         return self.repository.delete(goal_id)
 
     def list_goal(
         self,
-        where: ColumnElement[bool] | None = None,
+        where: list[ColumnElement[bool]] | None = None,
         *,
         page: int = 1,
         limit: int = 10,

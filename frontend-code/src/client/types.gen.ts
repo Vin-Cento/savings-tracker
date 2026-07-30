@@ -249,7 +249,11 @@ export type CountGoalData = {
         /**
          * Active
          */
-        active?: boolean;
+        active?: boolean | null;
+        /**
+         * Completed
+         */
+        completed?: boolean | null;
     };
     url: '/goals/count';
 };
@@ -336,12 +340,7 @@ export type GetGoalResponse = GetGoalResponses[keyof GetGoalResponses];
 
 export type UpdateGoalData = {
     body: GoalUpdateSchema;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
+    path?: never;
     query?: never;
     url: '/goals/{id}';
 };
@@ -422,31 +421,6 @@ export type AddGoalResponses = {
 };
 
 export type AddGoalResponse = AddGoalResponses[keyof AddGoalResponses];
-
-export type UpsertBulkGoalData = {
-    body: GoalCreateSchema;
-    path?: never;
-    query?: never;
-    url: '/goals/bulk';
-};
-
-export type UpsertBulkGoalErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpsertBulkGoalError = UpsertBulkGoalErrors[keyof UpsertBulkGoalErrors];
-
-export type UpsertBulkGoalResponses = {
-    /**
-     * Successful Response
-     */
-    201: GoalSchema;
-};
-
-export type UpsertBulkGoalResponse = UpsertBulkGoalResponses[keyof UpsertBulkGoalResponses];
 
 export type DeleteDepositData = {
     body?: never;
