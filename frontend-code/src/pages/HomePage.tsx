@@ -9,9 +9,14 @@ import { page, limit, gridPositions } from "./HomePage/constant"
 import GoalPopUpMenu from "../components/GoalPopUpForm";
 import type { GoalSchema } from "../client";
 import { useState } from "react";
-import { getNextSortConfig, sortByConfig, type SortConfig } from "../composables/sortUtil";
+import { sortByConfig, type SortConfig } from "../composables/sortUtil";
 import { sortingComparison } from "../composables/util";
 import DropdownButton from "../components/DropdownButton";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../stores/store";
+import { openAddDepositPopup, openAddGoalPopup } from "../stores/popupSlice";
+import { setGoal } from "../stores/goalSlice";
+import AddDepositPopUpForm from "../components/AddDepositPopUpForm";
 
 function calculateProgressPercent(amount: number, target: number): number {
   if (target <= 0) return -1;
@@ -19,6 +24,8 @@ function calculateProgressPercent(amount: number, target: number): number {
 }
 
 function HomePage() {
+  const dispatch = useDispatch<AppDispatch>();
+
   const getGridPositionClass = (index: number) => {
     const patternIndex = index % gridPositions.length;
     return gridPositions[patternIndex];
@@ -37,18 +44,27 @@ function HomePage() {
   const deposit = depositQuery.data?.data
   let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
 
-  const [sortConfig, setSortConfig] = useState<SortConfig<GoalSchema>>(null);
+  const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
 
-  const handleSort = (attr: keyof GoalSchema) => {
-    setSortConfig((currentSortConfig) =>
-      getNextSortConfig(currentSortConfig, attr)
-    );
-  };
+  // const handleSort = (attr: keyof GoalSchema) => {
+  //   setSortConfig((currentSortConfig) =>
+  //     getNextSortConfig(currentSortConfig, attr)
+  //   );
+  // };
+  //
+  // const handleSort1 = () => {
+  //   console.log('alert')
+  // }
 
-  const handleSort1 = () => {
-    console.log('alert')
+  const handleEditGoal = (goal: GoalSchema) => {
+    dispatch(setGoal({ goal: goal }))
+    dispatch(openAddGoalPopup())
   }
 
+  const handleDeposit = (goal: GoalSchema) => {
+    dispatch(setGoal({ goal: goal }))
+    dispatch(openAddDepositPopup())
+  }
 
   const sortedGoals = sortByConfig(
     goals.data,
@@ -125,7 +141,8 @@ function HomePage() {
             sortedGoals.map((goal, index) => (
               <div
                 key={goal.id}
-                className={`${getGridPositionClass(index)} bg-zinc-700 flex font-bold border border-gray-700 p-2 rounded-2xl`}
+                className={`${getGridPositionClass(index)} bg-zinc-700 flex font-bold border border-gray-700 p-2 rounded-2xl cursor-pointer`}
+                onClick={() => handleDeposit(goal)}
               >
                 <div className="w-full p-3 flex flex-col h-full">
                   <h3 className="text-xl font-bold m-2">{goal.name}</h3>
@@ -181,6 +198,7 @@ function HomePage() {
         </div>
       </main >
       <GoalPopUpMenu />
+      <AddDepositPopUpForm />
     </>
   );
 }
