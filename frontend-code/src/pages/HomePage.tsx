@@ -46,16 +46,6 @@ function HomePage() {
 
   const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
 
-  // const handleSort = (attr: keyof GoalSchema) => {
-  //   setSortConfig((currentSortConfig) =>
-  //     getNextSortConfig(currentSortConfig, attr)
-  //   );
-  // };
-  //
-  // const handleSort1 = () => {
-  //   console.log('alert')
-  // }
-
   const handleEditGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))
     dispatch(openAddGoalPopup())
