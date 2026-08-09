@@ -17,10 +17,6 @@ router = APIRouter(
 )
 
 
-class GoalNotFoundError(Exception):
-    pass
-
-
 @router.get("/count", response_model=int, operation_id="countGoal")
 def count_goal(service: GoalServiceDependency,
                active: bool | None = Query(None),

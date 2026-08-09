@@ -1,10 +1,10 @@
 from typing import List, Optional
 import uuid
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from datetime import datetime
 from sys import maxsize
-from core.dependencies import get_session
+from core.dependencies import GoalServiceDependency, get_session
 from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
@@ -23,8 +23,10 @@ def get(id: uuid.UUID, session: Session = Depends(get_session)):
 
 @router.post("/add", response_model=DepositSchema, operation_id='addDeposit')
 def add(deposit: DepositCreateSchema,
-        session: Session = Depends(get_session)) -> DepositSchema:
-    res = deposit_service.add_deposit(session, deposit)
+        goal_service: GoalServiceDependency,
+        session: Session = Depends(get_session),
+        ) -> DepositSchema:
+    res = deposit_service.add_deposit(session, deposit, goal_service)
     return DepositSchema(id=res.id, amount=res.amount, note=res.note,
                          goal_id=res.goal_id, createdAt=res.createdAt)
 

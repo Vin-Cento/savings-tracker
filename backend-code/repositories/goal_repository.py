@@ -1,126 +1,116 @@
-from typing import Any, Dict, List, Optional
-import uuid
-
-from fastapi import HTTPException, status
-from sqlalchemy import Row, func, select
+from typing import List
+from uuid import UUID
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import and_
-
+from sqlalchemy.sql.elements import ColumnElement
 from models.models import DepositRow, GoalRow
 from schema.goal_schema import GoalCreateSchema, GoalSchema, GoalUpdateSchema
-from sqlalchemy import delete as sqlalchemy_delete
-from core.logging import logging
-from sqlalchemy.dialects import postgresql
-
-logger = logging.getLogger("goal repo")
 
 
-def get(db: Session, goal_id: uuid.UUID) -> GoalSchema:
-    row = (
-        db.query(
-            GoalRow.id.label("id"),
-            GoalRow.name.label("name"),
-            GoalRow.target.label("target"),
-            GoalRow.active.label("active"),
-            GoalRow.completed.label("completed"),
-            func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
-            GoalRow.deadline.label("deadline"),
-            GoalRow.createdAt.label("createdAt"),
+class GoalRepository:
+    def __init__(self, session: Session) -> None:
+        self.session = session
+
+    def get(self, goal_id: UUID) -> GoalSchema | None:
+        row = (
+            self.session.query(
+                GoalRow.id.label("id"),
+                GoalRow.name.label("name"),
+                GoalRow.target.label("target"),
+                GoalRow.active.label("active"),
+                GoalRow.completed.label("completed"),
+                func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
+                GoalRow.deadline.label("deadline"),
+                GoalRow.createdAt.label("createdAt"),
+            )
+            .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
+            .filter(GoalRow.id == goal_id)
+            .group_by(GoalRow.id)
+            .first()
         )
-        .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
-        .filter(GoalRow.id == goal_id)
-        .group_by(GoalRow.id)
-        .first()
-    )
-    if row is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Goal {goal_id} not found",
-        )
+        if row is None:
+            return None
 
-    return GoalSchema.model_validate(row._mapping)
+        return GoalSchema.model_validate(row._mapping)
 
-
-def fetch(db: Session, page: int, limit: int) -> List[GoalSchema]:
-    rows: list[Row] = (
-        db.query(
-            GoalRow.id.label("id"),
-            GoalRow.name.label("name"),
-            GoalRow.target.label("target"),
-            GoalRow.active.label("active"),
-            GoalRow.completed.label("completed"),
-            func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
-            GoalRow.deadline.label("deadline"),
-            GoalRow.createdAt.label("createdAt"),
-        )
-        .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
-        .group_by(GoalRow.id)
-        .order_by(GoalRow.createdAt.desc())
-        .offset((page - 1) * limit)
-        .limit(limit)
-        .all()
-    )
-    result = [GoalSchema.model_validate(r) for r in rows]
-    return result
-
-
-def count(db: Session, where: Optional[Dict[str, Any]] = None) -> int:
-    conditions = []
-
-    if where is None:
-        return db.query(GoalRow).count()
-
-    for key, value in where.items():
-        attr = getattr(GoalRow, key)
-        if isinstance(value, (list, tuple, set)):
-            conditions.append(attr.in_(value))
-        else:
-            conditions.append(attr == value)
-
-    stmt = select(func.count()).select_from(GoalRow)
-    if conditions:
-        stmt = stmt.where(and_(*conditions))
-
-    compiled = stmt.compile(dialect=postgresql.dialect(),
-                            compile_kwargs={"literal_binds": True})
-    logger.info("SQL QUERY:\n%s", compiled)
-
-    return db.execute(stmt).scalar_one()
-
-
-def create(db: Session, goal: GoalCreateSchema):
-    new_goal = GoalRow(
-        name=goal.name,
-        target=goal.target,
-        deadline=goal.deadline,
-    )
-    db.add(new_goal)
-    db.commit()
-    db.refresh(new_goal)
-
-    return new_goal
-
-
-def update(db: Session, goal: GoalUpdateSchema):
-    db_goal = db.get(GoalRow, goal.id)
-
-    if db_goal is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Goal {goal.id} not found",
+    def fetch(self, where: list[ColumnElement[bool]] | None = None,
+              *, page: int = 1, limit: int = 10,) -> List[GoalSchema]:
+        stmt = (
+            self.session.query(
+                GoalRow.id.label("id"),
+                GoalRow.name.label("name"),
+                GoalRow.target.label("target"),
+                GoalRow.active.label("active"),
+                GoalRow.completed.label("completed"),
+                func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
+                GoalRow.deadline.label("deadline"),
+                GoalRow.createdAt.label("createdAt"),
+            )
+            .outerjoin(DepositRow, DepositRow.goal_id == GoalRow.id)
+            .group_by(GoalRow.id)
         )
 
-    db_goal.name = goal.name
-    db_goal.deadline = goal.deadline
-    db_goal.target = goal.target
-    db_goal.completed = goal.completed
+        if where is not None:
+            stmt = stmt.filter(*where)
 
-    db.commit()
-    db.refresh(db_goal)
+        goal_rows = (
+            stmt
+            .order_by(GoalRow.createdAt.desc())
+            .offset((page - 1) * limit)
+            .limit(limit)
+            .all()
+        )
 
-    return db_goal
+        return [GoalSchema.model_validate(goal_row) for goal_row in goal_rows]
 
+    def add(self, goal: GoalCreateSchema) -> GoalSchema:
+        row = GoalRow(
+            name=goal.name,
+            target=goal.target,
+            active=goal.active,
+        )
 
-def delete(db: Session, goal: GoalSchema):
-    db.execute(sqlalchemy_delete(GoalRow).where(GoalRow.id == goal.id))
-    db.commit()
+        self.session.add(row)
+        self.session.flush()
+        self.session.commit()
+        return GoalSchema(
+            id=row.id,
+            name=row.name,
+            active=row.active,
+            completed=row.completed,
+            target=row.target,
+            createdAt=row.createdAt,
+            amount=0
+        )
+
+    def delete(self, goal_id: UUID) -> bool:
+        row = self.session.get(GoalRow, goal_id)
+
+        if row is None:
+            return False
+
+        self.session.delete(row)
+        self.session.commit()
+
+        return True
+
+    def update(self, goal: GoalUpdateSchema) -> GoalSchema | None:
+        goal_row = self.session.get(GoalRow, goal.id)
+
+        if goal_row is None:
+            return None
+
+        goal_row.name = goal.name
+        goal_row.target = goal.target
+        goal_row.active = goal.active
+        goal_row.deadline = goal.deadline
+        goal_row.completed = goal.completed
+
+        self.session.commit()
+        return self.get(goal.id)
+
+    def count(self, where: list[ColumnElement[bool]] | None = None) -> int:
+        stmt = select(func.count()).select_from(GoalRow)
+        if where is not None:
+            stmt = stmt.filter(*where)
+        return self.session.scalar(stmt) or 0

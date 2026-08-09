@@ -3,7 +3,7 @@ from database import get_session
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from repositories.goal_repository_protocol import GoalRepositoryProtocol
-from repositories.goal_repository_sqlalchemy import GoalRepository
+from repositories.goal_repository import GoalRepository
 from services.goal_service_class import GoalService
 
 DatabaseSession = Annotated[

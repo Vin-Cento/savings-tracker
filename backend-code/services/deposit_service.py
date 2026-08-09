@@ -4,7 +4,8 @@ import uuid
 
 from fastapi import status, HTTPException
 from sqlalchemy.orm import Session
-from repositories import deposit_repository, goal_repository
+from core.dependencies import GoalServiceDependency
+from repositories import deposit_repository
 from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
@@ -47,13 +48,17 @@ def list_deposit(db: Session,
     )
 
 
-def add_deposit(db: Session, deposit: DepositCreateSchema):
-    goal = goal_repository.get(db, deposit.goal_id)
+def add_deposit(db: Session, deposit: DepositCreateSchema, goal_service: GoalServiceDependency):
+    goal = goal_service.get_goal(deposit.goal_id)
+    if goal is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Goal Not Found",
+        )
     remaining = goal.target - goal.amount - deposit.amount
     if remaining > 0:
         res = deposit_repository.add(db, deposit)
     else:
-        goal = goal_repository.get(db, deposit.goal_id)
         goal_schema = (
             GoalUpdateSchema(
                 id=goal.id,
@@ -62,7 +67,7 @@ def add_deposit(db: Session, deposit: DepositCreateSchema):
                 completed=True
             )
         )
-        goal_repository.update(db, goal_schema)
+        goal_service.update_goal(goal_schema)
         # remainder is always negative so we are adding
         deposit.amount = deposit.amount + remaining
         res = deposit_repository.add(db, deposit)
