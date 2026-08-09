@@ -1,17 +1,14 @@
 from typing import List, Optional
 import uuid
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Query
 from sqlalchemy import ColumnElement
-from sqlalchemy.orm import Session
 from datetime import datetime
 from sys import maxsize
-from core.dependencies import DepositServiceDependency, get_session
+from core.dependencies import DepositServiceDependency
 from models.models import DepositRow
 from schema.deposit_schema import (DepositCreateSchema,
                                    DepositPaginationSchema,
                                    DepositSchema)
-from services import deposit_service
-
 router = APIRouter(
     prefix="/deposit",
     tags=["deposit"],
@@ -42,7 +39,6 @@ def fetch_deposit(
     deposit_date: Optional[datetime] = datetime.min,
 ):
     where: list[ColumnElement[bool]] = []
-    print('goal_id: ', goal_id)
     if goal_id != []:
         where.append(DepositRow.goal_id.in_(goal_id))
     if deposit_date != None:
@@ -51,5 +47,11 @@ def fetch_deposit(
 
 
 @router.post("/total", response_model=int, operation_id="totalDeposit")
-def total(goals: List[int], session: Session = Depends(get_session)):
-    return deposit_service.get_deposit_total(session, goals)
+def total(
+    service: DepositServiceDependency,
+    goals: List[uuid.UUID] = Query(default=[]),
+):
+    where: list[ColumnElement[bool]] = []
+    if goals != []:
+        where.append(DepositRow.goal_id.in_(goals))
+    return service.total_deposit(where)
