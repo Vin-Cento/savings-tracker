@@ -14,6 +14,7 @@ class GoalSchema(SchemaModel):
     name: str
     target: int
     active: bool
+    completed: bool
     amount: int
     deadline: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
@@ -24,9 +25,17 @@ class GoalPaginationSchema(Pagination):
 
 
 class GoalCreateSchema(BaseModel):
+    name: str
+    target: int
+    active: bool = True
+    completed: bool = False
+    deadline: Optional[datetime] = None
+
+
+class GoalUpdateSchema(BaseModel):
     id: uuid.UUID
     name: str
     target: int
-    active: Optional[bool] = True
-    amount: int = 0
+    active: bool = True
+    completed: bool = False
     deadline: Optional[datetime] = None
