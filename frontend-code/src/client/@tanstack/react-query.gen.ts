@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { addDeposit, addGoal, countGoal, deleteDeposit, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDeposit, updateGoal } from '../sdk.gen';
-import type { AddDepositData, AddDepositError, AddDepositResponse, AddGoalData, AddGoalError, AddGoalResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteDepositData, DeleteDepositError, DeleteDepositResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositData, TotalDepositError, TotalDepositResponse, UpdateGoalData, UpdateGoalError, UpdateGoalResponse } from '../types.gen';
+import { addDeposit, addGoal, countGoal, deleteGoal, fetchDeposits, fetchGoals, getDeposit, getGoal, type Options, readRootGet, totalDeposit, updateGoal } from '../sdk.gen';
+import type { AddDepositData, AddDepositError, AddDepositResponse, AddGoalData, AddGoalError, AddGoalResponse, CountGoalData, CountGoalError, CountGoalResponse, DeleteGoalData, DeleteGoalError, DeleteGoalResponse, FetchDepositsData, FetchDepositsError, FetchDepositsResponse, FetchGoalsData, FetchGoalsError, FetchGoalsResponse, GetDepositData, GetDepositError, GetDepositResponse, GetGoalData, GetGoalError, GetGoalResponse, ReadRootGetData, TotalDepositData, TotalDepositError, TotalDepositResponse, UpdateGoalData, UpdateGoalError, UpdateGoalResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -259,26 +259,6 @@ export const addGoalMutation = (options?: Partial<Options<AddGoalData>>): UseMut
     return mutationOptions;
 };
 
-export const deleteDepositMutationKey = (options?: Partial<Options<DeleteDepositData>>) => createMutationKey('deleteDeposit', options);
-
-/**
- * Delete
- */
-export const deleteDepositMutation = (options?: Partial<Options<DeleteDepositData>>): UseMutationOptions<DeleteDepositResponse, DeleteDepositError, Options<DeleteDepositData>> => {
-    const mutationOptions: UseMutationOptions<DeleteDepositResponse, DeleteDepositError, Options<DeleteDepositData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await deleteDeposit({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        },
-        mutationKey: deleteDepositMutationKey(options)
-    };
-    return mutationOptions;
-};
-
 export const getDepositQueryKey = (options: Options<GetDepositData>) => createQueryKey('getDeposit', options);
 
 /**
@@ -320,7 +300,7 @@ export const addDepositMutation = (options?: Partial<Options<AddDepositData>>): 
 export const fetchDepositsQueryKey = (options?: Options<FetchDepositsData>) => createQueryKey('fetchDeposits', options);
 
 /**
- * List
+ * Fetch Deposit
  */
 export const fetchDepositsOptions = (options?: Options<FetchDepositsData>) => queryOptions<FetchDepositsResponse, FetchDepositsError, FetchDepositsResponse, ReturnType<typeof fetchDepositsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -338,7 +318,7 @@ export const fetchDepositsOptions = (options?: Options<FetchDepositsData>) => qu
 export const fetchDepositsInfiniteQueryKey = (options?: Options<FetchDepositsData>): QueryKey<Options<FetchDepositsData>> => createQueryKey('fetchDeposits', options, true);
 
 /**
- * List
+ * Fetch Deposit
  */
 export const fetchDepositsInfiniteOptions = (options?: Options<FetchDepositsData>) => {
     const opts = infiniteQueryOptions<FetchDepositsResponse, FetchDepositsError, InfiniteData<FetchDepositsResponse>, QueryKey<Options<FetchDepositsData>>, number | Pick<QueryKey<Options<FetchDepositsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(

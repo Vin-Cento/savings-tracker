@@ -422,36 +422,6 @@ export type AddGoalResponses = {
 
 export type AddGoalResponse = AddGoalResponses[keyof AddGoalResponses];
 
-export type DeleteDepositData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: number;
-    };
-    query?: never;
-    url: '/deposit/{id}';
-};
-
-export type DeleteDepositErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteDepositError = DeleteDepositErrors[keyof DeleteDepositErrors];
-
-export type DeleteDepositResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DeleteDepositResponse = DeleteDepositResponses[keyof DeleteDepositResponses];
-
 export type GetDepositData = {
     body?: never;
     path: {
