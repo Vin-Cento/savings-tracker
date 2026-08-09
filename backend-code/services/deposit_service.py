@@ -72,13 +72,3 @@ def add_deposit(db: Session, deposit: DepositCreateSchema, goal_service: GoalSer
         deposit.amount = deposit.amount + remaining
         res = deposit_repository.add(db, deposit)
     return res
-
-
-def delete_deposit(db: Session, id: int):
-    deposit = deposit_repository.get(db, {"id": id})
-    if not deposit:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Deposit not found",
-        )
-    deposit_repository.delete(db, deposit)

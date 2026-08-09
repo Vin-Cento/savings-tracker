@@ -101,8 +101,3 @@ def add(db: Session, deposit: DepositCreateSchema):
     db.refresh(new_goal)
 
     return new_goal
-
-
-def delete(db: Session, deposit: DepositRow):
-    db.delete(deposit)
-    db.commit()
