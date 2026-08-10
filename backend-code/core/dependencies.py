@@ -3,7 +3,7 @@ from database import get_session
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from repositories.deposit_repository_protocol import DepositRepositoryProtocol
-from repositories.deposit_repository_sqlalchemy import DepositRepository
+from repositories.deposit_repository import DepositRepository
 from repositories.goal_repository_protocol import GoalRepositoryProtocol
 from repositories.goal_repository import GoalRepository
 from services.deposit_service_class import DepositService

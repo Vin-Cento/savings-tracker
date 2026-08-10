@@ -1,103 +1,87 @@
-from typing import Any, Dict, Optional, Sequence
+from typing import List
+from uuid import UUID
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, select
+from sqlalchemy.sql.elements import ColumnElement
 from models.models import DepositRow
-from schema.deposit_schema import DepositCreateSchema
-from core.logging import logging
-from sqlalchemy.dialects import postgresql
-
-logger = logging.getLogger("deposit repo")
+from schema.deposit_schema import DepositCreateSchema, DepositSchema
 
 
-def get(db: Session, where: Dict[str, Any]) -> Optional[DepositRow]:
-    conditions = []
-    for key, value in where.items():
-        attr = getattr(DepositRow, key)
-        if isinstance(value, (list, tuple, set)):  # type: ignore
-            conditions.append(attr.in_(value))
-        else:
-            conditions.append(attr == value)
-    if conditions:
-        stmt = select(DepositRow).where(and_(*conditions))
-    else:
-        stmt = select(DepositRow)
-    result = db.execute(stmt).scalars().first()
-    return result
+class DepositRepository:
+    def __init__(self, session: Session) -> None:
+        self.session = session
 
+    def get(self, deposit_id: UUID) -> DepositSchema | None:
+        row = (
+            self.session.query(
+                DepositRow.id.label("id"),
+                DepositRow.amount.label("amount"),
+                DepositRow.goal_id.label("goal_id"),
+                DepositRow.createdAt.label("createdAt"),
+            )
+            .filter(DepositRow.id == deposit_id)
+            .group_by(DepositRow.id)
+            .first()
+        )
+        if row is None:
+            return None
 
-def count(db: Session, where: Dict[str, Any]) -> int:
-    conditions = []
-    for key, value in where.items():
-        attr = getattr(DepositRow, key)
-        if isinstance(value, (list, tuple, set)):
-            if len(value) == 0:
-                continue
-            conditions.append(attr.in_(value))
-        else:
-            conditions.append(attr == value)
+        return DepositSchema.model_validate(row._mapping)
 
-    stmt = select(func.count()).select_from(DepositRow)
-    if conditions:
-        stmt = stmt.where(and_(*conditions))
+    def fetch(self,
+              where: list[ColumnElement[bool]] | None = None,
+              *, page: int = 1, limit: int = 10
+              ) -> List[DepositSchema]:
+        stmt = (
+            self.session.query(
+                DepositRow.id.label("id"),
+                DepositRow.amount.label("amount"),
+                DepositRow.goal_id.label("goal_id"),
+                DepositRow.createdAt.label("createdAt"),
+            )
+        )
 
-    compiled = stmt.compile(dialect=postgresql.dialect(),
-                            compile_kwargs={"literal_binds": True})
-    logger.info("SQL QUERY:\n%s", compiled)
-    return db.execute(stmt).scalar_one()
+        if where is not None:
+            stmt = stmt.filter(*where)
 
-
-def total(db: Session, where: Dict[str, Any]) -> int:
-    conditions = []
-    for key, value in where.items():
-        attr = getattr(DepositRow, key)
-        if isinstance(value, (list, tuple, set)):  # type: ignore
-            conditions.append(attr.in_(value))
-        else:
-            conditions.append(attr == value)
-    if conditions:
-        stmt = select(func.sum(DepositRow.amount)).where(and_(*conditions))
-    else:
-        stmt = select(func.sum(DepositRow.amount))
-    result = db.execute(stmt).scalar_one()
-    return result
-
-
-def fetch(db: Session,
-          where: Dict[str, Any],
-          page: int,
-          limit: int) -> Sequence[DepositRow]:
-    conditions = []
-    for key, value in where.items():
-        attr = getattr(DepositRow, key)
-        if isinstance(value, (list, tuple, set)):
-            if len(value) == 0:
-                continue
-            conditions.append(attr.in_(value))
-        else:
-            conditions.append(attr == value)
-    stmt = select(DepositRow)
-    if conditions:
-        stmt = stmt.where(and_(*conditions))
-
-    stmt = (stmt.order_by(DepositRow.createdAt.desc())
+        deposit_rows = (
+            stmt
+            .order_by(DepositRow.createdAt.desc())
             .offset((page - 1) * limit)
-            .limit(limit))
-    compiled = stmt.compile(dialect=postgresql.dialect(),
-                            compile_kwargs={"literal_binds": True})
-    logger.info("SQL QUERY:\n%s", compiled)
-    result = db.execute(stmt).scalars().all()
-    return result
+            .limit(limit)
+            .all()
+        )
 
+        return [
+            DepositSchema.model_validate(deposit_row)
+            for deposit_row in deposit_rows
+        ]
 
-def add(db: Session, deposit: DepositCreateSchema):
-    new_goal = DepositRow(
-        amount=deposit.amount,
-        goal_id=deposit.goal_id,
-        note=deposit.note
-    )
+    def add(self, deposit: DepositCreateSchema) -> DepositSchema:
+        row = DepositRow(
+            amount=deposit.amount,
+            note=deposit.note,
+            goal_id=deposit.goal_id,
+        )
 
-    db.add(new_goal)
-    db.commit()
-    db.refresh(new_goal)
+        self.session.add(row)
+        self.session.commit()
+        self.session.refresh(row)
+        return DepositSchema(
+            id=row.id, amount=row.amount, note=row.note,
+            createdAt=row.createdAt, goal_id=row.goal_id,
+        )
 
-    return new_goal
+    def count(self, where: list[ColumnElement[bool]] | None = None) -> int:
+        stmt = select(func.count()).select_from(DepositRow)
+        if where is not None:
+            stmt = stmt.filter(*where)
+        return self.session.scalar(stmt) or 0
+
+    def total(self, where: list[ColumnElement[bool]] | None = None) -> int:
+        stmt = select(
+            func.coalesce(func.sum(DepositRow.amount), 0).label("amount")
+        ).select_from(DepositRow)
+        if where is not None:
+            stmt = stmt.filter(*where)
+        return self.session.scalar(stmt) or 0
