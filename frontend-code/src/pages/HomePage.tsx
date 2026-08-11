@@ -73,14 +73,12 @@ function HomePage() {
             className="w-2/4 bg-linear-to-r from-red-700 to-amber-700"
           />
           <StatCard
-            to="/goals/management"
             title="Active goals"
             value={activeCount}
             className="w-1/4 items-center bg-zinc-800"
             valueClassName="text-orange-600"
           />
           <StatCard
-            to="/goals/management"
             title="Goals completed"
             value={completeCount}
             className="w-1/4 items-center bg-zinc-800"
@@ -184,8 +182,8 @@ function HomePage() {
               </div>
             ))
           ) : (
-            <div>
-              <p>No goals available</p>
+            <div className="col-span-3 w-full text-center p-12">
+              <h1 className="text-2xl">No goals available</h1>
             </div>
           )}
         </div>

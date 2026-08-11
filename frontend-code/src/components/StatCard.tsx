@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
 
 type StatCardProps = {
-  to: string;
+  to?: string;
   title: string;
   value: ReactNode;
   className?: string;
@@ -16,19 +16,26 @@ function StatCard({
   className = "",
   valueClassName = "",
 }: StatCardProps) {
-  return (
+  const content = (
+    <div>
+      <h1 className="mb-5 text-sm">{title}</h1>
+
+      <p className={`text-5xl font-bold ${valueClassName}`}>
+        {value}
+      </p>
+    </div>
+  );
+  return to ? (
     <Link
       to={to}
-      className={`m-2 flex p-4 rounded-xl ${className}`}
+      className={`m-2 flex rounded-xl p-4 ${className}`}
     >
-      <div>
-        <h1 className="mb-5 text-sm">{title}</h1>
-
-        <p className={`text-5xl font-bold ${valueClassName}`}>
-          {value}
-        </p>
-      </div>
+      {content}
     </Link>
+  ) : (
+    <div className={`m-2 flex rounded-xl p-4 ${className}`}>
+      {content}
+    </div>
   );
 }
 

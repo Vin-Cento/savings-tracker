@@ -74,7 +74,6 @@ function GoalPopUpMenu() {
       };
 
       upsertGoal.mutate({
-        path: { id: goal.id },
         body: payload,
       });
     }
