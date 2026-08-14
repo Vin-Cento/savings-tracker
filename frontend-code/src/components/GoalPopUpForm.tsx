@@ -4,7 +4,7 @@ import type { GoalCreateSchema, GoalUpdateSchema } from "../client";
 import { updateGoalMutation, addGoalMutation, fetchGoalsQueryKey } from "../client/@tanstack/react-query.gen";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../stores/store";
-import { closePopup, openAddGoalPopup } from "../stores/popupSlice";
+import { closePopup } from "../stores/popupSlice";
 import { useState } from "react";
 
 function GoalPopUpMenu() {
@@ -18,6 +18,7 @@ function GoalPopUpMenu() {
         queryKey: fetchGoalsQueryKey(),
       });
 
+      setTarget("")
       dispatch(closePopup())
     },
     onError: (error) => {
@@ -31,6 +32,7 @@ function GoalPopUpMenu() {
         queryKey: fetchGoalsQueryKey(),
       });
 
+      setTarget("")
       dispatch(closePopup())
     },
     onError: (error) => {
@@ -39,7 +41,6 @@ function GoalPopUpMenu() {
   });
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    dispatch(openAddGoalPopup())
 
     e.preventDefault();
 
@@ -115,7 +116,6 @@ function GoalPopUpMenu() {
             setTarget(value);
           }
         }}
-        defaultValue={goal.target}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         placeholder="Enter target number"
         required
