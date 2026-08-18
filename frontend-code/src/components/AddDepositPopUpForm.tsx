@@ -39,22 +39,22 @@ function AddDepositPopUpForm() {
 
     const formData = new FormData(e.currentTarget);
 
-    const amount = Number(formData.get("deposit_amount"));
-    const note = (formData.get("deposit_note") as string)?.trim() || null;
+    const deposit_amount = Number(formData.get("deposit_amount"));
+    const deposit_note = (formData.get("deposit_note") as string)?.trim() || null;
 
-    if (Number.isNaN(amount)) {
+    if (Number.isNaN(deposit_amount)) {
       alert("Invalid amount");
       return;
     }
 
-    const payload: DepositCreateSchema = {
+    const createDepositPayload: DepositCreateSchema = {
       goal_id: goal.id,
-      amount,
-      note,
+      amount: deposit_amount,
+      note: deposit_note,
     };
 
     addDepositMutationResult.mutate({
-      body: payload,
+      body: createDepositPayload,
     });
   };
 
