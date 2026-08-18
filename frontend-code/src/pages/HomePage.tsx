@@ -11,7 +11,7 @@ import { sortingComparison } from "../composables/util";
 import StatCard from "../components/StatCard";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../stores/store";
-import { openAddDepositPopup, openAddGoalPopup } from "../stores/popupSlice";
+import { openAddDepositPopup } from "../stores/popupSlice";
 import { setGoal } from "../stores/goalSlice";
 import AddDepositPopUpForm from "../components/AddDepositPopUpForm";
 import DepositFilterBar from "../components/DepositFilterBar";
@@ -35,11 +35,13 @@ function HomePage() {
 
   const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
 
-  const filterOptions = [{ label: "Active Goals", onClick: () => { console.log('active goal') } },
-  { label: "Completed Goals" },
-  { label: "Due This Month" },
-  { label: "Overdue" },
-  { label: "Progress > 50%" },]
+  const filterOptions = [
+    { label: "Active Goals", onClick: () => { console.log('active goal') } },
+    { label: "Completed Goals" },
+    { label: "Due This Month" },
+    { label: "Overdue" },
+    { label: "Progress > 50%" }
+  ]
 
   const sortOptions = [{ label: "Active Goals", onClick: () => { console.log('active goal') } },
   { label: "Completed Goals" },
@@ -47,10 +49,10 @@ function HomePage() {
   { label: "Overdue" },
   { label: "Progress > 50%" },]
 
-  const handleEditGoal = (goal: GoalSchema) => {
-    dispatch(setGoal({ goal: goal }))
-    dispatch(openAddGoalPopup())
-  }
+  // const handleEditGoal = (goal: GoalSchema) => {
+  //   dispatch(setGoal({ goal: goal }))
+  //   dispatch(openAddGoalPopup())
+  // }
 
   const depositGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))

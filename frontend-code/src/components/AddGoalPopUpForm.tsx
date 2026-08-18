@@ -45,17 +45,17 @@ function AddGoalPopUpMenu() {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const deadlineValue = formData.get("deadline");
+    const deadlineValue = formData.get("goal_deadline");
 
     if (typeof deadlineValue !== "string") {
-      console.error("Invalid deadline value");
+      alert("Invalid deadline value");
       return;
     }
 
     if (goal.id == "") {
       const payload: GoalCreateSchema = {
-        name: formData.get("name") as string,
-        target: Number(formData.get("target")),
+        name: formData.get("goal_name") as string,
+        target: Number(formData.get("goal_target")),
         deadline:
           deadlineValue === "" ? null : new Date(deadlineValue).toISOString(),
         active: true,
@@ -67,8 +67,8 @@ function AddGoalPopUpMenu() {
     } else {
       const payload: GoalUpdateSchema = {
         id: goal.id,
-        name: formData.get("name") as string,
-        target: Number(formData.get("target")),
+        name: formData.get("goal_name") as string,
+        target: Number(formData.get("goal_target")),
         deadline:
           deadlineValue === "" ? null : new Date(deadlineValue).toISOString(),
         active: true,

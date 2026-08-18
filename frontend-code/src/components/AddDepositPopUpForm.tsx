@@ -39,8 +39,8 @@ function AddDepositPopUpForm() {
 
     const formData = new FormData(e.currentTarget);
 
-    const amountValue = formData.get("amount");
-    const noteValue = formData.get("note");
+    const amountValue = formData.get("deposit_amount");
+    const noteValue = formData.get("deposit_note");
 
     const amount =
       typeof amountValue === "string" ? Number(amountValue) : NaN;
@@ -51,7 +51,7 @@ function AddDepositPopUpForm() {
         : null;
 
     if (Number.isNaN(amount)) {
-      console.error("Invalid amount");
+      alert("Invalid amount");
       return;
     }
 
