@@ -47,16 +47,29 @@ function HomePage() {
 
   const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
 
+  const filterOptions = [{ label: "Active Goals", onClick: () => { console.log('active goal') } },
+  { label: "Completed Goals" },
+  { label: "Due This Month" },
+  { label: "Overdue" },
+  { label: "Progress > 50%" },]
+
+  const sortOptions = [{ label: "Active Goals", onClick: () => { console.log('active goal') } },
+  { label: "Completed Goals" },
+  { label: "Due This Month" },
+  { label: "Overdue" },
+  { label: "Progress > 50%" },]
+
   const handleEditGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))
     dispatch(openAddGoalPopup())
   }
 
-  const handleDeposit = (goal: GoalSchema) => {
+  const depositGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))
     dispatch(openAddDepositPopup())
   }
 
+  // how does this work?
   const sortedGoals = sortByConfig(
     goals.data,
     sortConfig,
@@ -98,32 +111,22 @@ function HomePage() {
           </Link>
         </div>
         <div className="flex gap-x-2 m-2 mt-9">
-          <h1 className="font-extrabold text-2xl">Your goals</h1>
+          <h1 className="font-extrabold text-2xl">
+            Your goals
+          </h1>
           <div className="flex-1" />
           <div className="relative" >
             <DropdownButton
               label="Filters"
               icon={<FaSliders />}
-              items={[
-                { label: "Active Goals", onClick: () => { console.log('active goal') } },
-                { label: "Completed Goals" },
-                { label: "Due This Month" },
-                { label: "Overdue" },
-                { label: "Progress > 50%" },
-              ]}
+              items={filterOptions}
             />
           </div>
           <div className="relative">
             <DropdownButton
               label="Filters"
               icon={<FaSort />}
-              items={[
-                { label: "Active Goals", },
-                { label: "Completed Goals" },
-                { label: "Due This Month" },
-                { label: "Overdue" },
-                { label: "Progress > 50%" },
-              ]}
+              items={sortOptions}
             />
           </div>
         </div>
@@ -133,10 +136,12 @@ function HomePage() {
               <div
                 key={goal.id}
                 className={`${getGridPositionClass(index)} bg-zinc-700 flex font-bold border border-gray-700 p-2 rounded-2xl cursor-pointer`}
-                onClick={() => handleDeposit(goal)}
+                onClick={() => depositGoal(goal)}
               >
                 <div className="w-full p-3 flex flex-col h-full">
-                  <h3 className="text-xl font-bold m-2">{goal.name}</h3>
+                  <h3 className="text-xl font-bold m-2">
+                    {goal.name}
+                  </h3>
 
                   {/* fills empty space */}
                   <div className="flex-1" />
@@ -159,13 +164,13 @@ function HomePage() {
 
                   <div className="flex">
                     {calculateProgressPercent(goal.amount, goal.target) !== -1 ?
-                      (
-                        <p className="m-2">
-                          ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
-                        </p>
-                      )
+                      (<p className="m-2">
+                        ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
+                      </p>)
                       :
-                      (<p className="m-2">No Target</p>)
+                      (<p className="m-2">
+                        No Target
+                      </p>)
                     }
 
                     <p className="m-2">
@@ -183,7 +188,9 @@ function HomePage() {
             ))
           ) : (
             <div className="col-span-3 w-full text-center p-12">
-              <h1 className="text-2xl">No goals available</h1>
+              <h1 className="text-2xl">
+                No goals available
+              </h1>
             </div>
           )}
         </div>
