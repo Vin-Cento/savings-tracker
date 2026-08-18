@@ -34,7 +34,7 @@ function AddDepositPopUpForm() {
     },
   });
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const createDeposit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -69,7 +69,7 @@ function AddDepositPopUpForm() {
   if (!open) return null;
 
   return (
-    <PopUpForm open={popup == 'addDeposit'} onSubmit={handleSubmit}>
+    <PopUpForm open={popup == 'addDeposit'} onSubmit={createDeposit}>
       <label htmlFor="deposit_amount_label" className="block mb-2">
         Deposit:
       </label>
