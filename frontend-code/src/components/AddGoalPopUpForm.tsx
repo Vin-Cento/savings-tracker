@@ -90,20 +90,20 @@ function AddGoalPopUpMenu() {
 
   return (
     <PopUpForm open={popup == 'addGoal'} onSubmit={handleSubmit}>
-      <label htmlFor="name" className="block mb-2">
+      <label htmlFor="goal_name_label" className="block mb-2">
         Name:
       </label>
       <input
         type="text"
-        id="name"
-        name="name"
+        id="goal_name"
+        name="goal_name"
         defaultValue={goal.name}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         placeholder="Enter your name"
         required
       />
 
-      <label htmlFor="target" className="block mb-2">
+      <label htmlFor="goal_target_label" className="block mb-2">
         Target:
       </label>
       <input
@@ -121,13 +121,13 @@ function AddGoalPopUpMenu() {
         required
       />
 
-      <label htmlFor="deadline" className="block mb-2">
+      <label htmlFor="goal_deadline_label" className="block mb-2">
         Deadline:
       </label>
       <input
         type="date"
-        id="deadline"
-        name="deadline"
+        id="goal_deadline"
+        name="goal_deadline"
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         defaultValue={
           goal.deadline

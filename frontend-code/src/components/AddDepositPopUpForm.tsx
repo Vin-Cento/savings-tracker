@@ -78,13 +78,13 @@ function AddDepositPopUpForm() {
 
   return (
     <PopUpForm open={popup == 'addDeposit'} onSubmit={handleSubmit}>
-      <label htmlFor="amount" className="block mb-2">
+      <label htmlFor="deposit_amount_label" className="block mb-2">
         Deposit:
       </label>
 
       <input
-        id="depost_amount"
-        name="depost_amount"
+        id="deposit_amount"
+        name="deposit_amount"
         value={depositAmount}
         onChange={(e) => {
           const value = e.target.value;
@@ -97,14 +97,14 @@ function AddDepositPopUpForm() {
         required
       />
 
-      <label htmlFor="note" className="block mb-2">
+      <label htmlFor="deposit_note_label" className="block mb-2">
         Notes:
       </label>
 
       <textarea
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black block"
-        id="note"
-        name="note"
+        id="deposit_note"
+        name="deposit_note"
         rows={4}
         cols={50}
         placeholder="Enter your note here..."
