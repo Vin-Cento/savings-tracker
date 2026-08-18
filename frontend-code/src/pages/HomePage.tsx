@@ -3,7 +3,7 @@ import DepositStatCard from "../components/DepositStatCard";
 import { useQuery } from "@tanstack/react-query";
 import { countGoalOptions, fetchDepositsOptions, fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
 import { page, limit } from "./HomePage/constant"
-import AddGoalPopUpMenu from "../components/GoalPopUpForm";
+import AddGoalPopUpMenu from "../components/AddGoalPopUpForm";
 import type { GoalSchema } from "../client";
 import { useState } from "react";
 import { sortByConfig, type SortConfig } from "../composables/sortUtil";
