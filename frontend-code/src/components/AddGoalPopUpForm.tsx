@@ -9,7 +9,7 @@ import { useState } from "react";
 
 function AddGoalPopUpMenu() {
   const dispatch = useDispatch<AppDispatch>();
-  const [target, setTarget] = useState("");
+  const [goalTarget, setGoalTarget] = useState("");
   const queryClient = useQueryClient();
   const upsertGoal = useMutation({
     ...updateGoalMutation(),
@@ -18,7 +18,7 @@ function AddGoalPopUpMenu() {
         queryKey: fetchGoalsQueryKey(),
       });
 
-      setTarget("")
+      setGoalTarget("")
       dispatch(closePopup())
     },
     onError: (error) => {
@@ -32,7 +32,7 @@ function AddGoalPopUpMenu() {
         queryKey: fetchGoalsQueryKey(),
       });
 
-      setTarget("")
+      setGoalTarget("")
       dispatch(closePopup())
     },
     onError: (error) => {
@@ -107,13 +107,13 @@ function AddGoalPopUpMenu() {
         Target:
       </label>
       <input
-        id="target"
-        name="target"
-        value={target}
+        id="goal_target"
+        name="goal_target"
+        value={goalTarget}
         onChange={(e) => {
           const value = e.target.value;
           if (/^\d*\.?\d{0,2}$/.test(value)) {
-            setTarget(value);
+            setGoalTarget(value);
           }
         }}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"

@@ -9,9 +9,11 @@ import { closePopup } from "../stores/popupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../stores/store";
 import PopUpForm from "./PopUpForm";
+import { useState } from "react";
 
 function AddDepositPopUpForm() {
   const dispatch = useDispatch<AppDispatch>();
+  const [depositAmount, setdepositAmount] = useState("");
 
   const queryClient = useQueryClient();
   const addDepositMutationResult = useMutation({
@@ -81,10 +83,15 @@ function AddDepositPopUpForm() {
       </label>
 
       <input
-        type="number"
-        id="amount"
-        name="amount"
-        defaultValue={0}
+        id="depost_amount"
+        name="depost_amount"
+        value={depositAmount}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (/^\d*\.?\d{0,2}$/.test(value)) {
+            setdepositAmount(value);
+          }
+        }}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         placeholder="Enter deposit amount"
         required
