@@ -40,7 +40,7 @@ function AddGoalPopUpMenu() {
     },
   });
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const submitGoalForm = async (e: React.SubmitEvent<HTMLFormElement>) => {
 
     e.preventDefault();
 
@@ -89,7 +89,7 @@ function AddGoalPopUpMenu() {
   );
 
   return (
-    <PopUpForm open={popup == 'addGoal'} onSubmit={handleSubmit}>
+    <PopUpForm open={popup == 'addGoal'} onSubmit={submitGoalForm}>
       <label htmlFor="goal_name_label" className="block mb-2">
         Name:
       </label>
