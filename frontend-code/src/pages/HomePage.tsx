@@ -49,11 +49,6 @@ function HomePage() {
   { label: "Overdue" },
   { label: "Progress > 50%" },]
 
-  // const handleEditGoal = (goal: GoalSchema) => {
-  //   dispatch(setGoal({ goal: goal }))
-  //   dispatch(openAddGoalPopup())
-  // }
-
   const depositGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))
     dispatch(openAddDepositPopup())

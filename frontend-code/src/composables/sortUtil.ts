@@ -34,16 +34,16 @@ export function sortByConfig<T>(
   return [...data].sort((a, b) => {
     if (!sortConfig || sortConfig.direction === null) return 0;
 
-    const aValue = a[sortConfig.attr];
-    const bValue = b[sortConfig.attr];
+    const attributeValueA = a[sortConfig.attr];
+    const attributeValueB = b[sortConfig.attr];
 
-    if (aValue == null && bValue == null) return 0;
-    if (aValue == null) return 1;
-    if (bValue == null) return -1;
+    if (attributeValueA == null && attributeValueB == null) return 0;
+    if (attributeValueA == null) return 1;
+    if (attributeValueB == null) return -1;
 
     const comparison = sortingComparison(
-      aValue as NonNullable<T[keyof T]>,
-      bValue as NonNullable<T[keyof T]>
+      attributeValueA as NonNullable<T[keyof T]>,
+      attributeValueB as NonNullable<T[keyof T]>
     );
 
     return sortConfig.direction === "asc" ? comparison : -comparison;
