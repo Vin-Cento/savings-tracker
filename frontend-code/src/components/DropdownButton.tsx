@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 
-type DropdownItem = {
+export type DropdownItem = {
   label: ReactNode;
   onClick?: () => void;
 };

@@ -7,7 +7,7 @@ import type { AppDispatch, RootState } from "../stores/store";
 import { closePopup } from "../stores/popupSlice";
 import { useState } from "react";
 
-function GoalPopUpMenu() {
+function AddGoalPopUpMenu() {
   const dispatch = useDispatch<AppDispatch>();
   const [target, setTarget] = useState("");
   const queryClient = useQueryClient();
@@ -140,4 +140,4 @@ function GoalPopUpMenu() {
 }
 
 
-export default GoalPopUpMenu;
+export default AddGoalPopUpMenu;
