@@ -54,7 +54,6 @@ function HomePage() {
     dispatch(openAddDepositPopup())
   }
 
-  // how does this work?
   const sortedGoals = sortByConfig(
     goals.data,
     sortConfig,
