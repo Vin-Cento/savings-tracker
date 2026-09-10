@@ -19,9 +19,18 @@ import GoalGrid from "../components/GoalGrid";
 
 function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
+  const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined)
 
-  const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page, limit }, }) });
-  const goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
+  const goalsQuery = useQuery({
+    ...fetchGoalsOptions({
+      query: {
+        page,
+        limit,
+        active: activeFilter,
+      },
+    }),
+  });
+  let goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
 
   const activeCountQuery = useQuery({ ...countGoalOptions({ query: { active: true } }) })
   const activeCount = activeCountQuery.data
@@ -36,18 +45,18 @@ function HomePage() {
   const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
 
   const filterOptions = [
-    { label: "Active Goals", onClick: () => { console.log('active goal') } },
-    { label: "Completed Goals" },
+    {
+      label: "Active Goals", onClick: () => { setActiveFilter(true) }
+    },
+    { label: "NonActive Goals", onClick: () => { setActiveFilter(false) } },
     { label: "Due This Month" },
     { label: "Overdue" },
-    { label: "Progress > 50%" }
   ]
 
-  const sortOptions = [{ label: "Active Goals", onClick: () => { console.log('active goal') } },
-  { label: "Completed Goals" },
-  { label: "Due This Month" },
-  { label: "Overdue" },
-  { label: "Progress > 50%" },]
+  const sortOptions = [
+    { label: "Status", onClick: () => { console.log('active goal') } },
+    { label: "Created At" },
+  ]
 
   const depositGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))
