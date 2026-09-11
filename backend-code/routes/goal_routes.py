@@ -47,10 +47,13 @@ def fetch_goal(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     active: bool = Query(None),
+    completed: bool = Query(None),
 ):
     where: list[ColumnElement[bool]] = []
     if active is not None:
         where.append(GoalRow.active == active)
+    if completed is not None:
+        where.append(GoalRow.completed == completed)
     return goal_service.list_goal(where=where, page=page, limit=limit)
 
 

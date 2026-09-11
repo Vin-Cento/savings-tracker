@@ -379,6 +379,10 @@ export type FetchGoalsData = {
          * Active
          */
         active?: boolean;
+        /**
+         * Completed
+         */
+        completed?: boolean;
     };
     url: '/goals';
 };

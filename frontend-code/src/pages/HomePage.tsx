@@ -20,6 +20,7 @@ import GoalGrid from "../components/GoalGrid";
 function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined)
+  const [completedFilter, setCompletedFilter] = useState<boolean | undefined>(undefined)
 
   const goalsQuery = useQuery({
     ...fetchGoalsOptions({
@@ -27,6 +28,7 @@ function HomePage() {
         page,
         limit,
         active: activeFilter,
+        completed: completedFilter,
       },
     }),
   });
@@ -46,11 +48,23 @@ function HomePage() {
 
   const filterOptions = [
     {
-      label: "Active Goals", onClick: () => { setActiveFilter(true) }
+      label: "All Goals", onClick: () => {
+        setActiveFilter(undefined)
+        setCompletedFilter(undefined)
+      }
     },
-    { label: "NonActive Goals", onClick: () => { setActiveFilter(false) } },
-    { label: "Due This Month" },
-    { label: "Overdue" },
+    {
+      label: "Active Goals", onClick: () => {
+        setActiveFilter(true)
+        setCompletedFilter(undefined)
+      }
+    },
+    {
+      label: "Completed Goals", onClick: () => {
+        setCompletedFilter(true)
+        setActiveFilter(undefined)
+      }
+    },
   ]
 
   const sortOptions = [
