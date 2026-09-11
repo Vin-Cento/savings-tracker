@@ -383,6 +383,14 @@ export type FetchGoalsData = {
          * Completed
          */
         completed?: boolean;
+        /**
+         * Sort By
+         */
+        sort_by?: string;
+        /**
+         * Sort Order
+         */
+        sort_order?: string;
     };
     url: '/goals';
 };

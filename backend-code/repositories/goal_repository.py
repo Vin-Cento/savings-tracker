@@ -5,6 +5,17 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.elements import ColumnElement
 from models.models import DepositRow, GoalRow
 from schema.goal_schema import GoalCreateSchema, GoalSchema, GoalUpdateSchema
+from typing import Literal
+
+SortBy = Literal[
+    "name",
+    "target",
+    "amount",
+    "deadline",
+    "createdAt",
+]
+
+SortOrder = Literal["asc", "desc"]
 
 
 class GoalRepository:
@@ -33,8 +44,18 @@ class GoalRepository:
 
         return GoalSchema.model_validate(row._mapping)
 
-    def fetch(self, where: list[ColumnElement[bool]] | None = None,
-              *, page: int = 1, limit: int = 10,) -> List[GoalSchema]:
+    def fetch(
+        self,
+        where: list[ColumnElement[bool]] | None = None, *,
+        page: int = 1, limit: int = 10,
+        sort_by: SortBy = "createdAt",
+        sort_order: SortOrder = "desc",
+    ) -> List[GoalSchema]:
+
+        amount = func.coalesce(
+            func.sum(DepositRow.amount), 0
+        ).label("amount")
+
         stmt = (
             self.session.query(
                 GoalRow.id.label("id"),
@@ -42,7 +63,7 @@ class GoalRepository:
                 GoalRow.target.label("target"),
                 GoalRow.active.label("active"),
                 GoalRow.completed.label("completed"),
-                func.coalesce(func.sum(DepositRow.amount), 0).label("amount"),
+                amount,
                 GoalRow.deadline.label("deadline"),
                 GoalRow.createdAt.label("createdAt"),
             )
@@ -53,9 +74,24 @@ class GoalRepository:
         if where is not None:
             stmt = stmt.filter(*where)
 
+        sort_columns = {
+            "name": GoalRow.name,
+            "target": GoalRow.target,
+            "amount": amount,
+            "deadline": GoalRow.deadline,
+            "createdAt": GoalRow.createdAt,
+        }
+
+        sort_column = sort_columns[sort_by]
+        order_by = (
+            sort_column.asc()
+            if sort_order == "asc"
+            else sort_column.desc()
+        )
+
         goal_rows = (
             stmt
-            .order_by(GoalRow.createdAt.desc())
+            .order_by(order_by)
             .offset((page - 1) * limit)
             .limit(limit)
             .all()

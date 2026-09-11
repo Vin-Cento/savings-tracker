@@ -18,7 +18,7 @@ import { setGoal } from "../stores/goalSlice";
 import {
   getNextSortConfig,
   sortByConfig,
-  type SortConfig,
+  type SortConfigOld,
 } from "../composables/sortUtil";
 
 function GoalManagerPage() {
@@ -50,7 +50,7 @@ function GoalManagerPage() {
   const totalPages = Math.ceil(goals.total / PAGE_SIZE);
   const emptyRows = Math.max(0, PAGE_SIZE - goals.data.length);
 
-  const [sortConfig, setSortConfig] = useState<SortConfig<GoalSchema>>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfigOld<GoalSchema>>(null);
 
   const handleDeleteGoal = (id: string) => {
     deleteGoal.mutate({ path: { id, }, });

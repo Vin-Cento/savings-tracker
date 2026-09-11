@@ -1,14 +1,14 @@
 export type SortDirection = "asc" | "desc" | null;
 
-export type SortConfig<T> = {
+export type SortConfigOld<T> = {
   attr: keyof T;
   direction: SortDirection;
 } | null;
 
 export function getNextSortConfig<T>(
-  currentSortConfig: SortConfig<T>,
+  currentSortConfig: SortConfigOld<T>,
   attr: keyof T
-): SortConfig<T> {
+): SortConfigOld<T> {
   let direction: SortDirection = "asc";
 
   if (currentSortConfig?.attr === attr) {
@@ -25,7 +25,7 @@ export function getNextSortConfig<T>(
 
 export function sortByConfig<T>(
   data: T[],
-  sortConfig: SortConfig<T>,
+  sortConfig: SortConfigOld<T>,
   sortingComparison: (
     a: NonNullable<T[keyof T]>,
     b: NonNullable<T[keyof T]>

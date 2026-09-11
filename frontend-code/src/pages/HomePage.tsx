@@ -6,8 +6,6 @@ import { page, limit } from "./HomePage/constant"
 import AddGoalPopUpMenu from "../components/AddGoalPopUpForm";
 import type { GoalSchema } from "../client";
 import { useState } from "react";
-import { sortByConfig, type SortConfig } from "../composables/sortUtil";
-import { sortingComparison } from "../composables/util";
 import StatCard from "../components/StatCard";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../stores/store";
@@ -17,10 +15,21 @@ import AddDepositPopUpForm from "../components/AddDepositPopUpForm";
 import DepositFilterBar from "../components/DepositFilterBar";
 import GoalGrid from "../components/GoalGrid";
 
+type SortByEnum =
+  | "name"
+  | "target"
+  | "amount"
+  | "deadline"
+  | "createdAt";
+
+type SortOrderEnum = "asc" | "desc";
+
 function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined)
   const [completedFilter, setCompletedFilter] = useState<boolean | undefined>(undefined)
+  const [sortBy, setSortBy] = useState<SortByEnum>("createdAt");
+  const [sortOrder, setSortOrder] = useState<SortOrderEnum>("desc");
 
   const goalsQuery = useQuery({
     ...fetchGoalsOptions({
@@ -29,6 +38,8 @@ function HomePage() {
         limit,
         active: activeFilter,
         completed: completedFilter,
+        sort_by: sortBy,
+        sort_order: sortOrder,
       },
     }),
   });
@@ -43,8 +54,6 @@ function HomePage() {
   const depositQuery = useQuery({ ...fetchDepositsOptions({ query: { limit: limit, page: page, } }) })
   const deposit = depositQuery.data?.data
   let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
-
-  const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
 
   const filterOptions = [
     {
@@ -68,8 +77,24 @@ function HomePage() {
   ]
 
   const sortOptions = [
-    { label: "Status", onClick: () => { console.log('active goal') } },
-    { label: "Created At" },
+    {
+      label: "Created At", onClick: () => {
+        setSortBy('createdAt')
+        setSortOrder('desc')
+      }
+    },
+    {
+      label: "Name Asc", onClick: () => {
+        setSortBy('name')
+        setSortOrder('asc')
+      }
+    },
+    {
+      label: "Name Desc", onClick: () => {
+        setSortBy('name')
+        setSortOrder('desc')
+      }
+    },
   ]
 
   const depositGoal = (goal: GoalSchema) => {
@@ -77,11 +102,6 @@ function HomePage() {
     dispatch(openAddDepositPopup())
   }
 
-  const sortedGoals = sortByConfig(
-    goals.data,
-    sortConfig,
-    sortingComparison
-  );
   return (
     <>
       <main className="overflow-auto min-w-6xl max-w-7xl ml-auto mr-auto">
@@ -107,7 +127,7 @@ function HomePage() {
         </div>
         <DepositStatCard deposits={deposit ?? []} />
         <DepositFilterBar filterOptions={filterOptions} sortOptions={sortOptions} />
-        <GoalGrid goals={sortedGoals} depositGoal={depositGoal} />
+        <GoalGrid goals={goals.data} depositGoal={depositGoal} />
       </main >
       <AddGoalPopUpMenu />
       <AddDepositPopUpForm />

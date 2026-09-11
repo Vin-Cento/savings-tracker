@@ -13,7 +13,6 @@ type DropdownButtonProps = {
 
 function DropdownButton({ label, icon, items }: DropdownButtonProps) {
   const [open, setOpen] = useState(false);
-  console.log('DropdownButton open', open)
 
   return (
     <div className="relative">
