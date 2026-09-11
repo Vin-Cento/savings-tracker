@@ -38,11 +38,15 @@ class GoalService:
         *,
         page: int = 1,
         limit: int = 10,
+        sort_by: str = "createdAt",
+        sort_order: str = "desc",
     ) -> GoalPaginationSchema:
         goals = self.repository.fetch(
             where=where,
             page=page,
             limit=limit,
+            sort_by=sort_by,
+            sort_order=sort_order,
         )
         total = self.repository.count(where)
         return GoalPaginationSchema(

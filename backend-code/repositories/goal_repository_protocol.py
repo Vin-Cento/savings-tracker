@@ -10,8 +10,14 @@ class GoalRepositoryProtocol(Protocol):
     def get(self, goal_id: UUID) -> GoalSchema | None:
         ...
 
-    def fetch(self, where: list[ColumnElement[bool]] | None = None,
-              *, page: int = 1, limit: int = 10,) -> List[GoalSchema]:
+    def fetch(
+            self,
+            where: list[ColumnElement[bool]] | None = None, *,
+            page: int = 1,
+            limit: int = 10,
+            sort_by: str = 'createdAt',
+            sort_order: str = 'desc',
+    ) -> List[GoalSchema]:
         ...
 
     def add(self, goal: GoalCreateSchema) -> GoalSchema:

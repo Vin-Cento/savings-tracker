@@ -31,8 +31,8 @@ def count_goal(service: GoalServiceDependency,
 
 
 @router.get("/{id}", response_model=GoalSchema, operation_id="getGoal")
-def get_goal(id: uuid.UUID, service: GoalServiceDependency):
-    goal = service.get_goal(id)
+def get_goal(id: uuid.UUID, goal_service: GoalServiceDependency):
+    goal = goal_service.get_goal(id)
     if goal is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -43,11 +43,23 @@ def get_goal(id: uuid.UUID, service: GoalServiceDependency):
 
 @router.get("", response_model=GoalPaginationSchema, operation_id='fetchGoals')
 def fetch_goal(
-    service: GoalServiceDependency,
+    goal_service: GoalServiceDependency,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
+    active: bool = Query(None),
+    completed: bool = Query(None),
+    sort_by: str = Query("createdAt"),
+    sort_order: str = Query("desc"),
 ):
-    return service.list_goal(page=page, limit=limit)
+    where: list[ColumnElement[bool]] = []
+    if active is not None:
+        where.append(GoalRow.active == active)
+    if completed is not None:
+        where.append(GoalRow.completed == completed)
+    return goal_service.list_goal(
+        where=where, page=page, limit=limit,
+        sort_by=sort_by, sort_order=sort_order
+    )
 
 
 @router.post(
@@ -75,7 +87,6 @@ def add_goal(
 )
 def update_goal(
     goal: GoalUpdateSchema,
-    # id: uuid.UUID,
     service: GoalServiceDependency,
 ):
     new_goal = service.update_goal(goal)
@@ -85,19 +96,6 @@ def update_goal(
             detail="Goal Not Found",
         )
     return new_goal
-
-
-# @router.post(
-#     "/bulk",
-#     response_model=GoalSchema,
-#     status_code=status.HTTP_201_CREATED,
-#     operation_id='upsertBulkGoal'
-# )
-# def bulk_upsert(
-#     goal: GoalCreateSchema,
-#     session: Session = Depends(get_session),
-# ):
-#     return goal_service.bulk_upsert_goal(session, goal)
 
 
 @router.delete(

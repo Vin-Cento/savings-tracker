@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 
-type DropdownItem = {
+export type DropdownItem = {
   label: ReactNode;
   onClick?: () => void;
 };
@@ -28,7 +28,8 @@ function DropdownButton({ label, icon, items }: DropdownButtonProps) {
 
       {open && (
         <div
-          className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-800 shadow-lg z-50"
+          className="absolute right-0 mt-2 w-56 rounded-xl 
+          border border-zinc-700 bg-zinc-800 shadow-lg z-50"
           onMouseLeave={() => setOpen(false)}
         >
           {items.map((item, index) => (

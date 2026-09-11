@@ -1,38 +1,49 @@
-import { Link } from "react-router-dom"
 import { formatMoney } from "../composables/format";
-import DepositBarChart from "../components/DepositBarChart";
+import DepositStatCard from "../components/DepositStatCard";
 import { useQuery } from "@tanstack/react-query";
 import { countGoalOptions, fetchDepositsOptions, fetchGoalsOptions } from "../client/@tanstack/react-query.gen";
-import { FaSort } from "react-icons/fa";
-import { FaSliders } from "react-icons/fa6";
-import { page, limit, gridPositions } from "./HomePage/constant"
-import GoalPopUpMenu from "../components/GoalPopUpForm";
+import { page, limit } from "./HomePage/constant"
+import AddGoalPopUpMenu from "../components/AddGoalPopUpForm";
 import type { GoalSchema } from "../client";
 import { useState } from "react";
-import { sortByConfig, type SortConfig } from "../composables/sortUtil";
-import { sortingComparison } from "../composables/util";
-import DropdownButton from "../components/DropdownButton";
+import StatCard from "../components/StatCard";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../stores/store";
-import { openAddDepositPopup, openAddGoalPopup } from "../stores/popupSlice";
+import { openAddDepositPopup } from "../stores/popupSlice";
 import { setGoal } from "../stores/goalSlice";
 import AddDepositPopUpForm from "../components/AddDepositPopUpForm";
+import DepositFilterBar from "../components/DepositFilterBar";
+import GoalGrid from "../components/GoalGrid";
 
-function calculateProgressPercent(amount: number, target: number): number {
-  if (target <= 0) return -1;
-  return Math.min(Math.round((amount / target) * 100), 100);
-}
+type SortByEnum =
+  | "name"
+  | "target"
+  | "amount"
+  | "deadline"
+  | "createdAt";
+
+type SortOrderEnum = "asc" | "desc";
 
 function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
+  const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined)
+  const [completedFilter, setCompletedFilter] = useState<boolean | undefined>(undefined)
+  const [sortBy, setSortBy] = useState<SortByEnum>("createdAt");
+  const [sortOrder, setSortOrder] = useState<SortOrderEnum>("desc");
 
-  const getGridPositionClass = (index: number) => {
-    const patternIndex = index % gridPositions.length;
-    return gridPositions[patternIndex];
-  };
-
-  const goalsQuery = useQuery({ ...fetchGoalsOptions({ query: { page, limit }, }) });
-  const goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
+  const goalsQuery = useQuery({
+    ...fetchGoalsOptions({
+      query: {
+        page,
+        limit,
+        active: activeFilter,
+        completed: completedFilter,
+        sort_by: sortBy,
+        sort_order: sortOrder,
+      },
+    }),
+  });
+  let goals = goalsQuery.data ? goalsQuery.data : { data: [], total: 0 }
 
   const activeCountQuery = useQuery({ ...countGoalOptions({ query: { active: true } }) })
   const activeCount = activeCountQuery.data
@@ -44,150 +55,81 @@ function HomePage() {
   const deposit = depositQuery.data?.data
   let totalDeposit = depositQuery.data?.sum ? depositQuery.data?.sum : 0
 
-  const [sortConfig, _] = useState<SortConfig<GoalSchema>>(null);
+  const filterOptions = [
+    {
+      label: "All Goals", onClick: () => {
+        setActiveFilter(undefined)
+        setCompletedFilter(undefined)
+      }
+    },
+    {
+      label: "Active Goals", onClick: () => {
+        setActiveFilter(true)
+        setCompletedFilter(undefined)
+      }
+    },
+    {
+      label: "Completed Goals", onClick: () => {
+        setCompletedFilter(true)
+        setActiveFilter(undefined)
+      }
+    },
+  ]
 
-  const handleEditGoal = (goal: GoalSchema) => {
-    dispatch(setGoal({ goal: goal }))
-    dispatch(openAddGoalPopup())
-  }
+  const sortOptions = [
+    {
+      label: "Created At", onClick: () => {
+        setSortBy('createdAt')
+        setSortOrder('desc')
+      }
+    },
+    {
+      label: "Name Asc", onClick: () => {
+        setSortBy('name')
+        setSortOrder('asc')
+      }
+    },
+    {
+      label: "Name Desc", onClick: () => {
+        setSortBy('name')
+        setSortOrder('desc')
+      }
+    },
+  ]
 
-  const handleDeposit = (goal: GoalSchema) => {
+  const depositGoal = (goal: GoalSchema) => {
     dispatch(setGoal({ goal: goal }))
     dispatch(openAddDepositPopup())
   }
 
-  const sortedGoals = sortByConfig(
-    goals.data,
-    sortConfig,
-    sortingComparison
-  );
   return (
     <>
       <main className="overflow-auto min-w-6xl max-w-7xl ml-auto mr-auto">
         <div className="flex gap-x-2">
-          <Link to={"/goals/management"} className="m-2 w-2/4 flex p-4 bg-linear-to-r from-red-700 to-amber-700 rounded-xl">
-            <div>
-              <h1 className="mb-5 text-sm">Total savings</h1>
-              <p className="text-5xl font-bold">{formatMoney(totalDeposit)}</p>
-            </div>
-          </Link>
-          <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
-            <div>
-              <h1 className="mb-5 text-sm">Active goals</h1>
-              <p className="text-5xl font-bold text-orange-600">{activeCount}</p>
-            </div>
-          </Link>
-          <Link to={"/goals/management"} className="m-2 w-1/4 flex p-4 items-center bg-zinc-800 rounded-xl" >
-            <div>
-              <h1 className="mb-5 text-sm">Goals completed</h1>
-              <p className="text-5xl font-bold text-green-400">{completeCount}</p>
-            </div>
-          </Link>
+          <StatCard
+            to="/goals/management"
+            title="Total savings"
+            value={formatMoney(totalDeposit)}
+            className="w-2/4 bg-linear-to-r from-red-700 to-amber-700"
+          />
+          <StatCard
+            title="Active goals"
+            value={activeCount}
+            className="w-1/4 items-center bg-zinc-800"
+            valueClassName="text-orange-600"
+          />
+          <StatCard
+            title="Goals completed"
+            value={completeCount}
+            className="w-1/4 items-center bg-zinc-800"
+            valueClassName="text-green-400"
+          />
         </div>
-        <div className="flex gap-x-2 m-2">
-          <Link to={"/goals/management"} className="w-full flex p-4 items-center bg-zinc-800 rounded-xl" >
-            <div className="w-full">
-              <h1 className="text-sm">Monthly Deposits</h1>
-              <div className="m-2 flex">
-                <div className="w-full h-50">
-                  <DepositBarChart deposits={deposit ? deposit : []} />
-                </div>
-              </div>
-            </div>
-          </Link>
-        </div>
-        <div className="flex gap-x-2 m-2 mt-9">
-          <h1 className="font-extrabold text-2xl">Your goals</h1>
-          <div className="flex-1" />
-          <div className="relative" >
-            <DropdownButton
-              label="Filters"
-              icon={<FaSliders />}
-              items={[
-                { label: "Active Goals", onClick: () => { console.log('active goal') } },
-                { label: "Completed Goals" },
-                { label: "Due This Month" },
-                { label: "Overdue" },
-                { label: "Progress > 50%" },
-              ]}
-            />
-          </div>
-          <div className="relative">
-            <DropdownButton
-              label="Filters"
-              icon={<FaSort />}
-              items={[
-                { label: "Active Goals", },
-                { label: "Completed Goals" },
-                { label: "Due This Month" },
-                { label: "Overdue" },
-                { label: "Progress > 50%" },
-              ]}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2 w-full">
-          {Array.isArray(goals?.data) && goals.data.length > 0 ? (
-            sortedGoals.map((goal, index) => (
-              <div
-                key={goal.id}
-                className={`${getGridPositionClass(index)} bg-zinc-700 flex font-bold border border-gray-700 p-2 rounded-2xl cursor-pointer`}
-                onClick={() => handleDeposit(goal)}
-              >
-                <div className="w-full p-3 flex flex-col h-full">
-                  <h3 className="text-xl font-bold m-2">{goal.name}</h3>
-
-                  {/* fills empty space */}
-                  <div className="flex-1" />
-
-                  {calculateProgressPercent(goal.amount, goal.target) !== -1 && (
-                    <>
-                      <h3 className="text-4xl m-2">
-                        {`${calculateProgressPercent(goal.amount, goal.target)}%`}
-                      </h3>
-                      <div className="w-full m-2 bg-zinc-600 rounded-2xl">
-                        <div
-                          className="h-5 bg-amber-600 rounded-2xl"
-                          style={{
-                            width: `${calculateProgressPercent(goal.amount, goal.target)}%`,
-                          }}
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  <div className="flex">
-                    {calculateProgressPercent(goal.amount, goal.target) !== -1 ?
-                      (
-                        <p className="m-2">
-                          ${goal.amount.toLocaleString()} of ${goal.target.toLocaleString()}
-                        </p>
-                      )
-                      :
-                      (<p className="m-2">No Target</p>)
-                    }
-
-                    <p className="m-2">
-                      {goal.deadline
-                        ? `Due ${new Date(goal.deadline).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}`
-                        : "No deadline"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div>
-              <p>No goals available</p>
-            </div>
-          )}
-        </div>
+        <DepositStatCard deposits={deposit ?? []} />
+        <DepositFilterBar filterOptions={filterOptions} sortOptions={sortOptions} />
+        <GoalGrid goals={goals.data} depositGoal={depositGoal} />
       </main >
-      <GoalPopUpMenu />
+      <AddGoalPopUpMenu />
       <AddDepositPopUpForm />
     </>
   );

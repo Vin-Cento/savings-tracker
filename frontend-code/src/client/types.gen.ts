@@ -375,6 +375,22 @@ export type FetchGoalsData = {
          * Limit
          */
         limit?: number;
+        /**
+         * Active
+         */
+        active?: boolean;
+        /**
+         * Completed
+         */
+        completed?: boolean;
+        /**
+         * Sort By
+         */
+        sort_by?: string;
+        /**
+         * Sort Order
+         */
+        sort_order?: string;
     };
     url: '/goals';
 };
@@ -520,12 +536,14 @@ export type FetchDepositsResponses = {
 export type FetchDepositsResponse = FetchDepositsResponses[keyof FetchDepositsResponses];
 
 export type TotalDepositData = {
-    /**
-     * Goals
-     */
-    body: Array<number>;
+    body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Goals
+         */
+        goals?: Array<string>;
+    };
     url: '/deposit/total';
 };
 

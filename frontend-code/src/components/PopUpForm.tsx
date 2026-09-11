@@ -4,8 +4,9 @@ import type {
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../stores/store";
 import { closePopup } from "../stores/popupSlice";
+import EscapeListener from "./EscapeListener";
 
-type PopupFormProps = {
+type PopUpFormProps = {
   open: boolean;
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void | Promise<void>;
   children: ReactNode;
@@ -17,10 +18,14 @@ function PopUpForm({
   onSubmit,
   children,
   submitLabel = "Submit",
-}: PopupFormProps) {
+}: PopUpFormProps) {
 
   if (!open) return null;
   const dispatch = useDispatch<AppDispatch>();
+
+  const ExitOnEscape = () => {
+    dispatch(closePopup())
+  };
 
   return (
     <div
@@ -44,6 +49,7 @@ function PopUpForm({
           </form>
         </div>
       </div>
+      <EscapeListener onEscape={ExitOnEscape} />
     </div>
   );
 }

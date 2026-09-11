@@ -1,14 +1,14 @@
 export type SortDirection = "asc" | "desc" | null;
 
-export type SortConfig<T> = {
+export type SortConfigOld<T> = {
   attr: keyof T;
   direction: SortDirection;
 } | null;
 
 export function getNextSortConfig<T>(
-  currentSortConfig: SortConfig<T>,
+  currentSortConfig: SortConfigOld<T>,
   attr: keyof T
-): SortConfig<T> {
+): SortConfigOld<T> {
   let direction: SortDirection = "asc";
 
   if (currentSortConfig?.attr === attr) {
@@ -25,7 +25,7 @@ export function getNextSortConfig<T>(
 
 export function sortByConfig<T>(
   data: T[],
-  sortConfig: SortConfig<T>,
+  sortConfig: SortConfigOld<T>,
   sortingComparison: (
     a: NonNullable<T[keyof T]>,
     b: NonNullable<T[keyof T]>
@@ -34,16 +34,16 @@ export function sortByConfig<T>(
   return [...data].sort((a, b) => {
     if (!sortConfig || sortConfig.direction === null) return 0;
 
-    const aValue = a[sortConfig.attr];
-    const bValue = b[sortConfig.attr];
+    const attributeValueA = a[sortConfig.attr];
+    const attributeValueB = b[sortConfig.attr];
 
-    if (aValue == null && bValue == null) return 0;
-    if (aValue == null) return 1;
-    if (bValue == null) return -1;
+    if (attributeValueA == null && attributeValueB == null) return 0;
+    if (attributeValueA == null) return 1;
+    if (attributeValueB == null) return -1;
 
     const comparison = sortingComparison(
-      aValue as NonNullable<T[keyof T]>,
-      bValue as NonNullable<T[keyof T]>
+      attributeValueA as NonNullable<T[keyof T]>,
+      attributeValueB as NonNullable<T[keyof T]>
     );
 
     return sortConfig.direction === "asc" ? comparison : -comparison;

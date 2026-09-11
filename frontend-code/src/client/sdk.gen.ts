@@ -92,11 +92,4 @@ export const fetchDeposits = <ThrowOnError extends boolean = false>(options?: Op
 /**
  * Total
  */
-export const totalDeposit = <ThrowOnError extends boolean = false>(options: Options<TotalDepositData, ThrowOnError>): RequestResult<TotalDepositResponses, TotalDepositErrors, ThrowOnError> => (options.client ?? client).post<TotalDepositResponses, TotalDepositErrors, ThrowOnError>({
-    url: '/deposit/total',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+export const totalDeposit = <ThrowOnError extends boolean = false>(options?: Options<TotalDepositData, ThrowOnError>): RequestResult<TotalDepositResponses, TotalDepositErrors, ThrowOnError> => (options?.client ?? client).post<TotalDepositResponses, TotalDepositErrors, ThrowOnError>({ url: '/deposit/total', ...options });

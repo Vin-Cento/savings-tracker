@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { formatMoney, formatTimeLocale } from '../composables/format'
 import { sortingComparison } from "../composables/util";
 import { FaEdit, FaSort, FaTrash, FaSortDown, FaSortUp, FaArrowLeft, FaArrowRight, FaPiggyBank, FaSearch } from "react-icons/fa";
-import GoalPopUpForm from "../components/GoalPopUpForm"
+import GoalPopUpForm from "../components/AddGoalPopUpForm"
 import AddDepositPopUpForm from "../components/AddDepositPopUpForm"
 import type { GoalSchema } from "../client/types.gen";
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ import { setGoal } from "../stores/goalSlice";
 import {
   getNextSortConfig,
   sortByConfig,
-  type SortConfig,
+  type SortConfigOld,
 } from "../composables/sortUtil";
 
 function GoalManagerPage() {
@@ -50,7 +50,7 @@ function GoalManagerPage() {
   const totalPages = Math.ceil(goals.total / PAGE_SIZE);
   const emptyRows = Math.max(0, PAGE_SIZE - goals.data.length);
 
-  const [sortConfig, setSortConfig] = useState<SortConfig<GoalSchema>>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfigOld<GoalSchema>>(null);
 
   const handleDeleteGoal = (id: string) => {
     deleteGoal.mutate({ path: { id, }, });

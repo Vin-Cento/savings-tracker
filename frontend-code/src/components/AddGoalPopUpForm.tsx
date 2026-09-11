@@ -4,12 +4,12 @@ import type { GoalCreateSchema, GoalUpdateSchema } from "../client";
 import { updateGoalMutation, addGoalMutation, fetchGoalsQueryKey } from "../client/@tanstack/react-query.gen";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../stores/store";
-import { closePopup, openAddGoalPopup } from "../stores/popupSlice";
+import { closePopup } from "../stores/popupSlice";
 import { useState } from "react";
 
-function GoalPopUpMenu() {
+function AddGoalPopUpMenu() {
   const dispatch = useDispatch<AppDispatch>();
-  const [target, setTarget] = useState("");
+  const [goalTarget, setGoalTarget] = useState("");
   const queryClient = useQueryClient();
   const upsertGoal = useMutation({
     ...updateGoalMutation(),
@@ -18,6 +18,7 @@ function GoalPopUpMenu() {
         queryKey: fetchGoalsQueryKey(),
       });
 
+      setGoalTarget("")
       dispatch(closePopup())
     },
     onError: (error) => {
@@ -31,6 +32,7 @@ function GoalPopUpMenu() {
         queryKey: fetchGoalsQueryKey(),
       });
 
+      setGoalTarget("")
       dispatch(closePopup())
     },
     onError: (error) => {
@@ -38,23 +40,22 @@ function GoalPopUpMenu() {
     },
   });
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    dispatch(openAddGoalPopup())
+  const submitGoalForm = async (e: React.SubmitEvent<HTMLFormElement>) => {
 
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const deadlineValue = formData.get("deadline");
+    const deadlineValue = formData.get("goal_deadline");
 
     if (typeof deadlineValue !== "string") {
-      console.error("Invalid deadline value");
+      alert("Invalid deadline value");
       return;
     }
 
     if (goal.id == "") {
       const payload: GoalCreateSchema = {
-        name: formData.get("name") as string,
-        target: Number(formData.get("target")),
+        name: formData.get("goal_name") as string,
+        target: Number(formData.get("goal_target")),
         deadline:
           deadlineValue === "" ? null : new Date(deadlineValue).toISOString(),
         active: true,
@@ -66,15 +67,14 @@ function GoalPopUpMenu() {
     } else {
       const payload: GoalUpdateSchema = {
         id: goal.id,
-        name: formData.get("name") as string,
-        target: Number(formData.get("target")),
+        name: formData.get("goal_name") as string,
+        target: Number(formData.get("goal_target")),
         deadline:
           deadlineValue === "" ? null : new Date(deadlineValue).toISOString(),
         active: true,
       };
 
       upsertGoal.mutate({
-        path: { id: goal.id },
         body: payload,
       });
     }
@@ -89,46 +89,45 @@ function GoalPopUpMenu() {
   );
 
   return (
-    <PopUpForm open={popup == 'addGoal'} onSubmit={handleSubmit}>
-      <label htmlFor="name" className="block mb-2">
+    <PopUpForm open={popup == 'addGoal'} onSubmit={submitGoalForm}>
+      <label htmlFor="goal_name_label" className="block mb-2">
         Name:
       </label>
       <input
         type="text"
-        id="name"
-        name="name"
+        id="goal_name"
+        name="goal_name"
         defaultValue={goal.name}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         placeholder="Enter your name"
         required
       />
 
-      <label htmlFor="target" className="block mb-2">
+      <label htmlFor="goal_target_label" className="block mb-2">
         Target:
       </label>
       <input
-        id="target"
-        name="target"
-        value={target}
+        id="goal_target"
+        name="goal_target"
+        value={goalTarget}
         onChange={(e) => {
           const value = e.target.value;
           if (/^\d*\.?\d{0,2}$/.test(value)) {
-            setTarget(value);
+            setGoalTarget(value);
           }
         }}
-        defaultValue={goal.target}
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         placeholder="Enter target number"
         required
       />
 
-      <label htmlFor="deadline" className="block mb-2">
+      <label htmlFor="goal_deadline_label" className="block mb-2">
         Deadline:
       </label>
       <input
         type="date"
-        id="deadline"
-        name="deadline"
+        id="goal_deadline"
+        name="goal_deadline"
         className="mb-4 w-full rounded px-2 py-1 bg-amber-100 text-black"
         defaultValue={
           goal.deadline
@@ -141,4 +140,4 @@ function GoalPopUpMenu() {
 }
 
 
-export default GoalPopUpMenu;
+export default AddGoalPopUpMenu;
